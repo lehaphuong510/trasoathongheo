@@ -159,8 +159,8 @@
     </div>
 
     <script>
-        // ĐIỀN LINK WORKER CỦA BẠN VÀO ĐÂY:
-        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev/"; 
+        // Bỏ dấu / ở cuối URL để tránh lỗi request
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
         
         let appConfig = {};
         let activeCampaigns = [];
@@ -179,6 +179,7 @@
         window.onload = async () => {
             try {
                 const resConfig = await fetch(`${WORKER_URL}/api/config`);
+                if (!resConfig.ok) throw new Error("API Worker không phản hồi");
                 appConfig = await resConfig.json();
                 
                 const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
@@ -215,7 +216,10 @@
                         });
                     }
                 }
-            } catch (e) { console.log(e); }
+            } catch (e) { 
+                console.error(e); 
+                alert("Lỗi tải dữ liệu cấu hình! Vui lòng đảm bảo bạn đã bấm nút 'Đồng bộ lên Web' trên Google Sheets.");
+            }
         };
 
         // --- NGƯỜI DÂN ---
@@ -228,7 +232,7 @@
             if (tinh && appConfig.diachinh[tinh]) {
                 appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
             }
-            $('#nd_phuong').select2(); // Làm mới Select2
+            $('#nd_phuong').select2(); 
             loadNdThon();
         }
 
@@ -241,7 +245,7 @@
             const dotsInPhuong = activeCampaigns.filter(d => d.tinh === tinh && d.phuong === phuong);
             dotsInPhuong.forEach(d => { thonSelect.innerHTML += `<option value="${d.id_dot}">${d.thon}</option>`; });
             thonSelect.innerHTML += `<option value="Khác">Khác (Tự kiểm tra)</option>`;
-            $('#nd_thon').select2(); // Làm mới Select2
+            $('#nd_thon').select2(); 
         }
 
         async function ghiNhanDataNgam() {
