@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Khảo sát Hộ Nghèo</title>
+</head>
+<body>
+    <h2>Phần Người Dân - Phiếu A</h2>
+    
+    <label>Tỉnh/Thành:</label>
+    <select id="tinh"><option>Chọn Tỉnh</option></select>
+    
+    <label>Quận/Huyện:</label>
+    <select id="huyen"><option>Chọn Huyện</option></select>
+    
+    <label>Phường/Xã:</label>
+    <select id="xa"><option>Chọn Xã</option></select>
+
+    <hr>
+    <div id="buoc1">
+        <h3>Bước 1: Nhận dạng nhanh</h3>
+        <div id="cau_hỏi_b1"></div> <!-- JS sẽ chèn 5 checkbox vào đây -->
+        <button onclick="checkBuoc1()">Tiếp tục</button>
+    </div>
+
+    <div id="buoc2" style="display:none;">
+        <h3>Bước 2: 9 Tiêu chí</h3>
+        <div id="cau_hỏi_b2"></div> <!-- JS sẽ chèn 9 checkbox vào đây -->
+        <button onclick="submitData()">Hoàn thành</button>
+    </div>
+
+    <script>
+        const CF_KV_URL = "https://YOUR_WORKER_ROUTE/api/config"; // Route API để lấy config nếu cần, hoặc chèn thẳng file JSON
+        let appData = {};
+
+        // Tải cấu hình khi mở trang
+        window.onload = async () => {
+            // Giả lập lấy JSON từ KV
+            const res = await fetch('YOUR_KV_PUBLIC_URL_OR_WORKER_PROXY');
+            appData = await res.json();
+            
+            const tinhSelect = document.getElementById('tinh');
+            Object.keys(appData.diachinh).forEach(t => {
+                tinhSelect.innerHTML += `<option value="${t}">${t}</option>`;
+            });
+            // Code render câu hỏi B1 và B2 từ appData.cauhoi...
+        };
+
+        function checkBuoc1() {
+            const b1_checked = document.querySelectorAll('#cau_hỏi_b1 input:checked').length;
+            if (b1_checked > 0) {
+                alert("Bạn thuộc diện loại trừ. Kết thúc rà soát. (Mã 0)");
+            } else {
+                alert("Hợp lệ. Chuyển sang bước 2. (Mã 1)");
+                document.getElementById('buoc1').style.display = 'none';
+                document.getElementById('buoc2').style.display = 'block';
+            }
+        }
+
+        async function submitData() {
+            const checkboxes = document.querySelectorAll('#cau_hỏi_b2 input');
+            let totalD = 0;
+            let payload = { action: "submit_phieuA", Col_D: 0, Col_E: 1, Col_0: 1 };
+            
+            checkboxes.forEach((cb, index) => {
+                const val = cb.checked ? 1 : 0;
+                payload[`Col_${index + 1}`] = val;
+                totalD += val;
+            });
+            
+            payload.Col_D = totalD;
+            if (totalD >= 4) {
+                payload.Col_E = 0;
+                alert("Không đạt chỉ tiêu (D >= 4).");
+            } else {
+                alert("Đạt chuẩn rà soát (D < 4).");
+            }
+
+            // Bắn API lên Worker
+            await fetch('https://YOUR_WORKER_URL/api/submit', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        }
+    </script>
+</body>
+</html>
