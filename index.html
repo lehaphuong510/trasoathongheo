@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Hệ Thống Rà Soát Hộ Nghèo</title>
+    <!-- Thư viện tạo file Word -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <!-- Thư viện xem trước file Word trên Web -->
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/docx-preview/dist/docx-preview.min.js"></script>
+
+    <!-- Thư viện Dropdown Search -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background-color: #f4f7f6; }
         .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -18,24 +29,26 @@
         .form-group { margin-bottom: 15px; }
         input[type="text"], input[type="date"], input[type="password"], select { width: 100%; padding: 10px; box-sizing: border-box; }
         .review-box { background: #e9ecef; padding: 15px; border-radius: 5px; }
-    </style>
-    <!-- Thư viện tạo Dropdown Search -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <style>
-        /* Tinh chỉnh UI cho Select2 khớp với form */
-        .select2-container .select2-selection--single { height: 38px; line-height: 38px; }
+        
+        /* Căn chỉnh UI cho Select2 */
+        .select2-container .select2-selection--single { height: 40px; line-height: 40px; border: 1px solid #ccc; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 40px; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 38px; }
+        
         .dot-item { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
         .dot-actions { margin-top: 10px; display: none; }
         .dot-item.open .dot-actions { display: block; }
         .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
         .btn-danger { background: #dc3545; }
+        
+        /* Modal Popup */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 90vh; overflow-y: auto; }
+        #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; padding: 10px; box-sizing: border-box; border: 1px dashed #ccc; overflow-x: auto; }
     </style>
 </head>
 <body>
     <div class="container">
-        
         <!-- MÀN HÌNH WELCOME -->
         <div id="screen-welcome" class="screen active">
             <h2 style="text-align: center;">Anh chị là Cán bộ triển khai hay Người dân thực hiện khảo sát, vui lòng bấm vào lựa chọn bên dưới:</h2>
@@ -49,15 +62,12 @@
             <input type="text" id="cb_username" placeholder="Tên đăng nhập"><br><br>
             <input type="password" id="cb_password" placeholder="Mật khẩu"><br><br>
             <button class="btn" onclick="authCanBo('login')">Đăng Nhập</button>
-            <button class="btn btn-secondary" onclick="authCanBo('register')">Đăng Ký Mới</button>
-            <br><br>
+            <button class="btn btn-secondary" onclick="authCanBo('register')">Đăng Ký Mới</button><br><br>
             <button class="btn btn-secondary" style="background:#6c757d; width: 100%;" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
         </div>
 
         <div id="screen-canbo-dash" class="screen">
             <h2>PHẦN DÀNH CHO CÁN BỘ</h2>
-            
-            <!-- NÚT TẠO ĐỢT MỚI VÀ FORM ẨN -->
             <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT MỚI</button>
             
             <div id="form-tao-dot" style="display: none; background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px; border: 1px solid #ddd;">
@@ -65,22 +75,17 @@
                 <div class="grid-2">
                     <div>
                         <label>Tỉnh/Thành phố:</label>
-                        <select id="cb_tinh" class="searchable-select" style="width:100%" onchange="loadCbPhuong()">
-                            <option value="">-- Chọn Tỉnh --</option>
-                        </select>
+                        <select id="cb_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn Tỉnh --</option></select>
                     </div>
                     <div>
                         <label>Phường/Xã:</label>
-                        <select id="cb_phuong" class="searchable-select" style="width:100%">
-                            <option value="">-- Chọn Phường/Xã --</option>
-                        </select>
+                        <select id="cb_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn Phường/Xã --</option></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Thôn/Tổ dân phố:</label>
                     <input type="text" id="cb_thon" placeholder="Nhập tên thôn/tổ...">
                 </div>
-                
                 <h4 id="title-a2"></h4>
                 <div class="grid-2">
                     <div><label>Ngày bắt đầu:</label><input type="date" id="cb_start"></div>
@@ -89,61 +94,48 @@
                 <button class="btn" onclick="taoDot()">Lưu Đợt Rà Soát</button>
             </div>
 
-            <!-- DANH SÁCH ĐỢT -->
             <div style="background:#e9ecef; padding:15px; border-radius:5px;">
                 <h3>Danh Sách Đợt Khảo Sát Của Bạn</h3>
-                <div id="canbo-dot-list">
-                    <!-- Javascript sẽ đổ danh sách vào đây -->
-                    <p>Đang tải dữ liệu...</p>
-                </div>
-            </div>
-            
-            <br>
+                <div id="canbo-dot-list"><p>Đang tải dữ liệu...</p></div>
+            </div><br>
             <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất & Quay Lại Màn Hình Chính</button>
         </div>
 
         <!-- ================= PHẦN NGƯỜI DÂN ================= -->
         <div id="screen-nd-step1" class="screen">
             <h2>Anh chị vui lòng cung cấp THÔNG TIN CÁ NHÂN theo yêu cầu bên dưới:</h2>
-            <div class="form-group">
-                <label>Họ và tên chủ hộ:</label>
-                <input type="text" id="nd_hoten" style="text-transform: uppercase;">
-            </div>
-            <div class="form-group">
-                <label>CCCD:</label>
-                <input type="text" id="nd_cccd">
-            </div>
+            <div class="form-group"><label>Họ và tên chủ hộ:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;"></div>
+            <div class="form-group"><label>CCCD:</label><input type="text" id="nd_cccd"></div>
             <div class="grid-2">
                 <div>
                     <label>Tỉnh/Thành phố:</label>
-                    <select id="nd_tinh" onchange="loadNdPhuong()"><option value="">-- Chọn Tỉnh --</option></select>
+                    <select id="nd_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn Tỉnh --</option></select>
                 </div>
                 <div>
                     <label>Phường/Xã/Đặc khu:</label>
-                    <select id="nd_phuong" onchange="loadNdThon()"><option value="">-- Chọn Phường/Xã --</option></select>
+                    <select id="nd_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn Phường/Xã --</option></select>
                 </div>
             </div>
             <div class="form-group">
                 <label>Thôn/Tổ dân phố:</label>
-                <select id="nd_thon"><option value="">-- Chọn Thôn/Tổ --</option></select>
+                <select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn Thôn/Tổ --</option></select>
             </div>
             <button class="btn" onclick="switchScreen('screen-nd-step2')">Tiếp tục tới phần Nhận dạng nhanh</button>
+            <br><br><button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
         </div>
 
         <div id="screen-nd-step2" class="screen">
             <h3>Nhận Dạng Nhanh - Phần 1</h3>
-            <p id="title-b1"></p> <!-- Render động B1 -->
-            <div id="list-b1"></div> <!-- Checkbox B1 render ở đây -->
-            
+            <p id="title-b1"></p>
+            <div id="list-b1"></div>
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Quay lại</button>
             <button class="btn" onclick="checkB1()">Tiếp tục</button>
         </div>
 
         <div id="screen-nd-step3" class="screen">
             <h3>Nhận Dạng Nhanh - Phần 2</h3>
-            <p id="title-b2"></p> <!-- Render động B2 -->
-            <div id="list-b2"></div> <!-- Checkbox B2 render ở đây -->
-            
+            <p id="title-b2"></p>
+            <div id="list-b2"></div>
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step2')">Quay lại</button>
             <button class="btn" onclick="checkB2()">Hoàn tất</button>
         </div>
@@ -152,40 +144,47 @@
             <h3>Xác Nhận Thông Tin</h3>
             <div class="review-box" id="review-content"></div>
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step3')">Chỉnh sửa</button>
-            <button class="btn" onclick="submitData()">Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)</button>
+            <button class="btn" onclick="submitDataThanhCong()">Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)</button>
         </div>
+    </div>
 
+    <!-- MODAL XEM TRƯỚC VÀ CHỈNH SỬA -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Xem Trước</h3>
+            <div id="modal-body"></div>
+            <br>
+            <button class="btn btn-secondary" onclick="document.getElementById('myModal').style.display='none'">Đóng Lại</button>
+        </div>
     </div>
 
     <script>
-        // ĐIỀN LINK WORKER CỦA M VÀO ĐÂY:
-        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
+        // ĐIỀN LINK WORKER CỦA BẠN VÀO ĐÂY:
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev/"; 
         
         let appConfig = {};
         let activeCampaigns = [];
         let currentUser = "";
         let finalData = {};
 
-        // Navigation
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        // Tải cấu hình và Đợt mở ngay khi load trang
+        function initSelect2() { 
+            $('.searchable-select').select2(); 
+        }
+
         window.onload = async () => {
             try {
                 const resConfig = await fetch(`${WORKER_URL}/api/config`);
                 appConfig = await resConfig.json();
                 
-                // Lấy danh sách đợt đang mở từ GAS thông qua Worker
-                const resDots = await fetch(WORKER_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "get_active_dots" })
-                });
+                const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
                 const dotData = await resDots.json();
                 if(dotData.status === "success") activeCampaigns = dotData.dots;
 
-                // Render dữ liệu ĐỊA CHÍNH
                 const cbTinh = document.getElementById('cb_tinh');
                 const ndTinh = document.getElementById('nd_tinh');
                 Object.keys(appConfig.diachinh || {}).forEach(tinh => {
@@ -193,164 +192,33 @@
                     ndTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
                 });
 
-                // Render dữ liệu CÂU HỎI & LỰA CHỌN động từ Tab PhieuA_Cauhoi & PhieuA_Luachon
+                // Khởi tạo Select2 và gắn Event Listener cho Dropdown
+                initSelect2();
+                $('#cb_tinh').on('change', loadCbPhuong);
+                $('#nd_tinh').on('change', loadNdPhuong);
+                $('#nd_phuong').on('change', loadNdThon);
+
+                // Render dữ liệu CÂU HỎI
                 if (appConfig.cauhoi) {
                     if (appConfig.cauhoi.A1) document.getElementById('title-a1').innerText = appConfig.cauhoi.A1.noi_dung;
                     if (appConfig.cauhoi.A2) document.getElementById('title-a2').innerText = appConfig.cauhoi.A2.noi_dung;
-                    
                     if (appConfig.cauhoi.B1) {
                         document.getElementById('title-b1').innerText = appConfig.cauhoi.B1.noi_dung;
-                        const listB1 = document.getElementById('list-b1');
-                        appConfig.cauhoi.B1.lua_chon.forEach((lc) => {
-                            listB1.innerHTML += `<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`;
+                        appConfig.cauhoi.B1.lua_chon.forEach(lc => {
+                            document.getElementById('list-b1').innerHTML += `<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`;
                         });
                     }
-
                     if (appConfig.cauhoi.B2) {
                         document.getElementById('title-b2').innerText = appConfig.cauhoi.B2.noi_dung;
-                        const listB2 = document.getElementById('list-b2');
-                        appConfig.cauhoi.B2.lua_chon.forEach((lc) => {
-                            listB2.innerHTML += `<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`;
+                        appConfig.cauhoi.B2.lua_chon.forEach(lc => {
+                            document.getElementById('list-b2').innerHTML += `<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`;
                         });
                     }
                 }
             } catch (e) { console.log(e); }
         };
 
-        // --- CÁN BỘ LOGIC ---
-        function loadCbPhuong() {
-            const tinh = document.getElementById('cb_tinh').value;
-            const phuong = document.getElementById('cb_phuong');
-            phuong.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            if (tinh && appConfig.diachinh[tinh]) {
-                appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
-            }
-        }
-
-        // Khởi tạo Select2 cho các dropdown có class searchable-select
-        function initSelect2() {
-            $('.searchable-select').select2();
-        }
-
-        async function authCanBo(action) {
-            const u = document.getElementById('cb_username').value;
-            const p = document.getElementById('cb_password').value;
-            if(!u || !p) return alert("Vui lòng nhập đủ thông tin!");
-            
-            const res = await fetch(WORKER_URL, {
-                method: 'POST', body: JSON.stringify({ action: action, username: u, password: p })
-            });
-            const data = await res.json();
-            if(data.status === "success") {
-                currentUser = u;
-                alert(action === 'login' ? "Đăng nhập thành công!" : "Đăng ký thành công!");
-                switchScreen('screen-canbo-dash');
-                initSelect2(); // Kích hoạt UI tìm kiếm sau khi đăng nhập
-                loadDanhSachDotCanBo(); // Tải danh sách đợt
-            } else {
-                alert("Sai tài khoản hoặc mật khẩu!");
-            }
-        }
-
-        async function loadDanhSachDotCanBo() {
-            const listDiv = document.getElementById('canbo-dot-list');
-            listDiv.innerHTML = "<p>Đang tải dữ liệu...</p>";
-            
-            const res = await fetch(WORKER_URL, {
-                method: 'POST', body: JSON.stringify({ action: "get_canbo_dots", username: currentUser })
-            });
-            const data = await res.json();
-            
-            if (data.status === "success") {
-                listDiv.innerHTML = "";
-                if (data.dots.length === 0) {
-                    listDiv.innerHTML = "<p>Bạn chưa tạo đợt rà soát nào.</p>";
-                    return;
-                }
-                
-                data.dots.forEach(d => {
-                    const statusText = d.trang_thai === 'Open' ? '🟢 Đang mở' : '🔴 Đã đóng';
-                    listDiv.innerHTML += `
-                        <div class="dot-item" onclick="this.classList.toggle('open')">
-                            <h4 style="margin:0; cursor:pointer;">📋 Đợt: ${d.ten_dot} <br><small style="color:#555; font-weight:normal;">Ngày tạo: ${d.ngay} | ${statusText}</small></h4>
-                            <div class="dot-actions">
-                                <button class="btn-sm" onclick="alert('Tính năng Xem trước đang phát triển'); event.stopPropagation();">👀 Xem trước</button>
-                                <button class="btn-sm" onclick="taiFileWord('${d.id_dot}'); event.stopPropagation();">📥 Tải Word</button>
-                                <button class="btn-sm" onclick="alert('Tính năng Chỉnh sửa đang phát triển'); event.stopPropagation();">✏️ Chỉnh sửa</button>
-                                <button class="btn-sm btn-danger" onclick="alert('Tính năng Kết thúc đang phát triển'); event.stopPropagation();">🔒 Kết thúc</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        async function taoDot() {
-            const payload = {
-                action: "create_dot",
-                username: currentUser,
-                tinh: document.getElementById('cb_tinh').value,
-                phuong: document.getElementById('cb_phuong').value,
-                thon: document.getElementById('cb_thon').value,
-                ngay_bat_dau: document.getElementById('cb_start').value,
-                ngay_ket_thuc: document.getElementById('cb_end').value
-            };
-            if(!payload.tinh || !payload.thon) return alert("Vui lòng điền đủ địa bàn!");
-            
-            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
-            
-            alert("✅ Đã tạo đợt rà soát thành công!");
-            
-            // Clear trắng form
-            $('#cb_tinh').val(null).trigger('change');
-            $('#cb_phuong').val(null).trigger('change');
-            document.getElementById('cb_thon').value = "";
-            document.getElementById('cb_start').value = "";
-            document.getElementById('cb_end').value = "";
-            $('#form-tao-dot').slideUp(); // Đóng form lại
-            
-            loadDanhSachDotCanBo(); // Tải lại list
-        }
-
-        
-
-        async function taiFileWord(clickedIdDot) {
-            // Lấy id từ nút bấm list, nếu không có thì lấy từ ô input
-            const idDot = clickedIdDot || document.getElementById('id_dot_canbo').value;
-            if (!idDot) { alert("Vui lòng nhập/chọn ID Đợt!"); return; }
-
-            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
-            try {
-                const resData = await fetch(WORKER_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot })
-                });
-                const data = await resData.json();
-                if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
-
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
-                const templateRes = await fetch(githubTemplate);
-                const templateBuffer = await templateRes.arrayBuffer();
-
-                const zip = new PizZip(templateBuffer);
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-                doc.render({
-                    Tinh_thanh: data.Tinh_thanh,
-                    Phuong_xa: data.Phuong_xa,
-                    Thon_to: data.Thon_to,
-                    Hogiadinh: data.Hogiadinh
-                });
-
-                const out = doc.getZip().generate({
-                    type: "blob",
-                    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                });
-                saveAs(out, `PhieuA_${idDot}.docx`);
-                alert("✅ Tải file thành công!");
-
-            } catch (error) { console.error(error); alert("Lỗi tải file. Vui lòng kiểm tra lại ID Đợt."); }
-        }
-        // --- NGƯỜI DÂN LOGIC ---
+        // --- NGƯỜI DÂN ---
         function startNguoiDan() { switchScreen('screen-nd-step1'); }
         
         function loadNdPhuong() {
@@ -360,6 +228,7 @@
             if (tinh && appConfig.diachinh[tinh]) {
                 appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
             }
+            $('#nd_phuong').select2(); // Làm mới Select2
             loadNdThon();
         }
 
@@ -372,21 +241,35 @@
             const dotsInPhuong = activeCampaigns.filter(d => d.tinh === tinh && d.phuong === phuong);
             dotsInPhuong.forEach(d => { thonSelect.innerHTML += `<option value="${d.id_dot}">${d.thon}</option>`; });
             thonSelect.innerHTML += `<option value="Khác">Khác (Tự kiểm tra)</option>`;
+            $('#nd_thon').select2(); // Làm mới Select2
         }
 
-        function checkB1() {
+        async function ghiNhanDataNgam() {
+            const thonEl = document.getElementById('nd_thon');
+            finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
+            finalData.CCCD = document.getElementById('nd_cccd').value;
+            finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
+            
+            if (finalData.ID_Dot) {
+                finalData.action = "submit_phieuA";
+                await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(finalData) });
+            }
+        }
+
+        async function checkB1() {
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
+                finalData["0"] = 0; 
+                await ghiNhanDataNgam();
                 alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
-                finalData["0"] = 0;
+                location.reload(); 
             } else {
-                alert("Mời anh chị tới Phần tiếp theo.");
-                finalData["0"] = 1;
+                finalData["0"] = 1; 
                 switchScreen('screen-nd-step3');
             }
         }
 
-        function checkB2() {
+        async function checkB2() {
             let tongD = 0;
             const cbs = document.querySelectorAll('.cb-b2');
             cbs.forEach((cb, i) => {
@@ -397,39 +280,185 @@
             finalData["D"] = tongD;
 
             if (tongD >= 4) {
+                finalData["E"] = 0; 
+                await ghiNhanDataNgam();
                 alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
-                finalData["E"] = 0;
+                location.reload();
             } else {
-                alert("Mời anh chị tới Phần tiếp theo.");
-                finalData["E"] = 1;
-                showReview();
+                finalData["E"] = 1; 
+                const thonEl = document.getElementById('nd_thon');
+                finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
+                finalData.CCCD = document.getElementById('nd_cccd').value;
+                document.getElementById('review-content').innerHTML = `
+                    <p><strong>Họ tên:</strong> ${finalData.B}</p>
+                    <p><strong>CCCD:</strong> ${finalData.CCCD}</p>
+                    <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
+                    <p><strong>Tổng điểm Bước 2:</strong> ${finalData["D"]} / ${cbs.length}</p>
+                `;
+                switchScreen('screen-nd-review');
             }
         }
 
-        function showReview() {
-            const hoten = document.getElementById('nd_hoten').value.toUpperCase();
-            const thonEl = document.getElementById('nd_thon');
-            const thonText = thonEl.options[thonEl.selectedIndex].text;
+        async function submitDataThanhCong() {
+            await ghiNhanDataNgam();
+            alert("Anh chị thuộc diện được rà soát, tiếp tục phần thông tin cho Phiếu B1, B2");
+            location.reload();
+        }
+
+        // --- CÁN BỘ ---
+        function loadCbPhuong() {
+            const tinh = document.getElementById('cb_tinh').value;
+            const phuong = document.getElementById('cb_phuong');
+            phuong.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            if (tinh && appConfig.diachinh[tinh]) {
+                appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
+            }
+            $('#cb_phuong').select2();
+        }
+
+        async function authCanBo(action) {
+            const u = document.getElementById('cb_username').value;
+            const p = document.getElementById('cb_password').value;
+            if(!u || !p) return alert("Vui lòng nhập đủ thông tin!");
             
-            finalData.B = hoten;
-            finalData.CCCD = document.getElementById('nd_cccd').value;
-            finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
-
-            document.getElementById('review-content').innerHTML = `
-                <p><strong>Họ tên:</strong> ${hoten}</p>
-                <p><strong>CCCD:</strong> ${finalData.CCCD}</p>
-                <p><strong>Địa chỉ:</strong> ${thonText}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
-                <p><strong>Tổng điểm Bước 2:</strong> ${finalData["D"]} / ${document.querySelectorAll('.cb-b2').length}</p>
-            `;
-            switchScreen('screen-nd-review');
+            const res = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: action, username: u, password: p }) });
+            const data = await res.json();
+            if(data.status === "success") {
+                currentUser = u;
+                alert(action === 'login' ? "Đăng nhập thành công!" : "Đăng ký thành công!");
+                switchScreen('screen-canbo-dash');
+                loadDanhSachDotCanBo();
+            } else { alert("Sai tài khoản hoặc mật khẩu!"); }
         }
 
-        async function submitData() {
-            if (finalData.ID_Dot) {
-                finalData.action = "submit_phieuA";
-                await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(finalData) });
+        async function loadDanhSachDotCanBo() {
+            const listDiv = document.getElementById('canbo-dot-list');
+            listDiv.innerHTML = "<p>Đang tải dữ liệu...</p>";
+            
+            const res = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_canbo_dots", username: currentUser }) });
+            const data = await res.json();
+            
+            if (data.status === "success") {
+                listDiv.innerHTML = "";
+                if (data.dots.length === 0) return listDiv.innerHTML = "<p>Bạn chưa tạo đợt rà soát nào.</p>";
+                
+                data.dots.forEach(d => {
+                    const statusText = d.trang_thai === 'Open' ? '🟢 Đang mở' : '🔴 Đã đóng';
+                    listDiv.innerHTML += `
+                        <div class="dot-item" onclick="this.classList.toggle('open')">
+                            <h4 style="margin:0; cursor:pointer;">📋 Đợt: ${d.ten_dot} <br><small style="color:#555; font-weight:normal;">Hạn kết thúc: ${d.ngay_ket_thuc} | ${statusText}</small></h4>
+                            <div class="dot-actions">
+                                <button class="btn-sm" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">👀 Xem trước</button>
+                                <button class="btn-sm" onclick="taiFileWord('${d.id_dot}'); event.stopPropagation();">📥 Tải Word</button>
+                                <button class="btn-sm" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">✏️ Đổi Hạn</button>
+                                <button class="btn-sm btn-danger" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">🔒 Kết thúc</button>
+                            </div>
+                        </div>
+                    `;
+                });
             }
-            alert("Đã ghi nhận Phiếu A. Hệ thống chuyển sang Phiếu B1...");
+        }
+
+        async function taoDot() {
+            const payload = {
+                action: "create_dot", username: currentUser,
+                tinh: document.getElementById('cb_tinh').value,
+                phuong: document.getElementById('cb_phuong').value,
+                thon: document.getElementById('cb_thon').value,
+                ngay_bat_dau: document.getElementById('cb_start').value,
+                ngay_ket_thuc: document.getElementById('cb_end').value
+            };
+            if(!payload.tinh || !payload.thon) return alert("Vui lòng điền đủ địa bàn!");
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
+            alert("✅ Đã tạo đợt rà soát thành công!");
+            
+            $('#cb_tinh').val(null).trigger('change');
+            $('#cb_phuong').val(null).trigger('change');
+            document.getElementById('cb_thon').value = "";
+            document.getElementById('cb_start').value = "";
+            document.getElementById('cb_end').value = "";
+            $('#form-tao-dot').slideUp(); 
+            loadDanhSachDotCanBo(); 
+        }
+
+        async function xemTruocDocx(idDot) {
+            document.getElementById('modal-title').innerText = "Xem Trước Phiếu A (Docx)";
+            document.getElementById('modal-body').innerHTML = "<p>Đang tải dữ liệu và tạo file xem trước...</p>";
+            document.getElementById('myModal').style.display = 'block';
+
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "preview_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) {
+                    document.getElementById('modal-body').innerHTML = "<p>Chưa có hồ sơ nào được nộp trong đợt này!</p>";
+                    return;
+                }
+
+                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
+                const templateRes = await fetch(githubTemplate);
+                const templateBuffer = await templateRes.arrayBuffer();
+
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                
+                document.getElementById('modal-body').innerHTML = ""; 
+                const container = document.getElementById('modal-body');
+                await docx.renderAsync(out, container);
+
+            } catch (error) { 
+                console.error(error); 
+                document.getElementById('modal-body').innerHTML = "<p>Lỗi hiển thị bản xem trước. Vui lòng tải file để xem!</p>"; 
+            }
+        }
+
+        async function chinhSua(idDot, currentEnd) {
+            document.getElementById('modal-title').innerText = "Đổi Ngày Kết Thúc";
+            document.getElementById('modal-body').innerHTML = `
+                <input type="date" id="new_end_date" value="${currentEnd}">
+                <button class="btn" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
+            `;
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        async function luuChinhSua(idDot) {
+            const newDate = document.getElementById('new_end_date').value;
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "edit_dot", ID_Dot: idDot, new_date: newDate }) });
+            alert("Đã cập nhật ngày kết thúc!");
+            document.getElementById('myModal').style.display = 'none';
+            loadDanhSachDotCanBo();
+        }
+
+        async function ketThuc(idDot) {
+            if(!confirm("Bạn có chắc muốn đóng đợt này? Người dân sẽ không thể nộp thêm.")) return;
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "close_dot", ID_Dot: idDot }) });
+            alert("Đã khóa sổ đợt rà soát!");
+            loadDanhSachDotCanBo();
+        }
+
+        async function taiFileWord(idDot) {
+            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
+
+                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
+                const templateRes = await fetch(githubTemplate);
+                const templateBuffer = await templateRes.arrayBuffer();
+
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                saveAs(out, `PhieuA_${idDot}.docx`);
+                alert("✅ Tải file thành công!");
+            } catch (error) { console.error(error); alert("Lỗi tải file."); }
         }
     </script>
 </body>
