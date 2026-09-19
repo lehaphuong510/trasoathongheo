@@ -69,7 +69,6 @@
             <h2>PHẦN DÀNH CHO CÁN BỘ</h2>
             <input type="text" id="cb_username" placeholder="Tên đăng nhập"><br><br>
             <input type="password" id="cb_password" placeholder="Mật khẩu"><br><br>
-            <!-- Thêm 'this' vào authCanBo để làm mượt luồng đăng nhập -->
             <button class="btn" onclick="authCanBo('login', this)">Đăng Nhập</button>
             <button class="btn btn-secondary" onclick="authCanBo('register', this)">Đăng Ký Mới</button><br><br>
             <button class="btn btn-secondary" style="background:#6c757d; width: 100%;" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
@@ -139,6 +138,8 @@
             <div class="form-group">
                 <label>Thôn/Tổ dân phố:</label>
                 <select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn Thôn/Tổ --</option></select>
+                <!-- Thêm Input điền Thôn Khác -->
+                <input type="text" id="nd_thon_khac" placeholder="Vui lòng nhập tên Thôn/Tổ dân phố của anh chị..." style="display:none; margin-top:10px;">
             </div>
             <button class="btn" onclick="toiBuoc2()">Tiếp tục tới phần Nhận dạng nhanh</button>
             <br><br><button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
@@ -285,6 +286,15 @@
             $('#cb_tinh').on('change', loadCbPhuong);
             $('#nd_tinh').on('change', loadNdPhuong);
             $('#nd_phuong').on('change', loadNdThon);
+            
+            // Xử lý hiện ô input nếu chọn Thôn là "Khác"
+            $('#nd_thon').on('change', function() {
+                if ($(this).val() === 'Khác') {
+                    $('#nd_thon_khac').slideDown();
+                } else {
+                    $('#nd_thon_khac').slideUp();
+                }
+            });
         };
 
         // --- NGƯỜI DÂN ---
@@ -314,6 +324,18 @@
                 alert("❌ Lỗi: Vui lòng nhập Họ Tên!");
                 return;
             }
+            
+            // Chặn lỗi nếu chọn Khác mà không nhập tên thôn
+            const thonVal = document.getElementById('nd_thon').value;
+            if (!thonVal) {
+                alert("❌ Lỗi: Vui lòng chọn Thôn/Tổ dân phố!");
+                return;
+            }
+            if (thonVal === "Khác" && !document.getElementById('nd_thon_khac').value.trim()) {
+                alert("❌ Lỗi: Vui lòng nhập tên Thôn/Tổ dân phố của anh chị!");
+                return;
+            }
+            
             switchScreen('screen-nd-step2');
         }
 
@@ -370,6 +392,8 @@
                 finalData["E"] = 0;
                 
                 const thonEl = document.getElementById('nd_thon');
+                const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
+                
                 finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
                 finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
                 const cccdDisplay = document.getElementById('nd_cccd').value; 
@@ -383,7 +407,7 @@
                 document.getElementById('review-content').innerHTML = `
                     <p><strong>Họ tên:</strong> ${finalData.B}</p>
                     <p><strong>CCCD:</strong> ${cccdDisplay}</p>
-                    <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
+                    <p><strong>Địa chỉ:</strong> ${thonText}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
                     <p><strong>Kết luận:</strong> <span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp (Vi phạm điều kiện Phần 1)</span></p>
                     ${reviewListB1}
                 `;
@@ -416,6 +440,8 @@
             finalData["E"] = isPass ? 1 : 0; 
 
             const thonEl = document.getElementById('nd_thon');
+            const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
+            
             finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
             finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
             const cccdDisplay = document.getElementById('nd_cccd').value; 
@@ -427,7 +453,7 @@
             document.getElementById('review-content').innerHTML = `
                 <p><strong>Họ tên:</strong> ${finalData.B}</p>
                 <p><strong>CCCD:</strong> ${cccdDisplay}</p>
-                <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
+                <p><strong>Địa chỉ:</strong> ${thonText}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
                 <p><strong>Tổng điểm Bước 2:</strong> <span style="color:red; font-weight:bold;">${finalData["D"]} / ${cbs.length}</span></p>
                 <p><strong>Kết luận:</strong> ${resultText}</p>
                 ${reviewListB2}
@@ -607,6 +633,8 @@
             const tinh = $('#nd_tinh').val();
             const phuong = $('#nd_phuong').val();
             const thonEl = document.getElementById('nd_thon');
+            const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
+            
             const isDoThi = phuong.includes('Phường');
             
             const kvName = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
@@ -621,7 +649,7 @@
                 Khuvuc: isDoThi ? 1 : 2,
                 Tinh_thanh: tinh,
                 Phuong_xa: phuong,
-                Thon_to: thonEl.options[thonEl.selectedIndex].text,
+                Thon_to: thonText,
                 B: document.getElementById('nd_hoten').value.toUpperCase(),
                 Ma_Dantoc: document.getElementById('nd_dantoc').value,
                 TongDiem_B1: finalData.TongDiemB1 || 0,
