@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Hệ Thống Rà Soát Hộ Nghèo</title>
-    <!-- Thư viện tạo file Word -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
-    <!-- Thư viện xem trước file Word trên Web -->
     <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
     <script src="https://unpkg.com/docx-preview/dist/docx-preview.min.js"></script>
 
-    <!-- Thư viện Dropdown Search -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -30,7 +27,6 @@
         input[type="text"], input[type="date"], input[type="password"], select { width: 100%; padding: 10px; box-sizing: border-box; }
         .review-box { background: #e9ecef; padding: 15px; border-radius: 5px; }
         
-        /* Căn chỉnh UI cho Select2 */
         .select2-container .select2-selection--single { height: 40px; line-height: 40px; border: 1px solid #ccc; }
         .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 40px; }
         .select2-container--default .select2-selection--single .select2-selection__arrow { height: 38px; }
@@ -41,7 +37,6 @@
         .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
         .btn-danger { background: #dc3545; }
         
-        /* Modal Popup */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
         .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 90vh; overflow-y: auto; }
         #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; padding: 10px; box-sizing: border-box; border: 1px dashed #ccc; overflow-x: auto; }
@@ -56,7 +51,7 @@
             <button class="btn-big" onclick="startNguoiDan()">NGƯỜI DÂN</button>
         </div>
 
-        <!-- ================= PHẦN CÁN BỘ ================= -->
+        <!-- PHẦN CÁN BỘ -->
         <div id="screen-canbo-auth" class="screen">
             <h2>PHẦN DÀNH CHO CÁN BỘ</h2>
             <input type="text" id="cb_username" placeholder="Tên đăng nhập"><br><br>
@@ -101,11 +96,17 @@
             <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất & Quay Lại Màn Hình Chính</button>
         </div>
 
-        <!-- ================= PHẦN NGƯỜI DÂN ================= -->
+        <!-- PHẦN NGƯỜI DÂN -->
         <div id="screen-nd-step1" class="screen">
             <h2>Anh chị vui lòng cung cấp THÔNG TIN CÁ NHÂN theo yêu cầu bên dưới:</h2>
             <div class="form-group"><label>Họ và tên chủ hộ:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;"></div>
-            <div class="form-group"><label>CCCD:</label><input type="text" id="nd_cccd"></div>
+            
+            <!-- THÊM MAXLENGTH VÀ CHỈ CHO GÕ SỐ -->
+            <div class="form-group">
+                <label>CCCD (Bắt buộc 12 số):</label>
+                <input type="text" id="nd_cccd" maxlength="12" placeholder="Nhập đủ 12 chữ số" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+
             <div class="grid-2">
                 <div>
                     <label>Tỉnh/Thành phố:</label>
@@ -120,7 +121,7 @@
                 <label>Thôn/Tổ dân phố:</label>
                 <select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn Thôn/Tổ --</option></select>
             </div>
-            <button class="btn" onclick="switchScreen('screen-nd-step2')">Tiếp tục tới phần Nhận dạng nhanh</button>
+            <button class="btn" onclick="toiBuoc2()">Tiếp tục tới phần Nhận dạng nhanh</button>
             <br><br><button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
         </div>
 
@@ -159,7 +160,6 @@
     </div>
 
     <script>
-        // Bỏ dấu / ở cuối URL để tránh lỗi request
         const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
         
         let appConfig = {};
@@ -177,54 +177,65 @@
         }
 
         window.onload = async () => {
+            // Tách biệt luồng lấy Config và lấy Đợt để không chết chùm
             try {
                 const resConfig = await fetch(`${WORKER_URL}/api/config`);
-                if (!resConfig.ok) throw new Error("API Worker không phản hồi");
-                appConfig = await resConfig.json();
-                
+                if (resConfig.ok) {
+                    appConfig = await resConfig.json();
+                    const cbTinh = document.getElementById('cb_tinh');
+                    const ndTinh = document.getElementById('nd_tinh');
+                    Object.keys(appConfig.diachinh || {}).forEach(tinh => {
+                        cbTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
+                        ndTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
+                    });
+
+                    if (appConfig.cauhoi) {
+                        if (appConfig.cauhoi.A1) document.getElementById('title-a1').innerText = appConfig.cauhoi.A1.noi_dung;
+                        if (appConfig.cauhoi.A2) document.getElementById('title-a2').innerText = appConfig.cauhoi.A2.noi_dung;
+                        if (appConfig.cauhoi.B1) {
+                            document.getElementById('title-b1').innerText = appConfig.cauhoi.B1.noi_dung;
+                            appConfig.cauhoi.B1.lua_chon.forEach(lc => {
+                                document.getElementById('list-b1').innerHTML += `<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`;
+                            });
+                        }
+                        if (appConfig.cauhoi.B2) {
+                            document.getElementById('title-b2').innerText = appConfig.cauhoi.B2.noi_dung;
+                            appConfig.cauhoi.B2.lua_chon.forEach(lc => {
+                                document.getElementById('list-b2').innerHTML += `<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`;
+                            });
+                        }
+                    }
+                }
+            } catch (e) { console.error("Lỗi Config:", e); }
+
+            try {
                 const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
                 const dotData = await resDots.json();
                 if(dotData.status === "success") activeCampaigns = dotData.dots;
+            } catch (e) { console.error("Lỗi lấy danh sách đợt:", e); }
 
-                const cbTinh = document.getElementById('cb_tinh');
-                const ndTinh = document.getElementById('nd_tinh');
-                Object.keys(appConfig.diachinh || {}).forEach(tinh => {
-                    cbTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
-                    ndTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
-                });
-
-                // Khởi tạo Select2 và gắn Event Listener cho Dropdown
-                initSelect2();
-                $('#cb_tinh').on('change', loadCbPhuong);
-                $('#nd_tinh').on('change', loadNdPhuong);
-                $('#nd_phuong').on('change', loadNdThon);
-
-                // Render dữ liệu CÂU HỎI
-                if (appConfig.cauhoi) {
-                    if (appConfig.cauhoi.A1) document.getElementById('title-a1').innerText = appConfig.cauhoi.A1.noi_dung;
-                    if (appConfig.cauhoi.A2) document.getElementById('title-a2').innerText = appConfig.cauhoi.A2.noi_dung;
-                    if (appConfig.cauhoi.B1) {
-                        document.getElementById('title-b1').innerText = appConfig.cauhoi.B1.noi_dung;
-                        appConfig.cauhoi.B1.lua_chon.forEach(lc => {
-                            document.getElementById('list-b1').innerHTML += `<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`;
-                        });
-                    }
-                    if (appConfig.cauhoi.B2) {
-                        document.getElementById('title-b2').innerText = appConfig.cauhoi.B2.noi_dung;
-                        appConfig.cauhoi.B2.lua_chon.forEach(lc => {
-                            document.getElementById('list-b2').innerHTML += `<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`;
-                        });
-                    }
-                }
-            } catch (e) { 
-                console.error(e); 
-                alert("Lỗi tải dữ liệu cấu hình! Vui lòng đảm bảo bạn đã bấm nút 'Đồng bộ lên Web' trên Google Sheets.");
-            }
+            initSelect2();
+            $('#cb_tinh').on('change', loadCbPhuong);
+            $('#nd_tinh').on('change', loadNdPhuong);
+            $('#nd_phuong').on('change', loadNdThon);
         };
 
         // --- NGƯỜI DÂN ---
         function startNguoiDan() { switchScreen('screen-nd-step1'); }
         
+        function toiBuoc2() {
+            const cccd = document.getElementById('nd_cccd').value;
+            if (cccd.length !== 12) {
+                alert("❌ Lỗi: Vui lòng nhập ĐỦ 12 chữ số CCCD!");
+                return;
+            }
+            if (!document.getElementById('nd_hoten').value) {
+                alert("❌ Lỗi: Vui lòng nhập Họ Tên!");
+                return;
+            }
+            switchScreen('screen-nd-step2');
+        }
+
         function loadNdPhuong() {
             const tinh = document.getElementById('nd_tinh').value;
             const phuong = document.getElementById('nd_phuong');
@@ -251,7 +262,10 @@
         async function ghiNhanDataNgam() {
             const thonEl = document.getElementById('nd_thon');
             finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-            finalData.CCCD = document.getElementById('nd_cccd').value;
+            
+            // CHÈN THÊM DẤU NHÁY ĐƠN ĐỂ GOOGLE SHEETS KHÔNG ÉP KIỂU MẤT SỐ 0
+            finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
+            
             finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
             
             if (finalData.ID_Dot) {
