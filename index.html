@@ -144,11 +144,12 @@
             <button class="btn" onclick="checkB2()">Hoàn tất</button>
         </div>
 
+        <!-- MÀN HÌNH REVIEW TỔNG HỢP CẢ ĐẬU LẪN RỚT -->
         <div id="screen-nd-review" class="screen">
             <h3>Xác Nhận Thông Tin</h3>
             <div class="review-box" id="review-content"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step3')">Chỉnh sửa</button>
-            <button class="btn" onclick="submitDataThanhCong()">Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)</button>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step3')">Quay lại Chỉnh sửa</button>
+            <button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận thông tin đã đúng</button>
         </div>
     </div>
 
@@ -163,7 +164,7 @@
     </div>
 
     <script>
-        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; // Điền link Worker vào đây
         
         let appConfig = {};
         let activeCampaigns = [];
@@ -283,24 +284,25 @@
             }
         }
 
+        // B1 VẪN GIỮ LOGIC RỚT NGAY (VÌ ĐÂY LÀ ĐIỀU KIỆN LOẠI TRỪ TUYỆT ĐỐI)
         async function checkB1() {
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
-                finalData["0"] = 0; // Có tick -> Báo rớt (0)
+                finalData["0"] = 0; 
                 await ghiNhanDataNgam();
                 alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
                 location.reload(); 
             } else {
-                finalData["0"] = 1; // Không tick -> Qua vòng (1)
+                finalData["0"] = 1; 
                 switchScreen('screen-nd-step3');
             }
         }
 
-        async function checkB2() {
+        // B2 CẢI TIẾN: CHO XEM LẠI DÙ ĐẬU HAY RỚT
+        function checkB2() {
             let tongD = 0;
             const cbs = document.querySelectorAll('.cb-b2');
             
-            // Xây dựng danh sách chi tiết các tick để Review
             let reviewListB2 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Chi tiết các tiêu chí:</strong><br>";
             
             cbs.forEach((cb, i) => {
@@ -308,42 +310,59 @@
                 finalData[`${i + 1}`] = val;
                 tongD += val;
                 
-                // Trích xuất nội dung text của lựa chọn và ghép icon
                 const labelText = cb.parentElement.innerText.trim();
                 reviewListB2 += `<div>${val === 1 ? '✅' : '⬜'} ${labelText}</div>`;
             });
             reviewListB2 += "</div>";
             finalData["D"] = tongD;
 
-            if (tongD >= 4) {
-                finalData["E"] = 0; 
-                await ghiNhanDataNgam();
-                alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
-                location.reload();
-            } else {
-                finalData["E"] = 1; 
-                const thonEl = document.getElementById('nd_thon');
-                finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-                
-                // Lưu vào biến ngầm thì có nháy đơn, nhưng hiển thị trên màn hình thì cắt nháy đơn đi cho đẹp
-                finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
-                const cccdDisplay = document.getElementById('nd_cccd').value; 
-                
-                document.getElementById('review-content').innerHTML = `
-                    <p><strong>Họ tên:</strong> ${finalData.B}</p>
-                    <p><strong>CCCD:</strong> ${cccdDisplay}</p>
-                    <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
-                    <p><strong>Tổng điểm Bước 2:</strong> <span style="color:red; font-weight:bold;">${finalData["D"]} / ${cbs.length}</span></p>
-                    ${reviewListB2}
-                `;
-                switchScreen('screen-nd-review');
+            // Kiểm tra Đậu / Rớt
+            const isPass = tongD < 4;
+            finalData["E"] = isPass ? 1 : 0; 
+
+            // Cập nhật thông báo nếu rớt
+            if (!isPass) {
+                alert("Cảnh báo: Dựa trên số lượng tích, Anh chị có thể không thuộc diện Hộ nghèo, cận nghèo. Vui lòng kiểm tra kỹ lại thông tin ở màn hình sau.");
             }
+
+            const thonEl = document.getElementById('nd_thon');
+            finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
+            finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
+            const cccdDisplay = document.getElementById('nd_cccd').value; 
+            
+            let resultText = isPass 
+                ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Phiếu B1)</span>` 
+                : `<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>`;
+
+            document.getElementById('review-content').innerHTML = `
+                <p><strong>Họ tên:</strong> ${finalData.B}</p>
+                <p><strong>CCCD:</strong> ${cccdDisplay}</p>
+                <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
+                <p><strong>Tổng điểm Bước 2:</strong> <span style="color:red; font-weight:bold;">${finalData["D"]} / ${cbs.length}</span></p>
+                <p><strong>Kết luận:</strong> ${resultText}</p>
+                ${reviewListB2}
+            `;
+
+            // Thay đổi chữ trên nút Xác Nhận dựa vào Đậu/Rớt
+            const btnSubmit = document.getElementById('btn-submit-review');
+            if (isPass) {
+                btnSubmit.innerText = "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)";
+            } else {
+                btnSubmit.innerText = "Xác nhận thông tin đã đúng (Kết thúc khảo sát)";
+            }
+
+            switchScreen('screen-nd-review');
         }
 
-        async function submitDataThanhCong() {
-            await ghiNhanDataNgam();
-            alert("Anh chị thuộc diện được rà soát, tiếp tục phần thông tin cho Phiếu B1, B2");
-            location.reload();
+        async function submitDataXacNhan() {
+            await ghiNhanDataNgam(); // Lưu data
+            
+            if (finalData["E"] === 1) {
+                alert("Anh chị thuộc diện được rà soát, tiếp tục phần thông tin cho Phiếu B1, B2");
+            } else {
+                alert("Đã ghi nhận thông tin. Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát.");
+            }
+            location.reload(); // Quay lại trang chủ
         }
 
         // --- CÁN BỘ ---
