@@ -203,7 +203,7 @@
 
         // Biến chạy cho luồng B1
         let currentB1Index = 0;
-        let b1Answers = {}; 
+        let b1Answers = {}; // ma_cauhoi -> index hoặc array index
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -333,9 +333,8 @@
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
                 finalData["0"] = 0; 
-                finalData["E"] = 0; // Đánh rớt luôn
+                finalData["E"] = 0;
                 
-                // Hiển thị Review Rớt cho Phần 1
                 const thonEl = document.getElementById('nd_thon');
                 finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
                 finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
@@ -407,7 +406,6 @@
 
         async function submitDataXacNhan() {
             await ghiNhanDataNgam(); 
-            // KHÔNG CÓ POPUP Ở ĐÂY NỮA
             if (finalData["E"] === 1) {
                 startPhieuB1(); 
             } else {
@@ -426,6 +424,7 @@
             renderB1();
         }
 
+        // RENDER HỖ TRỢ RADIO LẪN CHECKBOX (MULTICHOICE)
         function renderB1() {
             let q = appConfig.phieu_b1[currentB1Index];
             document.getElementById('b1-progress').innerText = `(Câu ${currentB1Index + 1}/${appConfig.phieu_b1.length})`;
@@ -439,21 +438,42 @@
             }
             
             let optsHTML = "";
-            let selectedIdx = b1Answers[q.ma];
+            let savedAns = b1Answers[q.ma]; // int hoặc array
+            
             q.options.forEach((opt, idx) => {
-                let checked = (selectedIdx === idx) ? "checked" : "";
+                let inputType = q.isMulti ? "checkbox" : "radio";
+                let inputName = q.isMulti ? `b1_opt_${idx}` : "b1_opt";
+                
+                let checked = "";
+                if (q.isMulti) {
+                    if (Array.isArray(savedAns) && savedAns.includes(idx)) checked = "checked";
+                } else {
+                    if (savedAns === idx) checked = "checked";
+                }
+                
                 optsHTML += `<label class="b1-option-label">
-                    <input type="radio" name="b1_opt" value="${idx}" ${checked}> ${opt.text}
+                    <input type="${inputType}" name="${inputName}" class="b1-input" value="${idx}" ${checked}> ${opt.text}
                 </label>`;
             });
             document.getElementById('b1-options').innerHTML = optsHTML;
         }
 
         function saveCurrentB1Answer() {
-            let selected = document.querySelector('input[name="b1_opt"]:checked');
-            if (selected) {
-                b1Answers[appConfig.phieu_b1[currentB1Index].ma] = parseInt(selected.value);
-                return true;
+            let q = appConfig.phieu_b1[currentB1Index];
+            
+            if (q.isMulti) {
+                let selected = document.querySelectorAll('.b1-input:checked');
+                // Chấp nhận mảng rỗng nếu user không tick gì (tùy logic nghiệp vụ, t đang thiết lập bắt buộc tick ít nhất 1)
+                if (selected.length > 0) {
+                    b1Answers[q.ma] = Array.from(selected).map(cb => parseInt(cb.value));
+                    return true;
+                }
+            } else {
+                let selected = document.querySelector('.b1-input:checked');
+                if (selected) {
+                    b1Answers[q.ma] = parseInt(selected.value);
+                    return true;
+                }
             }
             return false;
         }
@@ -470,7 +490,8 @@
 
         function nextB1() {
             if (!saveCurrentB1Answer()) {
-                alert("❌ Vui lòng chọn 1 đáp án trước khi qua câu tiếp theo!");
+                let textCheck = appConfig.phieu_b1[currentB1Index].isMulti ? "ít nhất 1 đáp án" : "1 đáp án";
+                alert(`❌ Vui lòng chọn ${textCheck} trước khi qua câu tiếp theo!`);
                 return;
             }
             if (currentB1Index < appConfig.phieu_b1.length - 1) {
@@ -481,6 +502,7 @@
             }
         }
 
+        // TỔNG KẾT ĐIỂM (CỘNG DỒN CHO MẢNG MULTICHOICE)
         function showReviewB1() {
             const tinh = $('#nd_tinh').val();
             const phuong = $('#nd_phuong').val();
@@ -498,15 +520,27 @@
             let htmlList = `<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'>`;
             
             appConfig.phieu_b1.forEach(q => {
-                let ansIdx = b1Answers[q.ma];
-                let ansObj = q.options[ansIdx];
-                let score = ansObj[colLookup] || 0;
-                totalScore += score;
+                let savedAns = b1Answers[q.ma];
+                htmlList += `<div style="padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
                 
-                htmlList += `<div style="padding-bottom:10px;">
-                    <strong>${q.noidung}</strong><br>
-                    ✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span>
-                </div>`;
+                if (q.isMulti) {
+                    if (Array.isArray(savedAns)) {
+                        savedAns.forEach(idx => {
+                            let ansObj = q.options[idx];
+                            let score = ansObj[colLookup] || 0;
+                            totalScore += score;
+                            htmlList += `✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span><br>`;
+                        });
+                    }
+                } else {
+                    if (savedAns !== undefined) {
+                        let ansObj = q.options[savedAns];
+                        let score = ansObj[colLookup] || 0;
+                        totalScore += score;
+                        htmlList += `✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span><br>`;
+                    }
+                }
+                htmlList += `</div>`;
             });
             
             if (isDoThi && diemCongDoThi > 0) {
@@ -543,7 +577,6 @@
 
         async function submitB1XacNhan() {
             await ghiNhanDataNgam(); 
-            // Ở B1 CŨNG KHÔNG ALERT RỚT NỮA, BẤM LÀ VỀ TRANG CHỦ HOẶC QUA B2
             if (finalData.KetQuaB1 === "Đậu") {
                 alert("Đã hoàn thành Phiếu B1. Chức năng Phiếu B2 đang được cập nhật!");
             }
