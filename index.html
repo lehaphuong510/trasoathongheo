@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Hệ Thống Rà Soát Hộ Nghèo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background-color: #f4f7f6; }
         .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -38,8 +41,9 @@
 
         <div id="screen-canbo-dash" class="screen">
             <h2>Bảng Điều Khiển Cán Bộ</h2>
-            <div style="background:#f9f9f9; padding:15px; border-radius:5px;">
+            <div style="background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px;">
                 <h3>Tạo Đợt Rà Soát Mới</h3>
+                <h4 id="title-a1"></h4> <!-- Render động A1 -->
                 <div class="grid-2">
                     <div><label>Tỉnh/Thành phố:</label><select id="cb_tinh" onchange="loadCbPhuong()"><option value="">-- Chọn Tỉnh --</option></select></div>
                     <div><label>Phường/Xã:</label><select id="cb_phuong"><option value="">-- Chọn Phường/Xã --</option></select></div>
@@ -47,11 +51,20 @@
                 <div class="form-group">
                     <label>Thôn/Tổ dân phố:</label><input type="text" id="cb_thon" placeholder="Nhập tên thôn/tổ...">
                 </div>
+                
+                <h4 id="title-a2"></h4> <!-- Render động A2 -->
                 <div class="grid-2">
                     <div><label>Ngày bắt đầu:</label><input type="date" id="cb_start"></div>
                     <div><label>Ngày kết thúc:</label><input type="date" id="cb_end"></div>
                 </div>
                 <button class="btn" onclick="taoDot()">Tạo Đợt Rà Soát</button>
+            </div>
+
+            <div style="background:#e9ecef; padding:15px; border-radius:5px;">
+                <h3>Quản Lý Đợt Rà Soát</h3>
+                <label>Nhập Mã Đợt Rà Soát (ID_Dot):</label><br>
+                <input type="text" id="id_dot_canbo" placeholder="VD: DRS_001" style="max-width: 300px;"><br>
+                <button class="btn" onclick="taiFileWord()">Tải Phiếu A (Word)</button>
             </div>
         </div>
 
@@ -85,11 +98,8 @@
 
         <div id="screen-nd-step2" class="screen">
             <h3>Nhận Dạng Nhanh - Phần 1</h3>
-            <p>Điều nào sau đây đúng với hộ gia đình của anh chị (đúng thì đánh dấu vào, không đúng thì để nguyên):</p>
-            <label><input type="checkbox" class="cb-b1"> 1. Ở nhà biệt thự; cấp 1, cấp 2</label><br><br>
-            <label><input type="checkbox" class="cb-b1"> 2. Sở hữu doanh nghiệp nộp thuế từ 100tr</label><br><br>
-            <label><input type="checkbox" class="cb-b1"> 3. Sở hữu trang trại, vật nuôi >200tr</label><br><br>
-            <label><input type="checkbox" class="cb-b1"> 4. Có ô tô, máy xúc, tài sản >200tr</label><br><br>
+            <p id="title-b1"></p> <!-- Render động B1 -->
+            <div id="list-b1"></div> <!-- Checkbox B1 render ở đây -->
             
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Quay lại</button>
             <button class="btn" onclick="checkB1()">Tiếp tục</button>
@@ -97,16 +107,8 @@
 
         <div id="screen-nd-step3" class="screen">
             <h3>Nhận Dạng Nhanh - Phần 2</h3>
-            <p>Điều nào sau đây đúng với hộ gia đình của anh chị (đúng thì đánh dấu vào, không đúng thì để nguyên):</p>
-            <label><input type="checkbox" class="cb-b2"> 1. Có xe máy/xe điện trị giá >20tr</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 2. Có điều hòa/tủ lạnh</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 3. Có bình tắm nóng</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 4. Có máy giặt/sấy</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 5. Có tài sản cho thuê</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 6. Tiêu thụ điện >150 kWh/tháng</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 7. Nhà ở >25m2/người</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 8. Có người hưởng lương hưu/CCVC</label><br><br>
-            <label><input type="checkbox" class="cb-b2"> 9. Có người làm HĐLĐ</label><br><br>
+            <p id="title-b2"></p> <!-- Render động B2 -->
+            <div id="list-b2"></div> <!-- Checkbox B2 render ở đây -->
             
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step2')">Quay lại</button>
             <button class="btn" onclick="checkB2()">Hoàn tất</button>
@@ -122,7 +124,9 @@
     </div>
 
     <script>
+        // ĐIỀN LINK WORKER CỦA M VÀO ĐÂY:
         const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
+        
         let appConfig = {};
         let activeCampaigns = [];
         let currentUser = "";
@@ -147,13 +151,35 @@
                 const dotData = await resDots.json();
                 if(dotData.status === "success") activeCampaigns = dotData.dots;
 
-                // Render Tỉnh cho cả Cán bộ và Người dân
+                // Render dữ liệu ĐỊA CHÍNH
                 const cbTinh = document.getElementById('cb_tinh');
                 const ndTinh = document.getElementById('nd_tinh');
                 Object.keys(appConfig.diachinh || {}).forEach(tinh => {
                     cbTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
                     ndTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
                 });
+
+                // Render dữ liệu CÂU HỎI & LỰA CHỌN động từ Tab PhieuA_Cauhoi & PhieuA_Luachon
+                if (appConfig.cauhoi) {
+                    if (appConfig.cauhoi.A1) document.getElementById('title-a1').innerText = appConfig.cauhoi.A1.noi_dung;
+                    if (appConfig.cauhoi.A2) document.getElementById('title-a2').innerText = appConfig.cauhoi.A2.noi_dung;
+                    
+                    if (appConfig.cauhoi.B1) {
+                        document.getElementById('title-b1').innerText = appConfig.cauhoi.B1.noi_dung;
+                        const listB1 = document.getElementById('list-b1');
+                        appConfig.cauhoi.B1.lua_chon.forEach((lc) => {
+                            listB1.innerHTML += `<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`;
+                        });
+                    }
+
+                    if (appConfig.cauhoi.B2) {
+                        document.getElementById('title-b2').innerText = appConfig.cauhoi.B2.noi_dung;
+                        const listB2 = document.getElementById('list-b2');
+                        appConfig.cauhoi.B2.lua_chon.forEach((lc) => {
+                            listB2.innerHTML += `<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`;
+                        });
+                    }
+                }
             } catch (e) { console.log(e); }
         };
 
@@ -162,7 +188,9 @@
             const tinh = document.getElementById('cb_tinh').value;
             const phuong = document.getElementById('cb_phuong');
             phuong.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            if (tinh) appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
+            if (tinh && appConfig.diachinh[tinh]) {
+                appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
+            }
         }
 
         async function authCanBo(action) {
@@ -199,6 +227,42 @@
             alert("Tạo đợt rà soát thành công!");
         }
 
+        async function taiFileWord() {
+            const idDot = document.getElementById('id_dot_canbo').value;
+            if (!idDot) { alert("Vui lòng nhập ID Đợt!"); return; }
+
+            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
+            try {
+                const resData = await fetch(WORKER_URL, {
+                    method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot })
+                });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
+
+                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
+                const templateRes = await fetch(githubTemplate);
+                const templateBuffer = await templateRes.arrayBuffer();
+
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+
+                doc.render({
+                    Tinh_thanh: data.Tinh_thanh,
+                    Phuong_xa: data.Phuong_xa,
+                    Thon_to: data.Thon_to,
+                    Hogiadinh: data.Hogiadinh
+                });
+
+                const out = doc.getZip().generate({
+                    type: "blob",
+                    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                });
+                saveAs(out, `PhieuA_${idDot}.docx`);
+                alert("✅ Tải file thành công! Hệ thống đã ghi nhận thời gian tải.");
+
+            } catch (error) { console.error(error); alert("Lỗi tải file. Vui lòng kiểm tra lại ID Đợt."); }
+        }
+
         // --- NGƯỜI DÂN LOGIC ---
         function startNguoiDan() { switchScreen('screen-nd-step1'); }
         
@@ -206,7 +270,9 @@
             const tinh = document.getElementById('nd_tinh').value;
             const phuong = document.getElementById('nd_phuong');
             phuong.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            if (tinh) appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
+            if (tinh && appConfig.diachinh[tinh]) {
+                appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
+            }
             loadNdThon();
         }
 
@@ -216,12 +282,8 @@
             const thonSelect = document.getElementById('nd_thon');
             thonSelect.innerHTML = '<option value="">-- Chọn Thôn/Tổ --</option>';
             
-            // Tìm đợt mở trong Tỉnh/Phường này
             const dotsInPhuong = activeCampaigns.filter(d => d.tinh === tinh && d.phuong === phuong);
-            dotsInPhuong.forEach(d => {
-                // value lưu id_dot ngầm
-                thonSelect.innerHTML += `<option value="${d.id_dot}">${d.thon}</option>`;
-            });
+            dotsInPhuong.forEach(d => { thonSelect.innerHTML += `<option value="${d.id_dot}">${d.thon}</option>`; });
             thonSelect.innerHTML += `<option value="Khác">Khác (Tự kiểm tra)</option>`;
         }
 
@@ -229,11 +291,10 @@
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
                 alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
-                finalData.Col_0 = 0;
-                // Có thể reset hoặc chuyển ra welcome
+                finalData["0"] = 0;
             } else {
                 alert("Mời anh chị tới Phần tiếp theo.");
-                finalData.Col_0 = 1;
+                finalData["0"] = 1;
                 switchScreen('screen-nd-step3');
             }
         }
@@ -243,17 +304,17 @@
             const cbs = document.querySelectorAll('.cb-b2');
             cbs.forEach((cb, i) => {
                 const val = cb.checked ? 1 : 0;
-                finalData[`Col_${i + 1}`] = val;
+                finalData[`${i + 1}`] = val;
                 tongD += val;
             });
-            finalData.Col_D = tongD;
+            finalData["D"] = tongD;
 
             if (tongD >= 4) {
                 alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
-                finalData.Col_E = 0;
+                finalData["E"] = 0;
             } else {
                 alert("Mời anh chị tới Phần tiếp theo.");
-                finalData.Col_E = 1;
+                finalData["E"] = 1;
                 showReview();
             }
         }
@@ -265,13 +326,13 @@
             
             finalData.B = hoten;
             finalData.CCCD = document.getElementById('nd_cccd').value;
-            finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : ""; // Gán ngầm ID
+            finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
 
             document.getElementById('review-content').innerHTML = `
                 <p><strong>Họ tên:</strong> ${hoten}</p>
                 <p><strong>CCCD:</strong> ${finalData.CCCD}</p>
                 <p><strong>Địa chỉ:</strong> ${thonText}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
-                <p><strong>Tổng điểm Bước 2:</strong> ${finalData.Col_D}/9</p>
+                <p><strong>Tổng điểm Bước 2:</strong> ${finalData["D"]} / ${document.querySelectorAll('.cb-b2').length}</p>
             `;
             switchScreen('screen-nd-review');
         }
@@ -282,7 +343,6 @@
                 await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(finalData) });
             }
             alert("Đã ghi nhận Phiếu A. Hệ thống chuyển sang Phiếu B1...");
-            // Thực tế sẽ load UI Phiếu B1 ở đây
         }
     </script>
 </body>
