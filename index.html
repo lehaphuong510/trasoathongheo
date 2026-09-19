@@ -190,11 +190,13 @@
         <!-- MÀN HÌNH REVIEW B1 -->
         <div id="screen-nd-review-b1" class="screen">
             <h3>Xác Nhận Thông Tin Phiếu B1</h3>
-            <p class="text-blink">⚠️ Lưu ý: Anh/chị vui lòng Xem và Tải phiếu B1 ngay tại đây. Nếu làm mới (Refresh) trang, dữ liệu sẽ bị mất!</p>
             
             <div class="review-box" id="review-content-b1"></div>
             
-            <div class="grid-2" style="margin-top: 15px;">
+            <!-- Đã dời câu thông báo xuống ngay trên đầu nút bấm -->
+            <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Anh/chị vui lòng Xem và Tải phiếu B1 ngay tại đây. Nếu làm mới (Refresh) trang, dữ liệu sẽ bị mất!</p>
+            
+            <div class="grid-2" style="margin-top: 5px;">
                 <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước Phiếu B1</button>
                 <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="taiFileWordB1()">📥 Tải Phiếu B1 (Docx)</button>
             </div>
@@ -663,29 +665,42 @@
                 let m = q.ma.replace('.', '_'); // B1.1 -> B1_1
                 let savedAns = b1Answers[q.ma];
                 let diemCau = 0;
+                let hasValidAns = false; // Cờ kiểm tra xem có tích đáp án hợp lệ (không chứa chữ Không có)
 
                 q.options.forEach((opt, idx) => {
-                    wordData[`x_${m}_${idx}`] = ""; // Trả về khoảng trắng
+                    wordData[`x_${m}_${idx}`] = ""; // Trả về khoảng trắng mặc định
                 });
+                
+                // Mặc định ô Điểm cũng để trống
                 wordData[`Diem_${m}`] = "";
 
                 if (q.isMulti) {
                     if (Array.isArray(savedAns)) {
                         savedAns.forEach(idx => {
-                            let score = q.options[idx][colLookup] || 0;
-                            wordData[`x_${m}_${idx}`] = "x";
-                            diemCau += score;
+                            let optText = q.options[idx].text.trim().toLowerCase();
+                            // Nếu đáp án KHÔNG BẮT ĐẦU bằng "không có" -> Mới ghi dấu x và cộng điểm
+                            if (!optText.startsWith("không có")) {
+                                let score = q.options[idx][colLookup] || 0;
+                                wordData[`x_${m}_${idx}`] = "x";
+                                diemCau += score;
+                                hasValidAns = true;
+                            }
                         });
                     }
                 } else {
                     if (savedAns !== undefined) {
-                        let score = q.options[savedAns][colLookup] || 0;
-                        wordData[`x_${m}_${savedAns}`] = "x";
-                        diemCau += score;
+                        let optText = q.options[savedAns].text.trim().toLowerCase();
+                        if (!optText.startsWith("không có")) {
+                            let score = q.options[savedAns][colLookup] || 0;
+                            wordData[`x_${m}_${savedAns}`] = "x";
+                            diemCau += score;
+                            hasValidAns = true;
+                        }
                     }
                 }
                 
-                if (diemCau > 0 || (savedAns !== undefined && (!q.isMulti || savedAns.length > 0))) {
+                // Chỉ điền tổng điểm nếu có đánh dấu ít nhất 1 đáp án hợp lệ
+                if (hasValidAns) {
                    wordData[`Diem_${m}`] = diemCau;
                 }
             });
