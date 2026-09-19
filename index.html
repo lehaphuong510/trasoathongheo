@@ -101,7 +101,6 @@
             <h2>Anh chị vui lòng cung cấp THÔNG TIN CÁ NHÂN theo yêu cầu bên dưới:</h2>
             <div class="form-group"><label>Họ và tên chủ hộ:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;"></div>
             
-            <!-- THÊM MAXLENGTH VÀ CHỈ CHO GÕ SỐ -->
             <div class="form-group">
                 <label>CCCD (Bắt buộc 12 số):</label>
                 <input type="text" id="nd_cccd" maxlength="12" placeholder="Nhập đủ 12 chữ số" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -160,7 +159,7 @@
     </div>
 
     <script>
-        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; // Điền link Worker vào đây
         
         let appConfig = {};
         let activeCampaigns = [];
@@ -177,7 +176,6 @@
         }
 
         window.onload = async () => {
-            // Tách biệt luồng lấy Config và lấy Đợt để không chết chùm
             try {
                 const resConfig = await fetch(`${WORKER_URL}/api/config`);
                 if (resConfig.ok) {
@@ -221,7 +219,19 @@
         };
 
         // --- NGƯỜI DÂN ---
-        function startNguoiDan() { switchScreen('screen-nd-step1'); }
+        async function startNguoiDan() { 
+            switchScreen('screen-nd-step1'); 
+            
+            // Ép hệ thống gọi API lấy danh sách đợt mới nhất ngầm mỗi khi bấm vào luồng Người Dân
+            try {
+                const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
+                const dotData = await resDots.json();
+                if(dotData.status === "success") {
+                    activeCampaigns = dotData.dots;
+                    loadNdThon(); // Refresh ngay dropdown Thôn
+                }
+            } catch(e) { console.log("Lỗi lấy đợt:", e); }
+        }
         
         function toiBuoc2() {
             const cccd = document.getElementById('nd_cccd').value;
@@ -237,35 +247,36 @@
         }
 
         function loadNdPhuong() {
-            const tinh = document.getElementById('nd_tinh').value;
-            const phuong = document.getElementById('nd_phuong');
-            phuong.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            const tinh = $('#nd_tinh').val();
+            // Xóa sạch dropdown Phường cũ và nạp lại chuẩn Select2
+            $('#nd_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>');
             if (tinh && appConfig.diachinh[tinh]) {
-                appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
+                appConfig.diachinh[tinh].forEach(p => $('#nd_phuong').append(new Option(p, p)));
             }
-            $('#nd_phuong').select2(); 
+            $('#nd_phuong').trigger('change'); 
             loadNdThon();
         }
 
         function loadNdThon() {
-            const tinh = document.getElementById('nd_tinh').value;
-            const phuong = document.getElementById('nd_phuong').value;
-            const thonSelect = document.getElementById('nd_thon');
-            thonSelect.innerHTML = '<option value="">-- Chọn Thôn/Tổ --</option>';
+            const tinh = $('#nd_tinh').val();
+            const phuong = $('#nd_phuong').val();
+            
+            // Xóa sạch dropdown Thôn cũ và nạp lại chuẩn Select2
+            $('#nd_thon').empty().append('<option value="">-- Chọn Thôn/Tổ --</option>');
             
             const dotsInPhuong = activeCampaigns.filter(d => d.tinh === tinh && d.phuong === phuong);
-            dotsInPhuong.forEach(d => { thonSelect.innerHTML += `<option value="${d.id_dot}">${d.thon}</option>`; });
-            thonSelect.innerHTML += `<option value="Khác">Khác (Tự kiểm tra)</option>`;
-            $('#nd_thon').select2(); 
+            dotsInPhuong.forEach(d => { 
+                $('#nd_thon').append(new Option(d.thon, d.id_dot)); 
+            });
+            $('#nd_thon').append(new Option("Khác (Tự kiểm tra)", "Khác"));
+            
+            $('#nd_thon').trigger('change'); 
         }
 
         async function ghiNhanDataNgam() {
             const thonEl = document.getElementById('nd_thon');
             finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-            
-            // CHÈN THÊM DẤU NHÁY ĐƠN ĐỂ GOOGLE SHEETS KHÔNG ÉP KIỂU MẤT SỐ 0
             finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
-            
             finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
             
             if (finalData.ID_Dot) {
