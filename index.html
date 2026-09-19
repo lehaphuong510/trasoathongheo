@@ -40,6 +40,10 @@
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
         .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 90vh; overflow-y: auto; }
         #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; padding: 10px; box-sizing: border-box; border: 1px dashed #ccc; overflow-x: auto; }
+        
+        /* Chỉnh style cho list review */
+        .review-checklist div { padding: 5px 0; border-bottom: 1px dashed #ccc; }
+        .review-checklist div:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -159,7 +163,7 @@
     </div>
 
     <script>
-        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; // Điền link Worker vào đây
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
         
         let appConfig = {};
         let activeCampaigns = [];
@@ -221,14 +225,12 @@
         // --- NGƯỜI DÂN ---
         async function startNguoiDan() { 
             switchScreen('screen-nd-step1'); 
-            
-            // Ép hệ thống gọi API lấy danh sách đợt mới nhất ngầm mỗi khi bấm vào luồng Người Dân
             try {
                 const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
                 const dotData = await resDots.json();
                 if(dotData.status === "success") {
                     activeCampaigns = dotData.dots;
-                    loadNdThon(); // Refresh ngay dropdown Thôn
+                    loadNdThon(); 
                 }
             } catch(e) { console.log("Lỗi lấy đợt:", e); }
         }
@@ -248,7 +250,6 @@
 
         function loadNdPhuong() {
             const tinh = $('#nd_tinh').val();
-            // Xóa sạch dropdown Phường cũ và nạp lại chuẩn Select2
             $('#nd_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>');
             if (tinh && appConfig.diachinh[tinh]) {
                 appConfig.diachinh[tinh].forEach(p => $('#nd_phuong').append(new Option(p, p)));
@@ -261,15 +262,12 @@
             const tinh = $('#nd_tinh').val();
             const phuong = $('#nd_phuong').val();
             
-            // Xóa sạch dropdown Thôn cũ và nạp lại chuẩn Select2
             $('#nd_thon').empty().append('<option value="">-- Chọn Thôn/Tổ --</option>');
-            
             const dotsInPhuong = activeCampaigns.filter(d => d.tinh === tinh && d.phuong === phuong);
             dotsInPhuong.forEach(d => { 
                 $('#nd_thon').append(new Option(d.thon, d.id_dot)); 
             });
             $('#nd_thon').append(new Option("Khác (Tự kiểm tra)", "Khác"));
-            
             $('#nd_thon').trigger('change'); 
         }
 
@@ -288,12 +286,12 @@
         async function checkB1() {
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
-                finalData["0"] = 0; 
+                finalData["0"] = 0; // Có tick -> Báo rớt (0)
                 await ghiNhanDataNgam();
                 alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
                 location.reload(); 
             } else {
-                finalData["0"] = 1; 
+                finalData["0"] = 1; // Không tick -> Qua vòng (1)
                 switchScreen('screen-nd-step3');
             }
         }
@@ -301,11 +299,20 @@
         async function checkB2() {
             let tongD = 0;
             const cbs = document.querySelectorAll('.cb-b2');
+            
+            // Xây dựng danh sách chi tiết các tick để Review
+            let reviewListB2 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Chi tiết các tiêu chí:</strong><br>";
+            
             cbs.forEach((cb, i) => {
                 const val = cb.checked ? 1 : 0;
                 finalData[`${i + 1}`] = val;
                 tongD += val;
+                
+                // Trích xuất nội dung text của lựa chọn và ghép icon
+                const labelText = cb.parentElement.innerText.trim();
+                reviewListB2 += `<div>${val === 1 ? '✅' : '⬜'} ${labelText}</div>`;
             });
+            reviewListB2 += "</div>";
             finalData["D"] = tongD;
 
             if (tongD >= 4) {
@@ -317,12 +324,17 @@
                 finalData["E"] = 1; 
                 const thonEl = document.getElementById('nd_thon');
                 finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-                finalData.CCCD = document.getElementById('nd_cccd').value;
+                
+                // Lưu vào biến ngầm thì có nháy đơn, nhưng hiển thị trên màn hình thì cắt nháy đơn đi cho đẹp
+                finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
+                const cccdDisplay = document.getElementById('nd_cccd').value; 
+                
                 document.getElementById('review-content').innerHTML = `
                     <p><strong>Họ tên:</strong> ${finalData.B}</p>
-                    <p><strong>CCCD:</strong> ${finalData.CCCD}</p>
+                    <p><strong>CCCD:</strong> ${cccdDisplay}</p>
                     <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
-                    <p><strong>Tổng điểm Bước 2:</strong> ${finalData["D"]} / ${cbs.length}</p>
+                    <p><strong>Tổng điểm Bước 2:</strong> <span style="color:red; font-weight:bold;">${finalData["D"]} / ${cbs.length}</span></p>
+                    ${reviewListB2}
                 `;
                 switchScreen('screen-nd-review');
             }
