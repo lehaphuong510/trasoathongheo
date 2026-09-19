@@ -673,7 +673,7 @@
                     return;
                 }
 
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
+                const githubTemplate = "https://github.com/lehaphuong510/trasoathongheo/raw/refs/heads/main/PhieuA.docx";
                 const templateRes = await fetch(githubTemplate);
                 const templateBuffer = await templateRes.arrayBuffer();
 
@@ -725,7 +725,7 @@
                 const data = await resData.json();
                 if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
 
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
+                const githubTemplate = "https://github.com/lehaphuong510/trasoathongheo/raw/refs/heads/main/PhieuA.docx";
                 const templateRes = await fetch(githubTemplate);
                 const templateBuffer = await templateRes.arrayBuffer();
 
