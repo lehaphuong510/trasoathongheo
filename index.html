@@ -147,10 +147,11 @@
             <button class="btn" onclick="checkB2()">Hoàn tất</button>
         </div>
 
+        <!-- MÀN HÌNH REVIEW TỔNG HỢP (PHIẾU A) CẢ ĐẬU LẪN RỚT -->
         <div id="screen-nd-review" class="screen">
             <h3>Xác Nhận Thông Tin Phiếu A</h3>
             <div class="review-box" id="review-content"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step3')">Quay lại Chỉnh sửa</button>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Quay lại trang cá nhân để Sửa</button>
             <button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận thông tin đã đúng</button>
         </div>
 
@@ -177,7 +178,7 @@
         <div id="screen-nd-review-b1" class="screen">
             <h3>Xác Nhận Thông Tin Phiếu B1</h3>
             <div class="review-box" id="review-content-b1"></div>
-            <button class="btn btn-secondary" onclick="editB1()">Quay lại Chỉnh sửa</button>
+            <button class="btn btn-secondary" onclick="editB1()">Quay lại câu hỏi để Sửa</button>
             <button class="btn" id="btn-submit-review-b1" onclick="submitB1XacNhan()">Xác nhận thông tin đã đúng</button>
         </div>
     </div>
@@ -193,7 +194,7 @@
     </div>
 
     <script>
-        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; // Điền link Worker vào đây
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; // Điền link Worker của m vào đây
         
         let appConfig = {};
         let activeCampaigns = [];
@@ -202,7 +203,7 @@
 
         // Biến chạy cho luồng B1
         let currentB1Index = 0;
-        let b1Answers = {}; // ma_cauhoi -> option index
+        let b1Answers = {}; 
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -332,9 +333,31 @@
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
                 finalData["0"] = 0; 
-                await ghiNhanDataNgam();
-                alert("Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát");
-                location.reload(); 
+                finalData["E"] = 0; // Đánh rớt luôn
+                
+                // Hiển thị Review Rớt cho Phần 1
+                const thonEl = document.getElementById('nd_thon');
+                finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
+                finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
+                const cccdDisplay = document.getElementById('nd_cccd').value; 
+                
+                let reviewListB1 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Lý do không thuộc diện (Phần 1):</strong><br>";
+                document.querySelectorAll('.cb-b1:checked').forEach(cb => {
+                    reviewListB1 += `<div>✅ ${cb.parentElement.innerText.trim()}</div>`;
+                });
+                reviewListB1 += "</div>";
+
+                document.getElementById('review-content').innerHTML = `
+                    <p><strong>Họ tên:</strong> ${finalData.B}</p>
+                    <p><strong>CCCD:</strong> ${cccdDisplay}</p>
+                    <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
+                    <p><strong>Kết luận:</strong> <span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp (Vi phạm điều kiện Phần 1)</span></p>
+                    ${reviewListB1}
+                `;
+
+                document.getElementById('btn-submit-review').innerText = "Xác nhận và Kết thúc";
+                switchScreen('screen-nd-review');
+
             } else {
                 finalData["0"] = 1; 
                 switchScreen('screen-nd-step3');
@@ -344,7 +367,7 @@
         function checkB2() {
             let tongD = 0;
             const cbs = document.querySelectorAll('.cb-b2');
-            let reviewListB2 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Chi tiết các tiêu chí:</strong><br>";
+            let reviewListB2 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Chi tiết các tiêu chí (Phần 2):</strong><br>";
             
             cbs.forEach((cb, i) => {
                 const val = cb.checked ? 1 : 0;
@@ -365,7 +388,7 @@
             const cccdDisplay = document.getElementById('nd_cccd').value; 
             
             let resultText = isPass 
-                ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Phiếu B1)</span>` 
+                ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Chuyển tới Phiếu B1)</span>` 
                 : `<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>`;
 
             document.getElementById('review-content').innerHTML = `
@@ -384,10 +407,10 @@
 
         async function submitDataXacNhan() {
             await ghiNhanDataNgam(); 
+            // KHÔNG CÓ POPUP Ở ĐÂY NỮA
             if (finalData["E"] === 1) {
-                startPhieuB1(); // Chuyển thẳng sang luồng Phiếu B1
+                startPhieuB1(); 
             } else {
-                alert("Đã ghi nhận thông tin. Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát.");
                 location.reload(); 
             }
         }
@@ -520,10 +543,9 @@
 
         async function submitB1XacNhan() {
             await ghiNhanDataNgam(); 
+            // Ở B1 CŨNG KHÔNG ALERT RỚT NỮA, BẤM LÀ VỀ TRANG CHỦ HOẶC QUA B2
             if (finalData.KetQuaB1 === "Đậu") {
                 alert("Đã hoàn thành Phiếu B1. Chức năng Phiếu B2 đang được cập nhật!");
-            } else {
-                alert("Đã ghi nhận thông tin. Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát.");
             }
             location.reload();
         }
