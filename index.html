@@ -284,7 +284,6 @@
             }
         }
 
-        // B1 VẪN GIỮ LOGIC RỚT NGAY (VÌ ĐÂY LÀ ĐIỀU KIỆN LOẠI TRỪ TUYỆT ĐỐI)
         async function checkB1() {
             const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
             if (checkedCount > 0) {
@@ -298,7 +297,7 @@
             }
         }
 
-        // B2 CẢI TIẾN: CHO XEM LẠI DÙ ĐẬU HAY RỚT
+        // B2 Đã Gộp Luồng Rớt & Đậu vào chung Màn hình Xác nhận
         function checkB2() {
             let tongD = 0;
             const cbs = document.querySelectorAll('.cb-b2');
@@ -320,11 +319,6 @@
             const isPass = tongD < 4;
             finalData["E"] = isPass ? 1 : 0; 
 
-            // Cập nhật thông báo nếu rớt
-            if (!isPass) {
-                alert("Cảnh báo: Dựa trên số lượng tích, Anh chị có thể không thuộc diện Hộ nghèo, cận nghèo. Vui lòng kiểm tra kỹ lại thông tin ở màn hình sau.");
-            }
-
             const thonEl = document.getElementById('nd_thon');
             finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
             finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
@@ -343,26 +337,26 @@
                 ${reviewListB2}
             `;
 
-            // Thay đổi chữ trên nút Xác Nhận dựa vào Đậu/Rớt
+            // Đổi text Nút bấm tương ứng với kết quả
             const btnSubmit = document.getElementById('btn-submit-review');
             if (isPass) {
                 btnSubmit.innerText = "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)";
             } else {
-                btnSubmit.innerText = "Xác nhận thông tin đã đúng (Kết thúc khảo sát)";
+                btnSubmit.innerText = "Xác nhận và Kết thúc";
             }
 
             switchScreen('screen-nd-review');
         }
 
         async function submitDataXacNhan() {
-            await ghiNhanDataNgam(); // Lưu data
+            await ghiNhanDataNgam(); 
             
             if (finalData["E"] === 1) {
                 alert("Anh chị thuộc diện được rà soát, tiếp tục phần thông tin cho Phiếu B1, B2");
             } else {
                 alert("Đã ghi nhận thông tin. Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát.");
             }
-            location.reload(); // Quay lại trang chủ
+            location.reload(); 
         }
 
         // --- CÁN BỘ ---
