@@ -1,85 +1,213 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>Khảo sát Hộ Nghèo</title>
+    <meta charset="UTF-8">
+    <title>Hệ Thống Rà Soát Hộ Nghèo</title>
+    <!-- Thư viện tạo file Word ở Frontend -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .section { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        select, input, button { padding: 8px; margin: 5px 0; width: 100%; max-width: 300px; }
+        button { background-color: #0056b3; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #004494; }
+    </style>
 </head>
 <body>
-    <h2>Phần Người Dân - Phiếu A</h2>
-    
-    <label>Tỉnh/Thành:</label>
-    <select id="tinh"><option>Chọn Tỉnh</option></select>
-    
-    <label>Quận/Huyện:</label>
-    <select id="huyen"><option>Chọn Huyện</option></select>
-    
-    <label>Phường/Xã:</label>
-    <select id="xa"><option>Chọn Xã</option></select>
+    <script>
+        // ĐIỀN LINK WORKER CỦA BẠN VÀO ĐÂY (nhớ giữ nguyên https:// ở đầu):
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev"; 
+        
+        // Cấu hình tải từ KV
+        let appConfig = {};
+    </script>
 
-    <hr>
-    <div id="buoc1">
-        <h3>Bước 1: Nhận dạng nhanh</h3>
-        <div id="cau_hỏi_b1"></div> <!-- JS sẽ chèn 5 checkbox vào đây -->
-        <button onclick="checkBuoc1()">Tiếp tục</button>
+    <!-- PHẦN 1: CÁN BỘ -->
+    <div class="section" style="background-color: #f9f9f9;">
+        <h2>🛠️ Dành Cho Cán Bộ</h2>
+        <label>Nhập Mã Đợt Rà Soát (ID_Dot):</label><br>
+        <input type="text" id="id_dot_canbo" placeholder="VD: DRS_001"><br>
+        <button onclick="taiFileWord()">Tải Phiếu A (Word) & Đóng Đợt</button>
     </div>
 
-    <div id="buoc2" style="display:none;">
-        <h3>Bước 2: 9 Tiêu chí</h3>
-        <div id="cau_hỏi_b2"></div> <!-- JS sẽ chèn 9 checkbox vào đây -->
-        <button onclick="submitData()">Hoàn thành</button>
+    <!-- PHẦN 2: NGƯỜI DÂN -->
+    <div class="section">
+        <h2>📝 Dành Cho Người Dân - Điền Phiếu A</h2>
+        
+        <label>ID Đợt Rà Soát (nếu có, tự tra cứu thì để trống):</label>
+        <input type="text" id="id_dot_nguoidan" placeholder="Nhập mã cán bộ cung cấp">
+
+        <label>Họ và Tên Chủ Hộ:</label>
+        <input type="text" id="hoten" placeholder="NGUYỄN VÂN A" style="text-transform: uppercase;">
+
+        <label>Số CCCD:</label>
+        <input type="text" id="cccd" placeholder="Nhập số CCCD">
+
+        <label>Tỉnh/Thành phố:</label>
+        <select id="tinh" onchange="loadPhuongXa()"><option value="">-- Chọn Tỉnh --</option></select>
+
+        <label>Phường/Xã:</label>
+        <select id="phuong"><option value="">-- Chọn Phường/Xã --</option></select>
+
+        <hr>
+        <div id="buoc1">
+            <h3>Bước 1: Nhận Dạng Nhanh</h3>
+            <p><i>(Tick nếu hộ gia đình có 1 trong các điều kiện sau)</i></p>
+            <!-- Dữ liệu demo Bước 1 (Sẽ được ghi đè bằng JSON từ hệ thống nếu cấu hình động) -->
+            <label><input type="checkbox" class="cb-b1"> 1. Ở nhà biệt thự; cấp 1, cấp 2</label><br>
+            <label><input type="checkbox" class="cb-b1"> 2. Sở hữu doanh nghiệp nộp thuế từ 100tr</label><br>
+            <label><input type="checkbox" class="cb-b1"> 3. Sở hữu trang trại, vật nuôi >200tr</label><br>
+            <label><input type="checkbox" class="cb-b1"> 4. Có ô tô, máy xúc, tài sản >200tr</label><br>
+            <br>
+            <button onclick="kiemTraBuoc1()">Kiểm Tra Bước 1</button>
+        </div>
+
+        <div id="buoc2" style="display:none;">
+            <h3>Bước 2: Chấm điểm 9 Tiêu Chí</h3>
+            <!-- Dữ liệu demo Bước 2 -->
+            <label><input type="checkbox" class="cb-b2"> 1. Có xe máy/xe điện trị giá >20tr</label><br>
+            <label><input type="checkbox" class="cb-b2"> 2. Có điều hòa/tủ lạnh</label><br>
+            <label><input type="checkbox" class="cb-b2"> 3. Có bình tắm nóng</label><br>
+            <label><input type="checkbox" class="cb-b2"> 4. Có máy giặt/sấy</label><br>
+            <label><input type="checkbox" class="cb-b2"> 5. Có tài sản cho thuê</label><br>
+            <label><input type="checkbox" class="cb-b2"> 6. Tiêu thụ điện >150 kWh/tháng</label><br>
+            <label><input type="checkbox" class="cb-b2"> 7. Nhà ở >25m2/người</label><br>
+            <label><input type="checkbox" class="cb-b2"> 8. Có người hưởng lương hưu/CCVC</label><br>
+            <label><input type="checkbox" class="cb-b2"> 9. Có người làm HĐLĐ</label><br>
+            <br>
+            <button onclick="nopPhieuA()">Hoàn Thành & Nộp Form</button>
+        </div>
     </div>
 
     <script>
-        const CF_KV_URL = "https://YOUR_WORKER_ROUTE/api/config"; // Route API để lấy config nếu cần, hoặc chèn thẳng file JSON
-        let appData = {};
-
-        // Tải cấu hình khi mở trang
+        // --- LOGIC GIAO DIỆN NGƯỜI DÂN ---
         window.onload = async () => {
-            // Giả lập lấy JSON từ KV
-            const res = await fetch('YOUR_KV_PUBLIC_URL_OR_WORKER_PROXY');
-            appData = await res.json();
-            
-            const tinhSelect = document.getElementById('tinh');
-            Object.keys(appData.diachinh).forEach(t => {
-                tinhSelect.innerHTML += `<option value="${t}">${t}</option>`;
-            });
-            // Code render câu hỏi B1 và B2 từ appData.cauhoi...
+            try {
+                // Gọi Worker lấy cục JSON từ KV
+                const response = await fetch(`${WORKER_URL}/api/config`);
+                appConfig = await response.json();
+                
+                // Đổ danh sách Tỉnh
+                const tinhSelect = document.getElementById('tinh');
+                Object.keys(appConfig.diachinh || {}).forEach(tinh => {
+                    tinhSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
+                });
+            } catch (e) {
+                console.log("Lỗi tải cấu hình:", e);
+            }
         };
 
-        function checkBuoc1() {
-            const b1_checked = document.querySelectorAll('#cau_hỏi_b1 input:checked').length;
-            if (b1_checked > 0) {
-                alert("Bạn thuộc diện loại trừ. Kết thúc rà soát. (Mã 0)");
+        function loadPhuongXa() {
+            const tinh = document.getElementById('tinh').value;
+            const phuongSelect = document.getElementById('phuong');
+            phuongSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            if (tinh && appConfig.diachinh[tinh]) {
+                appConfig.diachinh[tinh].forEach(phuong => {
+                    phuongSelect.innerHTML += `<option value="${phuong}">${phuong}</option>`;
+                });
+            }
+        }
+
+        let maCot0 = 1; // Default pass B1
+
+        function kiemTraBuoc1() {
+            const checkedB1 = document.querySelectorAll('.cb-b1:checked').length;
+            if (checkedB1 > 0) {
+                alert("❌ Hộ gia đình thuộc diện loại trừ. (Mã 0). Ngưng rà soát.");
+                maCot0 = 0;
             } else {
-                alert("Hợp lệ. Chuyển sang bước 2. (Mã 1)");
+                alert("✅ Hợp lệ, chuyển sang Bước 2. (Mã 1)");
+                maCot0 = 1;
                 document.getElementById('buoc1').style.display = 'none';
                 document.getElementById('buoc2').style.display = 'block';
             }
         }
 
-        async function submitData() {
-            const checkboxes = document.querySelectorAll('#cau_hỏi_b2 input');
-            let totalD = 0;
-            let payload = { action: "submit_phieuA", Col_D: 0, Col_E: 1, Col_0: 1 };
-            
-            checkboxes.forEach((cb, index) => {
+        async function nopPhieuA() {
+            const cbs = document.querySelectorAll('.cb-b2');
+            let tongD = 0;
+            let payload = {
+                action: "submit_phieuA",
+                ID_Dot: document.getElementById('id_dot_nguoidan').value,
+                B: document.getElementById('hoten').value.toUpperCase(),
+                CCCD: document.getElementById('cccd').value,
+                Col_0: maCot0, Col_E: 1
+            };
+
+            cbs.forEach((cb, index) => {
                 const val = cb.checked ? 1 : 0;
                 payload[`Col_${index + 1}`] = val;
-                totalD += val;
+                tongD += val;
             });
-            
-            payload.Col_D = totalD;
-            if (totalD >= 4) {
+            payload.Col_D = tongD;
+
+            if (tongD >= 4) {
                 payload.Col_E = 0;
-                alert("Không đạt chỉ tiêu (D >= 4).");
+                alert("❌ Tổng điểm D >= 4. Hộ không thuộc diện rà soát. (Mã 0)");
             } else {
-                alert("Đạt chuẩn rà soát (D < 4).");
+                alert("✅ Hoàn thành. Hộ được chuyển danh sách rà soát tiếp theo. (Mã 1)");
             }
 
-            // Bắn API lên Worker
-            await fetch('https://YOUR_WORKER_URL/api/submit', {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
+            // Gửi dữ liệu qua Worker -> Sheet
+            if (payload.ID_Dot) {
+                await fetch(WORKER_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                alert("Đã lưu dữ liệu vào hệ thống!");
+                location.reload();
+            }
+        }
+
+        // --- LOGIC CÁN BỘ TẢI FILE WORD ---
+        async function taiFileWord() {
+            const idDot = document.getElementById('id_dot_canbo').value;
+            if (!idDot) { alert("Vui lòng nhập ID Đợt!"); return; }
+
+            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
+            try {
+                // 1. Gọi Worker để lấy data hộ dân
+                const resData = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "download_dot", ID_Dot: idDot })
+                });
+                const data = await resData.json();
+
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) {
+                    alert("Không có hồ sơ nào trong đợt rà soát này!");
+                    return;
+                }
+
+                // 2. Tải template Word từ Github của bạn
+                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/refs/heads/main/PhieuA.docx";
+                const templateRes = await fetch(githubTemplate);
+                const templateBuffer = await templateRes.arrayBuffer();
+
+                // 3. Đổ data vào Word
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+
+                doc.render({
+                    Tinh_thanh: data.Tinh_thanh,
+                    Phuong_xa: data.Phuong_xa,
+                    Thon_to: data.Thon_to,
+                    Hogiadinh: data.Hogiadinh
+                });
+
+                // 4. Sinh file và tải về
+                const out = doc.getZip().generate({
+                    type: "blob",
+                    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                });
+                saveAs(out, `PhieuA_${idDot}.docx`);
+                alert("✅ Tải file thành công! Hệ thống đã ghi nhận thời gian tải.");
+
+            } catch (error) {
+                console.error(error);
+                alert("Lỗi khi tải file: Vui lòng kiểm tra lại ID Đợt.");
+            }
         }
     </script>
 </body>
