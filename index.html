@@ -41,9 +41,12 @@
         .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 90vh; overflow-y: auto; }
         #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; padding: 10px; box-sizing: border-box; border: 1px dashed #ccc; overflow-x: auto; }
         
-        /* Chỉnh style cho list review */
         .review-checklist div { padding: 5px 0; border-bottom: 1px dashed #ccc; }
         .review-checklist div:last-child { border-bottom: none; }
+        
+        /* Giao diện list chọn câu B1 */
+        .b1-option-label { display: block; padding: 12px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; background: #fdfdfd; }
+        .b1-option-label:hover { background: #eef5ff; border-color: #b8d4f2; }
     </style>
 </head>
 <body>
@@ -100,7 +103,7 @@
             <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất & Quay Lại Màn Hình Chính</button>
         </div>
 
-        <!-- PHẦN NGƯỜI DÂN -->
+        <!-- PHẦN NGƯỜI DÂN (PHIẾU A) -->
         <div id="screen-nd-step1" class="screen">
             <h2>Anh chị vui lòng cung cấp THÔNG TIN CÁ NHÂN theo yêu cầu bên dưới:</h2>
             <div class="form-group"><label>Họ và tên chủ hộ:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;"></div>
@@ -144,16 +147,42 @@
             <button class="btn" onclick="checkB2()">Hoàn tất</button>
         </div>
 
-        <!-- MÀN HÌNH REVIEW TỔNG HỢP CẢ ĐẬU LẪN RỚT -->
         <div id="screen-nd-review" class="screen">
-            <h3>Xác Nhận Thông Tin</h3>
+            <h3>Xác Nhận Thông Tin Phiếu A</h3>
             <div class="review-box" id="review-content"></div>
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step3')">Quay lại Chỉnh sửa</button>
             <button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận thông tin đã đúng</button>
         </div>
+
+        <!-- MÀN HÌNH B1 - TỪNG CÂU HỎI -->
+        <div id="screen-nd-b1" class="screen">
+            <h3>Phiếu B1 - Tính điểm vùng <span id="b1-progress" style="color:#0056b3;"></span></h3>
+            <p id="b1-question-text" style="font-weight: bold; font-size: 16px;"></p>
+            
+            <div id="b1-ghichu-container" style="display:none; margin-bottom:15px;">
+                <details style="background: #eef2f5; padding: 10px; border-radius: 5px; cursor: pointer;">
+                    <summary style="color: #0056b3; font-weight: bold;">? Bấm vào đây để xem thông tin chi tiết / danh sách bệnh</summary>
+                    <div id="b1-ghichu-content" style="margin-top: 10px; white-space: pre-wrap;"></div>
+                </details>
+            </div>
+            
+            <div id="b1-options"></div>
+            
+            <br>
+            <button class="btn btn-secondary" onclick="prevB1()">Quay lại câu trước</button>
+            <button class="btn" onclick="nextB1()">Tiếp tục</button>
+        </div>
+
+        <!-- MÀN HÌNH REVIEW B1 -->
+        <div id="screen-nd-review-b1" class="screen">
+            <h3>Xác Nhận Thông Tin Phiếu B1</h3>
+            <div class="review-box" id="review-content-b1"></div>
+            <button class="btn btn-secondary" onclick="editB1()">Quay lại Chỉnh sửa</button>
+            <button class="btn" id="btn-submit-review-b1" onclick="submitB1XacNhan()">Xác nhận thông tin đã đúng</button>
+        </div>
     </div>
 
-    <!-- MODAL XEM TRƯỚC VÀ CHỈNH SỬA -->
+    <!-- MODAL XEM TRƯỚC VÀ CHỈNH SỬA CÁN BỘ -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <h3 id="modal-title">Xem Trước</h3>
@@ -170,6 +199,10 @@
         let activeCampaigns = [];
         let currentUser = "";
         let finalData = {};
+
+        // Biến chạy cho luồng B1
+        let currentB1Index = 0;
+        let b1Answers = {}; // ma_cauhoi -> option index
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -278,6 +311,17 @@
             finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
             finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
             
+            const tinh = $('#nd_tinh').val();
+            const phuong = $('#nd_phuong').val();
+            const b1TenKhuVuc = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
+            const b1KhuvucType = (phuong || "").includes('Phường') ? 1 : 2;
+            const baremText = b1KhuvucType === 1 ? "Đô thị" : "Nông thôn - " + b1TenKhuVuc;
+            
+            finalData.Tinh_thanh = tinh;
+            finalData.Phuong_xa = phuong;
+            finalData.Khuvuc = b1KhuvucType;
+            finalData.Barem = baremText;
+
             if (finalData.ID_Dot) {
                 finalData.action = "submit_phieuA";
                 await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(finalData) });
@@ -297,25 +341,21 @@
             }
         }
 
-        // B2 Đã Gộp Luồng Rớt & Đậu vào chung Màn hình Xác nhận
         function checkB2() {
             let tongD = 0;
             const cbs = document.querySelectorAll('.cb-b2');
-            
             let reviewListB2 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Chi tiết các tiêu chí:</strong><br>";
             
             cbs.forEach((cb, i) => {
                 const val = cb.checked ? 1 : 0;
                 finalData[`${i + 1}`] = val;
                 tongD += val;
-                
                 const labelText = cb.parentElement.innerText.trim();
                 reviewListB2 += `<div>${val === 1 ? '✅' : '⬜'} ${labelText}</div>`;
             });
             reviewListB2 += "</div>";
             finalData["D"] = tongD;
 
-            // Kiểm tra Đậu / Rớt
             const isPass = tongD < 4;
             finalData["E"] = isPass ? 1 : 0; 
 
@@ -331,35 +371,164 @@
             document.getElementById('review-content').innerHTML = `
                 <p><strong>Họ tên:</strong> ${finalData.B}</p>
                 <p><strong>CCCD:</strong> ${cccdDisplay}</p>
-                <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${document.getElementById('nd_phuong').value}, ${document.getElementById('nd_tinh').value}</p>
+                <p><strong>Địa chỉ:</strong> ${thonEl.options[thonEl.selectedIndex].text}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
                 <p><strong>Tổng điểm Bước 2:</strong> <span style="color:red; font-weight:bold;">${finalData["D"]} / ${cbs.length}</span></p>
                 <p><strong>Kết luận:</strong> ${resultText}</p>
                 ${reviewListB2}
             `;
 
-            // Đổi text Nút bấm tương ứng với kết quả
             const btnSubmit = document.getElementById('btn-submit-review');
-            if (isPass) {
-                btnSubmit.innerText = "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)";
-            } else {
-                btnSubmit.innerText = "Xác nhận và Kết thúc";
-            }
-
+            btnSubmit.innerText = isPass ? "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)" : "Xác nhận và Kết thúc";
             switchScreen('screen-nd-review');
         }
 
         async function submitDataXacNhan() {
             await ghiNhanDataNgam(); 
-            
             if (finalData["E"] === 1) {
-                alert("Anh chị thuộc diện được rà soát, tiếp tục phần thông tin cho Phiếu B1, B2");
+                startPhieuB1(); // Chuyển thẳng sang luồng Phiếu B1
+            } else {
+                alert("Đã ghi nhận thông tin. Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát.");
+                location.reload(); 
+            }
+        }
+
+        // ================== LUỒNG PHIẾU B1 ================== //
+        function startPhieuB1() {
+            if (!appConfig.phieu_b1 || appConfig.phieu_b1.length === 0) {
+                alert("Hệ thống chưa đồng bộ bộ câu hỏi Phiếu B1 từ máy chủ. Vui lòng liên hệ cán bộ.");
+                return;
+            }
+            currentB1Index = 0;
+            switchScreen('screen-nd-b1');
+            renderB1();
+        }
+
+        function renderB1() {
+            let q = appConfig.phieu_b1[currentB1Index];
+            document.getElementById('b1-progress').innerText = `(Câu ${currentB1Index + 1}/${appConfig.phieu_b1.length})`;
+            document.getElementById('b1-question-text').innerText = q.noidung;
+            
+            if (q.ghichu && q.ghichu.trim() !== "") {
+                document.getElementById('b1-ghichu-container').style.display = 'block';
+                document.getElementById('b1-ghichu-content').innerText = q.ghichu;
+            } else {
+                document.getElementById('b1-ghichu-container').style.display = 'none';
+            }
+            
+            let optsHTML = "";
+            let selectedIdx = b1Answers[q.ma];
+            q.options.forEach((opt, idx) => {
+                let checked = (selectedIdx === idx) ? "checked" : "";
+                optsHTML += `<label class="b1-option-label">
+                    <input type="radio" name="b1_opt" value="${idx}" ${checked}> ${opt.text}
+                </label>`;
+            });
+            document.getElementById('b1-options').innerHTML = optsHTML;
+        }
+
+        function saveCurrentB1Answer() {
+            let selected = document.querySelector('input[name="b1_opt"]:checked');
+            if (selected) {
+                b1Answers[appConfig.phieu_b1[currentB1Index].ma] = parseInt(selected.value);
+                return true;
+            }
+            return false;
+        }
+
+        function prevB1() {
+            if (currentB1Index > 0) {
+                saveCurrentB1Answer();
+                currentB1Index--;
+                renderB1();
+            } else {
+                alert("Đây là câu đầu tiên của Phiếu B1.");
+            }
+        }
+
+        function nextB1() {
+            if (!saveCurrentB1Answer()) {
+                alert("❌ Vui lòng chọn 1 đáp án trước khi qua câu tiếp theo!");
+                return;
+            }
+            if (currentB1Index < appConfig.phieu_b1.length - 1) {
+                currentB1Index++;
+                renderB1();
+            } else {
+                showReviewB1();
+            }
+        }
+
+        function showReviewB1() {
+            const tinh = $('#nd_tinh').val();
+            const phuong = $('#nd_phuong').val();
+            const isDoThi = phuong.includes('Phường');
+            
+            const kvName = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
+            const kvInfo = appConfig.diemcong_dothi ? appConfig.diemcong_dothi[kvName] : null;
+            const maVung = kvInfo ? kvInfo.ma : "";
+            const diemCongDoThi = (isDoThi && kvInfo) ? kvInfo.diem : 0;
+            
+            const colLookup = isDoThi ? "DoThi_Chung" : "NT_" + maVung;
+            const loaiVungText = isDoThi ? "Đô thị" : "Nông thôn";
+            
+            let totalScore = 0;
+            let htmlList = `<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'>`;
+            
+            appConfig.phieu_b1.forEach(q => {
+                let ansIdx = b1Answers[q.ma];
+                let ansObj = q.options[ansIdx];
+                let score = ansObj[colLookup] || 0;
+                totalScore += score;
+                
+                htmlList += `<div style="padding-bottom:10px;">
+                    <strong>${q.noidung}</strong><br>
+                    ✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span>
+                </div>`;
+            });
+            
+            if (isDoThi && diemCongDoThi > 0) {
+                totalScore += diemCongDoThi;
+                htmlList += `<div style="padding-bottom:10px; background:#eef5ff; padding:8px; border-radius:3px;">
+                    <strong>Cộng điểm Đô thị vùng (${kvName})</strong>: <span style="color:#0056b3; font-weight:bold; float:right;">+${diemCongDoThi} điểm</span>
+                </div>`;
+            }
+            htmlList += "</div>";
+            
+            let isPass = totalScore <= 190;
+            let resultText = isPass 
+                ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Tới Phiếu B2)</span>` 
+                : `<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>`;
+                
+            document.getElementById('review-content-b1').innerHTML = `
+                <p><strong>Phân loại:</strong> ${loaiVungText} - ${kvName || "Không xác định"}</p>
+                <p><strong>Tổng điểm Phiếu B1:</strong> <span style="color:red; font-weight:bold; font-size:18px;">${totalScore}</span></p>
+                <p><strong>Kết luận:</strong> ${resultText}</p>
+                ${htmlList}
+            `;
+            
+            const btnSubmit = document.getElementById('btn-submit-review-b1');
+            btnSubmit.innerText = isPass ? "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B2)" : "Xác nhận và Kết thúc";
+            
+            finalData.TongDiemB1 = totalScore;
+            finalData.KetQuaB1 = isPass ? "Đậu" : "Rớt";
+            switchScreen('screen-nd-review-b1');
+        }
+
+        function editB1() {
+            switchScreen('screen-nd-b1');
+        }
+
+        async function submitB1XacNhan() {
+            await ghiNhanDataNgam(); 
+            if (finalData.KetQuaB1 === "Đậu") {
+                alert("Đã hoàn thành Phiếu B1. Chức năng Phiếu B2 đang được cập nhật!");
             } else {
                 alert("Đã ghi nhận thông tin. Anh chị không thuộc diện Hộ nghèo, cận nghèo. Kết thúc khảo sát.");
             }
-            location.reload(); 
+            location.reload();
         }
 
-        // --- CÁN BỘ ---
+        // --- CÁN BỘ LÝ QUẢN LÝ ---
         function loadCbPhuong() {
             const tinh = document.getElementById('cb_tinh').value;
             const phuong = document.getElementById('cb_phuong');
