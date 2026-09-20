@@ -595,8 +595,8 @@
             const diemCongDoThi = (isDoThi && appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung]) ? appConfig.diemcong_dothi[tenVung].diem : 0;
             const colLookup = isDoThi ? "DoThi_Chung" : "NT_" + maVung;
             
-            // ĐIỂM CHUẨN: Đô thị 220, Nông thôn 190
-            const diemChuan = isDoThi ? 220 : 190;
+            // ĐIỂM CHUẨN: Đô thị 280, Nông thôn 190
+            const diemChuan = isDoThi ? 280 : 190;
             const loaiVungText = isDoThi ? "Đô thị" : "Nông thôn";
 
             return { isDoThi, tenVung, maVung, diemCongDoThi, colLookup, diemChuan, loaiVungText };
