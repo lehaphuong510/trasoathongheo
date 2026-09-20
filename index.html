@@ -740,6 +740,22 @@
             return wordData;
         }
 
+        // Hàm tự động chọn file Template Word B1 dựa trên khu vực
+        function getB1TemplateUrl() {
+            const tinh = $('#nd_tinh').val();
+            const phuong = $('#nd_phuong').val();
+            const isDoThi = (phuong || "").includes('Phường');
+            
+            if (isDoThi) {
+                return "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_Dothi.docx";
+            } else {
+                const kvName = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
+                const kvInfo = appConfig.diemcong_dothi ? appConfig.diemcong_dothi[kvName] : null;
+                const maVung = kvInfo ? kvInfo.ma : "DBSH"; // Dự phòng
+                return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${maVung}.docx`;
+            }
+        }
+
         async function xemTruocDocxB1() {
             document.getElementById('modal-title').innerText = "Xem Trước Phiếu B1 (Docx)";
             document.getElementById('modal-body').innerHTML = "<p>Đang xử lý dữ liệu và tạo file xem trước...</p>";
@@ -747,7 +763,7 @@
 
             try {
                 const wordData = prepareWordDataB1();
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1.docx";
+                const githubTemplate = getB1TemplateUrl();
                 const templateRes = await fetch(githubTemplate);
                 const templateBuffer = await templateRes.arrayBuffer();
 
@@ -770,7 +786,7 @@
         async function taiFileWordB1() {
             try {
                 const wordData = prepareWordDataB1();
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1.docx";
+                const githubTemplate = getB1TemplateUrl();
                 const templateRes = await fetch(githubTemplate);
                 const templateBuffer = await templateRes.arrayBuffer();
 
@@ -791,7 +807,8 @@
             btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
             try {
                 const wordData = prepareWordDataB1();
-                const templateRes = await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1.docx");
+                const githubTemplate = getB1TemplateUrl();
+                const templateRes = await fetch(githubTemplate);
                 const zip = new PizZip(await templateRes.arrayBuffer());
                 const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
                 doc.render(wordData);
