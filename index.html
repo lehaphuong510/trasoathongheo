@@ -40,7 +40,6 @@
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
         .modal-content { background-color: #fefefe; margin: 2% auto; padding: 10px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 95vh; overflow-y: auto; }
         
-        /* CSS Ép bản Preview nằm gọn trong màn hình */
         #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; border: 1px dashed #ccc; overflow-x: hidden; position: relative;}
         .docx-wrapper { padding: 0 !important; background: transparent !important; margin: 0 !important; }
         .docx-wrapper > section.docx { 
@@ -51,7 +50,6 @@
             box-shadow: none !important; 
             min-height: auto !important;
         }
-        /* Ép bảng biểu không đâm lủng lề */
         .docx-wrapper table { width: 100% !important; table-layout: auto !important; word-break: break-word; }
         .docx-wrapper img { max-width: 100% !important; height: auto !important; }
         
@@ -202,10 +200,8 @@
             
             <div class="review-box" id="review-content-b1"></div>
             
-            <!-- Đã dời câu thông báo xuống ngay trên đầu nút bấm -->
             <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Anh/chị vui lòng Xem và Tải phiếu B1 ngay tại đây. Nếu làm mới (Refresh) trang, dữ liệu sẽ bị mất!</p>
             
-            <!-- Nút Xem trước và nút Mở Menu Tải -->
             <div class="grid-2" style="margin-top: 5px;">
                 <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước Phiếu B1</button>
                 <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="$('#dl-b1-options').slideToggle();">📥 Tải Phiếu B1 ▼</button>
@@ -308,7 +304,6 @@
             $('#nd_tinh').on('change', loadNdPhuong);
             $('#nd_phuong').on('change', loadNdThon);
             
-            // Xử lý hiện ô input nếu chọn Thôn là "Khác"
             $('#nd_thon').on('change', function() {
                 if ($(this).val() === 'Khác') {
                     $('#nd_thon_khac').slideDown();
@@ -333,30 +328,15 @@
         
         function toiBuoc2() {
             const cccd = document.getElementById('nd_cccd').value;
-            if (cccd.length !== 12) {
-                alert("❌ Lỗi: Vui lòng nhập ĐỦ 12 chữ số CCCD!");
-                return;
-            }
-            if (!document.getElementById('nd_dantoc').value) {
-                alert("❌ Lỗi: Vui lòng chọn Dân tộc!");
-                return;
-            }
-            if (!document.getElementById('nd_hoten').value) {
-                alert("❌ Lỗi: Vui lòng nhập Họ Tên!");
-                return;
-            }
+            if (cccd.length !== 12) { alert("❌ Lỗi: Vui lòng nhập ĐỦ 12 chữ số CCCD!"); return; }
+            if (!document.getElementById('nd_dantoc').value) { alert("❌ Lỗi: Vui lòng chọn Dân tộc!"); return; }
+            if (!document.getElementById('nd_hoten').value) { alert("❌ Lỗi: Vui lòng nhập Họ Tên!"); return; }
             
-            // Chặn lỗi nếu chọn Khác mà không nhập tên thôn
             const thonVal = document.getElementById('nd_thon').value;
-            if (!thonVal) {
-                alert("❌ Lỗi: Vui lòng chọn Thôn/Tổ dân phố!");
-                return;
-            }
+            if (!thonVal) { alert("❌ Lỗi: Vui lòng chọn Thôn/Tổ dân phố!"); return; }
             if (thonVal === "Khác" && !document.getElementById('nd_thon_khac').value.trim()) {
-                alert("❌ Lỗi: Vui lòng nhập tên Thôn/Tổ dân phố của anh chị!");
-                return;
+                alert("❌ Lỗi: Vui lòng nhập tên Thôn/Tổ dân phố của anh chị!"); return;
             }
-            
             switchScreen('screen-nd-step2');
         }
 
@@ -391,9 +371,19 @@
             
             const tinh = $('#nd_tinh').val();
             const phuong = $('#nd_phuong').val();
-            const b1TenKhuVuc = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
             const b1KhuvucType = (phuong || "").includes('Phường') ? 1 : 2;
-            const baremText = b1KhuvucType === 1 ? "Đô thị" : "Nông thôn - " + b1TenKhuVuc;
+            
+            let baremText = "";
+            if (b1KhuvucType === 1) {
+                baremText = "Đô thị";
+            } else {
+                const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : null;
+                if (kvInfo && kvInfo.nt_rieng) {
+                    baremText = "Nông thôn - " + kvInfo.nt_rieng;
+                } else {
+                    baremText = "Nông thôn - " + (kvInfo ? kvInfo.chung : "");
+                }
+            }
             
             finalData.Tinh_thanh = tinh;
             finalData.Phuong_xa = phuong;
@@ -581,19 +571,39 @@
             }
         }
 
-        function showReviewB1() {
+        // HÀM QUAN TRỌNG: XÁC ĐỊNH MÃ VÙNG VÀ ĐIỂM CHUẨN
+        function getVungInfo() {
             const tinh = $('#nd_tinh').val();
             const phuong = $('#nd_phuong').val();
-            const isDoThi = phuong.includes('Phường');
+            const isDoThi = (phuong || "").includes('Phường');
             
-            const kvName = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
-            const kvInfo = appConfig.diemcong_dothi ? appConfig.diemcong_dothi[kvName] : null;
-            const maVung = kvInfo ? kvInfo.ma : "";
-            const diemCongDoThi = (isDoThi && kvInfo) ? kvInfo.diem : 0;
+            const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : null;
+            let tenVung = "", maVung = "";
             
+            if (isDoThi) {
+                tenVung = kvInfo ? kvInfo.chung : "";
+                maVung = appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung] ? appConfig.diemcong_dothi[tenVung].ma : "TPTW";
+            } else {
+                if (kvInfo && kvInfo.nt_rieng) {
+                    tenVung = kvInfo.nt_rieng; // Xã của TPTW
+                } else {
+                    tenVung = kvInfo ? kvInfo.chung : ""; // Xã của tỉnh bình thường
+                }
+                maVung = appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung] ? appConfig.diemcong_dothi[tenVung].ma : "DBSH";
+            }
+            
+            const diemCongDoThi = (isDoThi && appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung]) ? appConfig.diemcong_dothi[tenVung].diem : 0;
             const colLookup = isDoThi ? "DoThi_Chung" : "NT_" + maVung;
-            const loaiVungText = isDoThi ? "Đô thị" : "Nông thôn";
             
+            // ĐIỂM CHUẨN: Đô thị 220, Nông thôn 190
+            const diemChuan = isDoThi ? 220 : 190;
+            const loaiVungText = isDoThi ? "Đô thị" : "Nông thôn";
+
+            return { isDoThi, tenVung, maVung, diemCongDoThi, colLookup, diemChuan, loaiVungText };
+        }
+
+        function showReviewB1() {
+            const vi = getVungInfo();
             let totalScore = 0;
             let htmlList = `<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'>`;
             
@@ -605,38 +615,47 @@
                     if (Array.isArray(savedAns)) {
                         savedAns.forEach(idx => {
                             let ansObj = q.options[idx];
-                            let score = ansObj[colLookup] || 0;
-                            totalScore += score;
+                            let score = ansObj[vi.colLookup] || 0;
+                            let optTextLower = ansObj.text.trim().toLowerCase();
+                            // Chỉ cộng điểm nếu không phải đáp án "không có"
+                            if (!optTextLower.startsWith("không có")) {
+                                totalScore += score;
+                            }
                             htmlList += `✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span><br>`;
                         });
                     }
                 } else {
                     if (savedAns !== undefined) {
                         let ansObj = q.options[savedAns];
-                        let score = ansObj[colLookup] || 0;
-                        totalScore += score;
+                        let score = ansObj[vi.colLookup] || 0;
+                        let optTextLower = ansObj.text.trim().toLowerCase();
+                        if (!optTextLower.startsWith("không có")) {
+                            totalScore += score;
+                        }
                         htmlList += `✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span><br>`;
                     }
                 }
                 htmlList += `</div>`;
             });
             
-            if (isDoThi && diemCongDoThi > 0) {
-                totalScore += diemCongDoThi;
+            if (vi.isDoThi && vi.diemCongDoThi > 0) {
+                totalScore += vi.diemCongDoThi;
                 htmlList += `<div style="padding-bottom:10px; background:#eef5ff; padding:8px; border-radius:3px;">
-                    <strong>Cộng điểm Đô thị vùng (${kvName})</strong>: <span style="color:#0056b3; font-weight:bold; float:right;">+${diemCongDoThi} điểm</span>
+                    <strong>Cộng điểm Đô thị vùng (${vi.tenVung})</strong>: <span style="color:#0056b3; font-weight:bold; float:right;">+${vi.diemCongDoThi} điểm</span>
                 </div>`;
             }
             htmlList += "</div>";
             
-            let isPass = totalScore <= 190;
+            // Xét kết quả dựa trên điểm chuẩn linh hoạt
+            let isPass = totalScore <= vi.diemChuan;
             let resultText = isPass 
                 ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Tới Phiếu B2)</span>` 
                 : `<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>`;
                 
             document.getElementById('review-content-b1').innerHTML = `
-                <p><strong>Phân loại:</strong> ${loaiVungText} - ${kvName || "Không xác định"}</p>
-                <p><strong>Tổng điểm Phiếu B1:</strong> <span style="color:red; font-weight:bold; font-size:18px;">${totalScore}</span></p>
+                <p><strong>Phân loại:</strong> ${vi.loaiVungText} - ${vi.tenVung || "Không xác định"}</p>
+                <p><strong>Điểm chuẩn tối đa để đi tiếp:</strong> ${vi.diemChuan} điểm</p>
+                <p><strong>Tổng điểm Phiếu B1 của anh/chị:</strong> <span style="color:red; font-weight:bold; font-size:18px;">${totalScore}</span></p>
                 <p><strong>Kết luận:</strong> ${resultText}</p>
                 ${htmlList}
             `;
@@ -651,23 +670,15 @@
 
         // --- HÀM TẠO DATA & MAPPING CHO FILE WORD PHIẾU B1 ---
         function prepareWordDataB1() {
+            const vi = getVungInfo();
             const tinh = $('#nd_tinh').val();
             const phuong = $('#nd_phuong').val();
             const thonEl = document.getElementById('nd_thon');
             const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
-            
-            const isDoThi = phuong.includes('Phường');
-            
-            const kvName = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
-            const kvInfo = appConfig.diemcong_dothi ? appConfig.diemcong_dothi[kvName] : null;
-            const maVung = kvInfo ? kvInfo.ma : "";
-            const diemCongDoThi = (isDoThi && kvInfo) ? kvInfo.diem : 0;
-            const colLookup = isDoThi ? "DoThi_Chung" : "NT_" + maVung;
-
             const cccd = document.getElementById('nd_cccd').value;
 
             let wordData = {
-                Khuvuc: isDoThi ? 1 : 2,
+                Khuvuc: vi.isDoThi ? 1 : 2,
                 Tinh_thanh: tinh,
                 Phuong_xa: phuong,
                 Thon_to: thonText,
@@ -684,22 +695,19 @@
                 let m = q.ma.replace('.', '_'); // B1.1 -> B1_1
                 let savedAns = b1Answers[q.ma];
                 let diemCau = 0;
-                let hasValidAns = false; // Cờ kiểm tra xem có tích đáp án hợp lệ (không chứa chữ Không có)
+                let hasValidAns = false;
 
                 q.options.forEach((opt, idx) => {
-                    wordData[`x_${m}_${idx}`] = ""; // Trả về khoảng trắng mặc định
+                    wordData[`x_${m}_${idx}`] = ""; 
                 });
-                
-                // Mặc định ô Điểm cũng để trống
                 wordData[`Diem_${m}`] = "";
 
                 if (q.isMulti) {
                     if (Array.isArray(savedAns)) {
                         savedAns.forEach(idx => {
                             let optText = q.options[idx].text.trim().toLowerCase();
-                            // Nếu đáp án KHÔNG BẮT ĐẦU bằng "không có" -> Mới ghi dấu x và cộng điểm
                             if (!optText.startsWith("không có")) {
-                                let score = q.options[idx][colLookup] || 0;
+                                let score = q.options[idx][vi.colLookup] || 0;
                                 wordData[`x_${m}_${idx}`] = "x";
                                 diemCau += score;
                                 hasValidAns = true;
@@ -710,7 +718,7 @@
                     if (savedAns !== undefined) {
                         let optText = q.options[savedAns].text.trim().toLowerCase();
                         if (!optText.startsWith("không có")) {
-                            let score = q.options[savedAns][colLookup] || 0;
+                            let score = q.options[savedAns][vi.colLookup] || 0;
                             wordData[`x_${m}_${savedAns}`] = "x";
                             diemCau += score;
                             hasValidAns = true;
@@ -718,7 +726,6 @@
                     }
                 }
                 
-                // Chỉ điền tổng điểm nếu có đánh dấu ít nhất 1 đáp án hợp lệ
                 if (hasValidAns) {
                    wordData[`Diem_${m}`] = diemCau;
                 }
@@ -731,28 +738,22 @@
                 wordData[`Diem_B1_15_${v}`] = "";
             });
 
-            if (isDoThi && diemCongDoThi > 0 && maVung) {
-                let vungMap = maVung === "TPTW" ? "TW" : maVung; 
+            if (vi.isDoThi && vi.diemCongDoThi > 0 && vi.maVung) {
+                let vungMap = vi.maVung === "TPTW" ? "TW" : vi.maVung; 
                 wordData[`x_B1_15_${vungMap}`] = "x";
-                wordData[`Diem_B1_15_${vungMap}`] = diemCongDoThi;
+                wordData[`Diem_B1_15_${vungMap}`] = vi.diemCongDoThi;
             }
 
             return wordData;
         }
 
-        // Hàm tự động chọn file Template Word B1 dựa trên khu vực
+        // Tự động chọn file Template Word B1 dựa trên khu vực
         function getB1TemplateUrl() {
-            const tinh = $('#nd_tinh').val();
-            const phuong = $('#nd_phuong').val();
-            const isDoThi = (phuong || "").includes('Phường');
-            
-            if (isDoThi) {
+            const vi = getVungInfo();
+            if (vi.isDoThi) {
                 return "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_Dothi.docx";
             } else {
-                const kvName = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : "";
-                const kvInfo = appConfig.diemcong_dothi ? appConfig.diemcong_dothi[kvName] : null;
-                const maVung = kvInfo ? kvInfo.ma : "DBSH"; // Dự phòng
-                return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${maVung}.docx`;
+                return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${vi.maVung}.docx`;
             }
         }
 
@@ -775,7 +776,6 @@
                 
                 document.getElementById('modal-body').innerHTML = ""; 
                 const container = document.getElementById('modal-body');
-                // Ép preview tự động co giãn bằng ignoreWidth
                 await docx.renderAsync(out, container, null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
             } catch (error) { 
                 console.error(error); 
@@ -909,13 +909,11 @@
                             <div class="dot-actions">
                                 <button class="btn-sm" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">👀 Xem trước</button>
                                 
-                                <!-- Nút Menu Tải xuống cho Cán Bộ -->
                                 <button class="btn-sm" style="background-color: #28a745;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">📥 Tải xuống ▼</button>
                                 
                                 <button class="btn-sm" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">✏️ Đổi Hạn</button>
                                 <button class="btn-sm btn-danger" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">🔒 Kết thúc</button>
                                 
-                                <!-- Khung chọn định dạng (Mặc định ẩn) -->
                                 <div id="dl-${d.id_dot}" style="display:none; margin-top: 10px; padding: 10px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;" onclick="event.stopPropagation();">
                                     <span style="font-size: 14px; margin-right: 10px; color: #155724; font-weight: bold;">Chọn định dạng:</span>
                                     <button class="btn-sm" style="background:#28a745;" onclick="taiFileWord('${d.id_dot}')">📄 Word (.docx)</button>
@@ -976,7 +974,6 @@
                 
                 document.getElementById('modal-body').innerHTML = ""; 
                 const container = document.getElementById('modal-body');
-                // Ép preview tự động co giãn bằng ignoreWidth
                 await docx.renderAsync(out, container, null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
 
             } catch (error) { 
