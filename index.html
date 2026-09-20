@@ -19,7 +19,7 @@
         .screen { display: none; }
         .active { display: block; }
         .btn-big { display: block; width: 100%; padding: 15px; margin: 10px 0; font-size: 18px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; }
-        .btn { padding: 10px 15px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; margin-top: 10px; }
+        .btn { padding: 10px 15px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; margin-top: 10px; font-weight:bold; }
         .btn-secondary { background: #6c757d; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .form-group { margin-bottom: 15px; }
@@ -33,25 +33,34 @@
         .dot-item { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
         .dot-actions { margin-top: 10px; display: none; }
         .dot-item.open .dot-actions { display: block; }
-        .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
+        .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; margin-bottom: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
         .btn-danger { background: #dc3545; }
+        .btn-pdf { background: #e83e8c; }
         
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
-        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 90vh; overflow-y: auto; }
-        #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; padding: 10px; box-sizing: border-box; border: 1px dashed #ccc; overflow-x: auto; }
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 10px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 95vh; overflow-y: auto; }
+        
+        /* CSS Ép bản Preview nằm gọn trong màn hình */
+        #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; border: 1px dashed #ccc; overflow-x: hidden; position: relative;}
+        .docx-wrapper { padding: 0 !important; background: transparent !important; margin: 0 !important; }
+        .docx-wrapper > section.docx { 
+            width: 100% !important; 
+            padding: 10px !important; 
+            margin: 0 auto !important;
+            box-sizing: border-box !important; 
+            box-shadow: none !important; 
+            min-height: auto !important;
+        }
+        /* Ép bảng biểu không đâm lủng lề */
+        .docx-wrapper table { width: 100% !important; table-layout: auto !important; word-break: break-word; }
+        .docx-wrapper img { max-width: 100% !important; height: auto !important; }
         
         .review-checklist div { padding: 5px 0; border-bottom: 1px dashed #ccc; }
         .review-checklist div:last-child { border-bottom: none; }
-        
         .b1-option-label { display: block; padding: 12px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; background: #fdfdfd; }
         .b1-option-label:hover { background: #eef5ff; border-color: #b8d4f2; }
 
-        /* Animation cảnh báo mất dữ liệu */
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .text-blink { animation: blink 1.2s infinite; color: #dc3545; font-weight: bold; margin-bottom: 15px;}
     </style>
 </head>
@@ -196,9 +205,19 @@
             <!-- Đã dời câu thông báo xuống ngay trên đầu nút bấm -->
             <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Anh/chị vui lòng Xem và Tải phiếu B1 ngay tại đây. Nếu làm mới (Refresh) trang, dữ liệu sẽ bị mất!</p>
             
+            <!-- Nút Xem trước và nút Mở Menu Tải -->
             <div class="grid-2" style="margin-top: 5px;">
                 <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước Phiếu B1</button>
-                <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="taiFileWordB1()">📥 Tải Phiếu B1 (Docx)</button>
+                <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="$('#dl-b1-options').slideToggle();">📥 Tải Phiếu B1 ▼</button>
+            </div>
+
+            <!-- Khung chọn định dạng tải (Mặc định ẩn) -->
+            <div id="dl-b1-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;">
+                <p style="margin-top:0; font-size:14px; text-align:center; color: #155724;">Chọn định dạng anh/chị muốn tải về:</p>
+                <div class="grid-2">
+                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">📄 File Word (.docx)</button>
+                    <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB1(this);">📕 File PDF (.pdf)</button>
+                </div>
             </div>
 
             <br>
@@ -227,7 +246,7 @@
 
         // Biến chạy cho luồng B1
         let currentB1Index = 0;
-        let b1Answers = {}; // ma_cauhoi -> index hoặc array index
+        let b1Answers = {}; 
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -740,7 +759,8 @@
                 
                 document.getElementById('modal-body').innerHTML = ""; 
                 const container = document.getElementById('modal-body');
-                await docx.renderAsync(out, container);
+                // Ép preview tự động co giãn bằng ignoreWidth
+                await docx.renderAsync(out, container, null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
             } catch (error) { 
                 console.error(error); 
                 document.getElementById('modal-body').innerHTML = `<p style="color:red;">Lỗi hiển thị: ${error.message}</p>`; 
@@ -764,6 +784,34 @@
                 console.error(error); 
                 alert("Lỗi tải file Phiếu B1. Vui lòng thử lại!"); 
             }
+        }
+
+        async function taiFilePDFB1(btnElement) {
+            const orgText = btnElement.innerText;
+            btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
+            try {
+                const wordData = prepareWordDataB1();
+                const templateRes = await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1.docx");
+                const zip = new PizZip(await templateRes.arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render(wordData);
+                
+                const base64Docx = doc.getZip().generate({ type: "base64" });
+                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: base64Docx }) });
+                const pdfData = await pdfRes.json();
+                
+                if (pdfData.status === "success") {
+                    const byteChars = atob(pdfData.pdfBase64);
+                    const byteNums = new Array(byteChars.length);
+                    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+                    const blob = new Blob([new Uint8Array(byteNums)], { type: "application/pdf" });
+                    saveAs(blob, `PhieuB1_${finalData.B.replace(/\s+/g, '_')}.pdf`);
+                } else alert("Lỗi convert PDF: " + pdfData.message);
+            } catch (error) { 
+                alert("Lỗi tải file PDF."); console.error(error); 
+            }
+            btnElement.innerText = orgText; btnElement.disabled = false;
+            $('#dl-b1-options').slideUp();
         }
 
         function editB1() {
@@ -793,7 +841,6 @@
             const p = document.getElementById('cb_password').value;
             if(!u || !p) return alert("Vui lòng nhập đủ thông tin!");
             
-            // Xử lý nút bấm không cho spam
             let originalText = "Đang xử lý...";
             if (btnElement) {
                 originalText = btnElement.innerText;
@@ -808,7 +855,6 @@
                 
                 if(data.status === "success") {
                     currentUser = u;
-                    // Xóa trắng ô pass, vô thẳng dashboard không alert
                     document.getElementById('cb_username').value = "";
                     document.getElementById('cb_password').value = "";
                     switchScreen('screen-canbo-dash');
@@ -845,9 +891,19 @@
                             <h4 style="margin:0; cursor:pointer;">📋 Đợt: ${d.ten_dot} <br><small style="color:#555; font-weight:normal;">Hạn kết thúc: ${d.ngay_ket_thuc} | ${statusText}</small></h4>
                             <div class="dot-actions">
                                 <button class="btn-sm" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">👀 Xem trước</button>
-                                <button class="btn-sm" onclick="taiFileWord('${d.id_dot}'); event.stopPropagation();">📥 Tải Word</button>
+                                
+                                <!-- Nút Menu Tải xuống cho Cán Bộ -->
+                                <button class="btn-sm" style="background-color: #28a745;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">📥 Tải xuống ▼</button>
+                                
                                 <button class="btn-sm" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">✏️ Đổi Hạn</button>
                                 <button class="btn-sm btn-danger" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">🔒 Kết thúc</button>
+                                
+                                <!-- Khung chọn định dạng (Mặc định ẩn) -->
+                                <div id="dl-${d.id_dot}" style="display:none; margin-top: 10px; padding: 10px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;" onclick="event.stopPropagation();">
+                                    <span style="font-size: 14px; margin-right: 10px; color: #155724; font-weight: bold;">Chọn định dạng:</span>
+                                    <button class="btn-sm" style="background:#28a745;" onclick="taiFileWord('${d.id_dot}')">📄 Word (.docx)</button>
+                                    <button class="btn-sm btn-pdf" onclick="taiFilePDF('${d.id_dot}', this)">📕 PDF (.pdf)</button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -903,7 +959,8 @@
                 
                 document.getElementById('modal-body').innerHTML = ""; 
                 const container = document.getElementById('modal-body');
-                await docx.renderAsync(out, container);
+                // Ép preview tự động co giãn bằng ignoreWidth
+                await docx.renderAsync(out, container, null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
 
             } catch (error) { 
                 console.error(error); 
@@ -953,8 +1010,35 @@
 
                 const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
                 saveAs(out, `PhieuA_${idDot}.docx`);
-                alert("✅ Tải file thành công!");
-            } catch (error) { console.error(error); alert("Lỗi tải file."); }
+            } catch (error) { console.error(error); alert("Lỗi tải file Word."); }
+        }
+
+        async function taiFilePDF(idDot, btnElement) {
+            const orgText = btnElement.innerText;
+            btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) { btnElement.innerText = orgText; btnElement.disabled = false; return alert("Không có hồ sơ nào!"); }
+
+                const templateRes = await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx");
+                const zip = new PizZip(await templateRes.arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                
+                const base64Docx = doc.getZip().generate({ type: "base64" });
+                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: base64Docx }) });
+                const pdfData = await pdfRes.json();
+                
+                if (pdfData.status === "success") {
+                    const byteChars = atob(pdfData.pdfBase64);
+                    const byteNums = new Array(byteChars.length);
+                    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+                    const blob = new Blob([new Uint8Array(byteNums)], { type: "application/pdf" });
+                    saveAs(blob, `PhieuA_${idDot}.pdf`);
+                } else alert("Lỗi convert PDF: " + pdfData.message);
+            } catch (e) { alert("Lỗi kết nối tạo PDF!"); console.error(e); }
+            btnElement.innerText = orgText; btnElement.disabled = false;
         }
     </script>
 </body>
