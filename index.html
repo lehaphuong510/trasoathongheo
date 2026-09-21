@@ -216,8 +216,8 @@
 
         // State cho Phiếu C và B2
         let numMembers = 0;
-        let phieuC_Data = []; // Mảng N phần tử, mỗi phần tử là 1 object { C1: val, C2: val... }
-        let hoGiaDinh_Data = {}; // Chứa B2.7, CS_DH...
+        let phieuC_Data = []; 
+        let hoGiaDinh_Data = {}; 
 
         function switchScreen(id) { $('.screen').removeClass('active'); $('#' + id).addClass('active'); }
         function initSelect2() { $('.searchable-select').select2(); }
@@ -279,7 +279,7 @@
         function checkB1() {
             if ($('.cb-b1:checked').length > 0) {
                 finalData["0"]=0; finalData["E"]=0; finalData.B=$('#nd_hoten').val().toUpperCase();
-                let html = "<div class='review-checklist'><strong>Lý do rớt:</strong><br>"; $('.cb-b1:checked').forEach(cb => html+=`<div>✅ ${cb.parentElement.innerText}</div>`); html+="</div>";
+                let html = "<div class='review-checklist'><strong>Lý do rớt:</strong><br>"; $('.cb-b1:checked').each(function(){ html+=`<div>✅ ${this.parentElement.innerText}</div>`; }); html+="</div>";
                 $('#review-content').html(`<p><strong>Kết luận:</strong> <span style="color:red;">Không thuộc diện rà soát tiếp</span></p>${html}`);
                 $('#btn-submit-review').text("Kết thúc"); switchScreen('screen-nd-review');
             } else { finalData["0"]=1; switchScreen('screen-nd-step3'); }
@@ -289,7 +289,7 @@
             let tongD=0; let html="<div class='review-checklist'>";
             $('.cb-b2').each((i,cb) => { let v = cb.checked?1:0; finalData[i+1]=v; tongD+=v; html+=`<div>${v?'✅':'⬜'} ${cb.parentElement.innerText}</div>`; });
             html+="</div>"; finalData["D"]=tongD; finalData["E"] = tongD<4 ? 1 : 0;
-            let res = finalData["E"] ? "<span style="color:green;">Đủ điều kiện (Tới Phiếu B1)</span>" : "<span style="color:red;">Không thuộc diện rà soát tiếp</span>";
+            let res = finalData["E"] ? '<span style="color:green;">Đủ điều kiện (Tới Phiếu B1)</span>' : '<span style="color:red;">Không thuộc diện rà soát tiếp</span>';
             $('#review-content').html(`<p><strong>Điểm B2 (Nhận dạng):</strong> ${tongD}</p><p><strong>Kết luận:</strong> ${res}</p>${html}`);
             $('#btn-submit-review').text(finalData["E"] ? "Xác nhận (Tới Phiếu B1)" : "Kết thúc"); switchScreen('screen-nd-review');
         }
@@ -392,7 +392,7 @@
         }
 
         function xemTruocDocxB1() { $('#modal-title').text("Phiếu B1"); handleDocxPreview(prepareWordDataB1(), getB1TemplateUrl(), 'myModal', 'modal-body'); }
-        function taiFileWordB1() { taiFileWord(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.docx`); }
+        function taiFileWordB1() { handleDocxDownload(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.docx`); }
         function taiFilePDFB1(btn) { handlePdfDownload(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b1-options').slideUp(); }
         function editB1() { switchScreen('screen-nd-b1'); }
         
@@ -408,20 +408,18 @@
             numMembers = n; phieuC_Data = Array.from({length: n}, () => ({})); hoGiaDinh_Data = {};
             
             let tabsHtml = "", contentHtml = "";
-            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !q.ghichu.includes('Matrix_CS')); // Tách lấy cá nhân
+            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !(q.ghichu||"").includes('Matrix_CS')); 
 
             for(let i=0; i<n; i++) {
                 tabsHtml += `<div class="tab-member ${i===0?'active':''}" onclick="switchMemberTab(${i})">Thành viên ${i+1}</div>`;
                 contentHtml += `<div id="member-content-${i}" class="tab-content ${i===0?'active':''}">`;
                 
                 pCQuestions.forEach(q => {
-                    // Xử lý Giao diện Từng câu hỏi
                     let m = q.ma, display = "block";
                     contentHtml += `<div class="phieuc-question" id="q_${i}_${m}" style="display:${display}; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
-                        <strong>${m}. ${q.noidung}</strong> ${q.k_bat_buoc?'(Không bắt buộc)':''}<br>`;
+                        <strong>${m}. ${q.noidung}</strong> ${q.k_bat_buoc?'<span style="color:#888">(Không bắt buộc)</span>':''}<br>`;
                     
                     if(q.options && q.options.length > 0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
-                        // Trắc nghiệm
                         q.options.forEach((opt, o_idx) => {
                             let isFillKhac = opt.text.includes('(fill)');
                             let textL = opt.text.replace('(fill)', '').trim();
@@ -429,26 +427,22 @@
                             contentHtml += `<label style="display:block; margin-top:5px;"><input type="${type}" name="pC_${i}_${m}" value="${opt.ma_lc}" onchange="evalDieuKienTuoi(${i})"> ${textL}</label>`;
                             if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" placeholder="Ghi rõ..." style="display:none; margin-left:20px; width:90%; margin-top:5px;">`;
                         });
-                    } else if (q.options[0].text.includes('(date)')) {
+                    } else if (q.options.length > 0 && q.options[0].text.includes('(date)')) {
                         contentHtml += `<input type="date" id="pC_${i}_${m}" onchange="evalDieuKienTuoi(${i})">`;
-                    } else if (q.options[0].text.includes('(dropdown)')) {
+                    } else if (q.options.length > 0 && q.options[0].text.includes('(dropdown)')) {
                         contentHtml += `<select id="pC_${i}_${m}" class="searchable-select" style="width:100%"><option value="">-- Chọn Dân tộc --</option>`;
-                        appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
+                        if(appConfig.madantoc) appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
                         contentHtml += `</select>`;
                     } else {
-                        // Fill thường (text/number)
                         let isNum = m==='C8'||m==='C9', suffix = m==='C8'?" cm":m==='C9'?" kg":"";
-                        contentHtml += `<div style="display:flex; align-items:center;"><input type="${isNum?'text':'text'}" id="pC_${i}_${m}" placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); evalDieuKienTuoi(${i})"> <span style="margin-left:5px;">${suffix}</span></div>`;
+                        contentHtml += `<div style="display:flex; align-items:center;"><input type="text" id="pC_${i}_${m}" placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); evalDieuKienTuoi(${i})"> <span style="margin-left:5px; white-space:nowrap;">${suffix}</span></div>`;
                     }
                     contentHtml += `</div>`;
                 });
                 contentHtml += `</div>`;
             }
             $('#tabs-container').html(tabsHtml); $('#tabs-content-container').html(contentHtml);
-            $('.searchable-select').select2();
-            
-            // Xử lý show text "Khác"
-            $('input[type="radio"], input[type="checkbox"]').on('change', function() {
+            $('.searchable-select').select2();$('input[type="radio"], input[type="checkbox"]').on('change', function() {
                 let name = $(this).attr('name'); let isChk = $(this).is(':checked'); let val =$(this).val();
                 let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.show() : txtBox.hide();
             });
@@ -475,9 +469,7 @@
             (appConfig.phieu_c || []).forEach(q => {
                 if(q.dieu_kien && !q.isHo) {
                     let show = false;
-                    if(ageY !== -1) {
-                        try { show = new Function("tuoi", "return tuoi " + q.dieu_kien)(ageY); } catch(e){}
-                    }
+                    if(ageY !== -1) { try { show = new Function("tuoi", "return tuoi " + q.dieu_kien)(ageY); } catch(e){} }
                     show ? $(`#q_${idx}_${q.ma}`).slideDown() : $(`#q_${idx}_${q.ma}`).slideUp();
                 }
             });
@@ -485,7 +477,7 @@
 
         function savePhieuCMembers() {
             let ok = true;
-            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !q.ghichu.includes('Matrix_CS'));
+            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !(q.ghichu||"").includes('Matrix_CS'));
             
             for(let i=0; i<numMembers; i++) {
                 let ageObj = tinhTuoi($(`#pC_${i}_C4`).val());
@@ -496,19 +488,14 @@
                     let val = null;
                     if(q.options && q.options.length>0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
                         let sel = $(`input[name="pC_${i}_${q.ma}"]:checked`);
-                        if(q.isMulti) {
-                            val = []; sel.each(function(){ val.push($(this).val()); });
-                        } else {
-                            val = sel.val();
-                        }
+                        if(q.isMulti) { val = []; sel.each(function(){ val.push($(this).val()); }); } 
+                        else { val = sel.val(); }
                     } else {
                         val = $(`#pC_${i}_${q.ma}`).val();
                         if(q.ma==='C8' || q.ma==='C9') val = parseFloat(val); // Convert to number
                     }
                     
-                    if(!q.k_bat_buoc && (val===null || val==="" || (Array.isArray(val) && val.length===0))) {
-                        ok = false;
-                    }
+                    if(!q.k_bat_buoc && (val===null || val==="" || (Array.isArray(val) && val.length===0))) { ok = false; }
                     phieuC_Data[i][q.ma] = val;
                 });
             }
@@ -518,13 +505,12 @@
         function checkAndGoHoGiaDinh() {
             if(!savePhieuCMembers()) return alert("⚠️ Vui lòng điền đủ thông tin các Thành viên ở những câu bắt buộc!");
             
-            // Xây dựng Giao diện Hộ gia đình
             let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
             let html = "";
             let matrixDH = hoQ.find(q => q.ma==='CS_DH'), matrixMM = hoQ.find(q => q.ma==='CS_MM');
             
             hoQ.forEach(q => {
-                if(q.ma==='CS_DH' || q.ma==='CS_MM') return; // Sẽ xử lý riêng ma trận
+                if(q.ma==='CS_DH' || q.ma==='CS_MM') return; 
                 
                 html += `<div style="margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
                 if(q.options && q.options.length>0) {
@@ -545,7 +531,7 @@
             
             // Xử lý Ma trận CS
             if(matrixDH && matrixMM) {
-                html += `<div style="margin-bottom:15px;"><strong>Ma trận Chính sách Hỗ trợ:</strong><br>
+                html += `<div style="margin-bottom:15px; overflow-x:auto;"><strong>Ma trận Chính sách Hỗ trợ:</strong><br>
                 <table class="matrix-table"><tr><th>Chính sách</th><th>Đang Hưởng</th><th>Mong Muốn</th></tr>`;
                 matrixDH.options.forEach(opt => {
                     let textL = opt.text.replace('(fill)', '').trim();
@@ -572,7 +558,6 @@
 
         // --- HARDCORE LOGIC TÍNH TOÁN B2 ---
         function tinhToanLogicB2() {
-            // Lưu data Hộ
             let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
             hoQ.forEach(q => {
                 if(q.options && q.options.length>1) {
@@ -584,48 +569,39 @@
                 }
             });
             
-            // Text input Khác
             hoGiaDinh_Data.txt_NNKK_7 = $('#txt_ho_NNKK_8').val() || "";
 
             let diemB2 = { B2_1: false, B2_2: false, B2_3: false, B2_4: false, B2_5: false, B2_6: false, B2_7: false, B2_8: false, B2_9: false, B2_10: false, B2_11: false, B2_12: false };
             let N = numMembers;
 
-            // B2.1: Có C17=2 hoặc C19=2
             diemB2.B2_1 = phieuC_Data.some(p => p.C17==='2' || p.C19==='2');
 
-            // B2.2: Tỷ lệ phụ thuộc > 50%
-            let phuThuocCount = phieuC_Data.filter(p => {
-                let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 18) || (p.C16 && p.C16.length > 0);
-            }).length;
+            let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 18) || (p.C16 && p.C16.length > 0); }).length;
             diemB2.B2_2 = (phuThuocCount / N) > 0.5;
 
-            // B2.3: Trẻ < 16t SDD
             diemB2.B2_3 = phieuC_Data.some(p => {
                 let t = tinhTuoi(p.C4), gioi = p.C7;
                 if(t.thang !== -1 && t.thang < 192) {
                     let chuan = appConfig.chuan_dinh_duong.find(c => c.gioi_tinh == gioi && c.thang_tuoi == t.thang);
                     if(chuan) {
-                        if(t.thang < 120) { return (p.C9 && p.C9 < chuan.can_nang) || (p.C8 && p.C8 < chuan.chieu_cao); } // < 10 tuổi
-                        else { return (p.C8 && p.C8 < chuan.chieu_cao); } // 10 - 16 tuổi
+                        if(t.thang < 120) { return (p.C9 && p.C9 < chuan.can_nang) || (p.C8 && p.C8 < chuan.chieu_cao); } 
+                        else { return (p.C8 && p.C8 < chuan.chieu_cao); } 
                     }
                 }
                 return false;
             });
 
-            // B2.4: 6-75t không BHYT
             diemB2.B2_4 = phieuC_Data.some(p => { let a=tinhTuoi(p.C4).nam; return a>=6 && a<=75 && p.C14==='2'; });
 
-            // B2.5: 16-30t không học/bằng cấp
             diemB2.B2_5 = phieuC_Data.some(p => {
                 let a = tinhTuoi(p.C4).nam;
                 if(a>=16 && a<=30 && p.C10==='2') {
-                    if(a<=18) return (parseInt(p.C12||0)<3) && p.C13==='1'; // <THCS
-                    else return (parseInt(p.C12||0)<4) && p.C13==='1'; // <THPT
+                    if(a<=18) return (parseInt(p.C12||0)<3) && p.C13==='1'; 
+                    else return (parseInt(p.C12||0)<4) && p.C13==='1'; 
                 }
                 return false;
             });
 
-            // B2.6: 3-16t học ko đúng cấp
             diemB2.B2_6 = phieuC_Data.some(p => {
                 let a = tinhTuoi(p.C4).nam, c = parseInt(p.C11||0);
                 if(a>=3 && a<16) {
@@ -639,28 +615,22 @@
                 return false;
             });
 
-            // B2.7: Nhà không bền (Tối đa 1 option 1,2,3)
-            let b27Ans = hoGiaDinh_Data['B2.7'] || []; let benChacCount = b27Ans.filter(x => x==='1'||x==='2'||x==='3').length;
+            let b27Ans = hoGiaDinh_Data['B2.7'] || []; let benChacCount = Array.isArray(b27Ans)?b27Ans.filter(x => x==='1'||x==='2'||x==='3').length:0;
             diemB2.B2_7 = benChacCount < 2;
 
-            // B2.8: Bình quân < 8m2
-            let dt = parseFloat(hoGiaDinh_Data['B2.81'] || 0);
-            let hasGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
+            let dt = parseFloat(hoGiaDinh_Data['B2.81'] || 0); let hasGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
             diemB2.B2_8 = (dt * (hasGac ? 1.5 : 1)) / N < 8;
 
-            // B2.9: 100% C15=2
             diemB2.B2_9 = phieuC_Data.every(p => p.C15==='2');
-
-            // B2.10, B2.11, B2.12
-            diemB2.B2_10 = (hoGiaDinh_Data['B2.10']||[]).includes('6'); // Option Không
-            diemB2.B2_11 = (hoGiaDinh_Data['B2.11']||[]).includes('3'); // Option Không
-            diemB2.B2_12 = (hoGiaDinh_Data['B2.12']||[]).includes('2'); // Option Không
+            diemB2.B2_10 = (hoGiaDinh_Data['B2.10']||[]).includes('6'); 
+            diemB2.B2_11 = (hoGiaDinh_Data['B2.11']||[]).includes('3'); 
+            diemB2.B2_12 = (hoGiaDinh_Data['B2.12']||[]).includes('2'); 
 
             finalData.diemB2 = diemB2;
             let b2Keys = Object.keys(diemB2), tickCount = 0;
             let html = "<div class='review-checklist'>";
             (appConfig.phieu_b2_list || []).forEach(q => {
-                let m = q.ma.replace('.','_'); // B2_1
+                let m = q.ma.replace('.','_'); 
                 let isDinh = diemB2[m]; if(isDinh) tickCount++;
                 html += `<div>${isDinh?'✅':'⬜'} [${q.section}] ${q.noidung}</div>`;
             });
@@ -679,13 +649,11 @@
 
         // --- WORD EXPORT PHIẾU B2 & PHIẾU C ---
         function prepareWordDataPhieuCB2() {
-            let d = { ...prepareWordDataB1() }; // Lấy metadata Hộ
+            let d = { ...prepareWordDataB1() }; 
             d.B2_Tong = finalData.TongDiemB2;
             
-            // Map B2_1 -> B2_12
             Object.keys(finalData.diemB2).forEach(k => { d[`x_${k}`] = finalData.diemB2[k] ? "x" : ""; });
             
-            // Map NNKK và Chính sách
             for(let i=0;i<=7;i++) d[`x_NNKK_${i}`] = (hoGiaDinh_Data['NNKK']||[]).includes(String(i+1)) ? "x" : "";
             d.txt_NNKK_7 = hoGiaDinh_Data.txt_NNKK_7 || "";
             for(let i=0;i<=12;i++) {
@@ -693,14 +661,12 @@
                 d[`x_CSMM_${i}`] = (hoGiaDinh_Data['CS_MM']||[]).includes(String(i+1)) ? "x" : "";
             }
 
-            // Map Vòng lặp Thành Viên
             d.ThanhVien = phieuC_Data.map((p, idx) => {
                 let row = { A: idx+1 };
                 for(let i=2; i<=21; i++) {
                     let v = p[`C${i}`]; 
                     row[`C${i}`] = Array.isArray(v) ? v.join(", ") : (v||"");
                 }
-                // Mapping mã sang cột (C17 -> C20 logic nếu cần thiết trên excel)
                 return row;
             });
             return d;
