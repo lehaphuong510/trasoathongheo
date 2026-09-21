@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Hệ Thống Rà Soát Hộ Nghèo</title>
-    <!-- Thư viện -->
     <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.11/build/docxtemplater.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
@@ -21,1038 +20,719 @@
         .btn-big { display: block; width: 100%; padding: 15px; margin: 10px 0; font-size: 18px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; }
         .btn { padding: 10px 15px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; margin-top: 10px; font-weight:bold; }
         .btn-secondary { background: #6c757d; }
+        .btn-danger { background: #dc3545; }
+        .btn-pdf { background: #e83e8c; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .form-group { margin-bottom: 15px; }
-        input[type="text"], input[type="date"], input[type="password"], select { width: 100%; padding: 10px; box-sizing: border-box; }
+        input[type="text"], input[type="date"], input[type="password"], input[type="number"], select { width: 100%; padding: 10px; box-sizing: border-box; }
         .review-box { background: #e9ecef; padding: 15px; border-radius: 5px; }
-        
         .select2-container .select2-selection--single { height: 40px; line-height: 40px; border: 1px solid #ccc; }
-        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 40px; }
-        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 38px; }
-        
         .dot-item { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
         .dot-actions { margin-top: 10px; display: none; }
         .dot-item.open .dot-actions { display: block; }
         .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; margin-bottom: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
-        .btn-danger { background: #dc3545; }
-        .btn-pdf { background: #e83e8c; }
-        
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
         .modal-content { background-color: #fefefe; margin: 2% auto; padding: 10px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 95vh; overflow-y: auto; }
-        
         #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; border: 1px dashed #ccc; overflow-x: hidden; position: relative;}
         .docx-wrapper { padding: 0 !important; background: transparent !important; margin: 0 !important; }
-        .docx-wrapper > section.docx { 
-            width: 100% !important; 
-            padding: 10px !important; 
-            margin: 0 auto !important;
-            box-sizing: border-box !important; 
-            box-shadow: none !important; 
-            min-height: auto !important;
-        }
+        .docx-wrapper > section.docx { width: 100% !important; padding: 10px !important; margin: 0 auto !important; box-sizing: border-box !important; box-shadow: none !important; min-height: auto !important; }
         .docx-wrapper table { width: 100% !important; table-layout: auto !important; word-break: break-word; }
-        .docx-wrapper img { max-width: 100% !important; height: auto !important; }
-        
-        .review-checklist div { padding: 5px 0; border-bottom: 1px dashed #ccc; }
-        .review-checklist div:last-child { border-bottom: none; }
         .b1-option-label { display: block; padding: 12px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; background: #fdfdfd; }
         .b1-option-label:hover { background: #eef5ff; border-color: #b8d4f2; }
-
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .text-blink { animation: blink 1.2s infinite; color: #dc3545; font-weight: bold; margin-bottom: 15px;}
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        
+        /* CSS cho Tab Thành viên */
+        .tab-member { display: inline-block; padding: 10px 15px; background: #ddd; margin-right: 5px; cursor: pointer; border-radius: 5px 5px 0 0; font-weight: bold; }
+        .tab-member.active { background: #0056b3; color: white; }
+        .tab-content { display: none; padding: 15px; border: 1px solid #0056b3; background: white; border-radius: 0 5px 5px 5px; }
+        .tab-content.active { display: block; }
+        
+        /* CSS Ma trận Chính sách */
+        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .matrix-table th, .matrix-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        .matrix-table th { background: #f4f7f6; }
+        .matrix-table td:first-child { text-align: left; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- MÀN HÌNH WELCOME -->
+        <!-- SCREEN WELCOME -->
         <div id="screen-welcome" class="screen active">
-            <h2 style="text-align: center;">Anh chị là Cán bộ triển khai hay Người dân thực hiện khảo sát, vui lòng bấm vào lựa chọn bên dưới:</h2>
+            <h2 style="text-align: center;">Hệ Thống Rà Soát Hộ Nghèo</h2>
             <button class="btn-big" onclick="switchScreen('screen-canbo-auth')">CÁN BỘ TRIỂN KHAI</button>
             <button class="btn-big" onclick="startNguoiDan()">NGƯỜI DÂN</button>
         </div>
 
-        <!-- PHẦN CÁN BỘ -->
+        <!-- CÁN BỘ AUTH -->
         <div id="screen-canbo-auth" class="screen">
-            <h2>PHẦN DÀNH CHO CÁN BỘ</h2>
+            <h2>Đăng Nhập Cán Bộ</h2>
             <input type="text" id="cb_username" placeholder="Tên đăng nhập"><br><br>
             <input type="password" id="cb_password" placeholder="Mật khẩu"><br><br>
             <button class="btn" onclick="authCanBo('login', this)">Đăng Nhập</button>
-            <button class="btn btn-secondary" onclick="authCanBo('register', this)">Đăng Ký Mới</button><br><br>
-            <button class="btn btn-secondary" style="background:#6c757d; width: 100%;" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại</button>
         </div>
 
         <div id="screen-canbo-dash" class="screen">
-            <h2>PHẦN DÀNH CHO CÁN BỘ</h2>
-            <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT MỚI</button>
-            
-            <div id="form-tao-dot" style="display: none; background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px; border: 1px solid #ddd;">
-                <h4 id="title-a1"></h4>
+            <h2>Dashboard Cán Bộ</h2>
+            <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT</button>
+            <div id="form-tao-dot" style="display: none; background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px;">
                 <div class="grid-2">
-                    <div>
-                        <label>Tỉnh/Thành phố:</label>
-                        <select id="cb_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn Tỉnh --</option></select>
-                    </div>
-                    <div>
-                        <label>Phường/Xã:</label>
-                        <select id="cb_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn Phường/Xã --</option></select>
-                    </div>
+                    <div><label>Tỉnh/Thành:</label><select id="cb_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+                    <div><label>Phường/Xã:</label><select id="cb_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
                 </div>
-                <div class="form-group">
-                    <label>Thôn/Tổ dân phố:</label>
-                    <input type="text" id="cb_thon" placeholder="Nhập tên thôn/tổ...">
-                </div>
-                <h4 id="title-a2"></h4>
+                <div class="form-group"><label>Thôn/Tổ:</label><input type="text" id="cb_thon"></div>
                 <div class="grid-2">
-                    <div><label>Ngày bắt đầu:</label><input type="date" id="cb_start"></div>
-                    <div><label>Ngày kết thúc:</label><input type="date" id="cb_end"></div>
+                    <div><label>Bắt đầu:</label><input type="date" id="cb_start"></div>
+                    <div><label>Kết thúc:</label><input type="date" id="cb_end"></div>
                 </div>
-                <button class="btn" onclick="taoDot()">Lưu Đợt Rà Soát</button>
+                <button class="btn" onclick="taoDot()">Lưu Đợt</button>
             </div>
-
             <div style="background:#e9ecef; padding:15px; border-radius:5px;">
-                <h3>Danh Sách Đợt Khảo Sát Của Bạn</h3>
-                <div id="canbo-dot-list"><p>Đang tải dữ liệu...</p></div>
+                <h3>Đợt Khảo Sát Của Bạn</h3>
+                <div id="canbo-dot-list"><p>Đang tải...</p></div>
             </div><br>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất & Quay Lại Màn Hình Chính</button>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất</button>
         </div>
 
-        <!-- PHẦN NGƯỜI DÂN (PHIẾU A) -->
+        <!-- NGƯỜI DÂN - PHIẾU A -->
         <div id="screen-nd-step1" class="screen">
-            <h2>Anh chị vui lòng cung cấp THÔNG TIN CÁ NHÂN theo yêu cầu bên dưới:</h2>
-            <div class="form-group"><label>Họ và tên chủ hộ:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;"></div>
-            
+            <h2>Thông Tin Cá Nhân Chủ Hộ</h2>
+            <div class="form-group"><label>Họ tên:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;"></div>
             <div class="grid-2">
-                <div>
-                    <label>CCCD (Bắt buộc 12 số):</label>
-                    <input type="text" id="nd_cccd" maxlength="12" placeholder="Nhập đủ 12 chữ số" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                </div>
-                <div>
-                    <label>Dân tộc:</label>
-                    <select id="nd_dantoc" class="searchable-select" style="width:100%"><option value="">-- Chọn Dân tộc --</option></select>
-                </div>
+                <div><label>CCCD:</label><input type="text" id="nd_cccd" maxlength="12" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                <div><label>Dân tộc:</label><select id="nd_dantoc" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
             </div>
-
             <div class="grid-2">
-                <div>
-                    <label>Tỉnh/Thành phố:</label>
-                    <select id="nd_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn Tỉnh --</option></select>
-                </div>
-                <div>
-                    <label>Phường/Xã/Đặc khu:</label>
-                    <select id="nd_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn Phường/Xã --</option></select>
-                </div>
+                <div><label>Tỉnh/Thành:</label><select id="nd_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+                <div><label>Phường/Xã:</label><select id="nd_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
             </div>
             <div class="form-group">
-                <label>Thôn/Tổ dân phố:</label>
-                <select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn Thôn/Tổ --</option></select>
-                <!-- Thêm Input điền Thôn Khác -->
-                <input type="text" id="nd_thon_khac" placeholder="Vui lòng nhập tên Thôn/Tổ dân phố của anh chị..." style="display:none; margin-top:10px;">
+                <label>Thôn/Tổ:</label><select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select>
+                <input type="text" id="nd_thon_khac" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:10px;">
             </div>
-            <button class="btn" onclick="toiBuoc2()">Tiếp tục tới phần Nhận dạng nhanh</button>
-            <br><br><button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
+            <button class="btn" onclick="toiBuoc2()">Tiếp tục Nhận Dạng Nhanh</button>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại</button>
         </div>
 
         <div id="screen-nd-step2" class="screen">
-            <h3>Nhận Dạng Nhanh - Phần 1</h3>
-            <p id="title-b1"></p>
-            <div id="list-b1"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Quay lại</button>
-            <button class="btn" onclick="checkB1()">Tiếp tục</button>
+            <h3>Nhận Dạng Nhanh 1</h3><p id="title-b1"></p><div id="list-b1"></div>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Quay lại</button><button class="btn" onclick="checkB1()">Tiếp tục</button>
         </div>
 
         <div id="screen-nd-step3" class="screen">
-            <h3>Nhận Dạng Nhanh - Phần 2</h3>
-            <p id="title-b2"></p>
-            <div id="list-b2"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step2')">Quay lại</button>
-            <button class="btn" onclick="checkB2()">Hoàn tất</button>
+            <h3>Nhận Dạng Nhanh 2</h3><p id="title-b2"></p><div id="list-b2"></div>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step2')">Quay lại</button><button class="btn" onclick="checkB2()">Hoàn tất</button>
         </div>
 
         <div id="screen-nd-review" class="screen">
-            <h3>Xác Nhận Thông Tin Phiếu A</h3>
-            <div class="review-box" id="review-content"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Quay lại trang cá nhân để Sửa</button>
-            <button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận thông tin đã đúng</button>
+            <h3>Xác Nhận Phiếu A</h3><div class="review-box" id="review-content"></div>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Sửa</button><button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
         </div>
 
-        <!-- MÀN HÌNH B1 - TỪNG CÂU HỎI -->
+        <!-- PHIẾU B1 -->
         <div id="screen-nd-b1" class="screen">
-            <h3>Phiếu B1 - Tính điểm vùng <span id="b1-progress" style="color:#0056b3;"></span></h3>
-            <p id="b1-question-text" style="font-weight: bold; font-size: 16px;"></p>
-            
-            <div id="b1-ghichu-container" style="display:none; margin-bottom:15px;">
-                <details style="background: #eef2f5; padding: 10px; border-radius: 5px; cursor: pointer;">
-                    <summary style="color: #0056b3; font-weight: bold;">? Bấm vào đây để xem thông tin chi tiết / danh sách bệnh</summary>
-                    <div id="b1-ghichu-content" style="margin-top: 10px; white-space: pre-wrap;"></div>
-                </details>
-            </div>
-            
-            <div id="b1-options"></div>
-            
-            <br>
-            <button class="btn btn-secondary" onclick="prevB1()">Quay lại câu trước</button>
-            <button class="btn" onclick="nextB1()">Tiếp tục</button>
+            <h3>Phiếu B1 <span id="b1-progress" style="color:#0056b3;"></span></h3>
+            <p id="b1-question-text" style="font-weight: bold;"></p>
+            <div id="b1-ghichu-container" style="display:none; margin-bottom:15px;"><details style="background:#eef2f5; padding:10px;"><summary style="color:#0056b3; font-weight:bold;">?</summary><div id="b1-ghichu-content" style="white-space: pre-wrap;"></div></details></div>
+            <div id="b1-options"></div><br>
+            <button class="btn btn-secondary" onclick="prevB1()">Quay lại</button><button class="btn" onclick="nextB1()">Tiếp tục</button>
         </div>
 
-        <!-- MÀN HÌNH REVIEW B1 -->
         <div id="screen-nd-review-b1" class="screen">
-            <h3>Xác Nhận Thông Tin Phiếu B1</h3>
-            
-            <div class="review-box" id="review-content-b1"></div>
-            
-            <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Anh/chị vui lòng Xem và Tải phiếu B1 ngay tại đây. Nếu làm mới (Refresh) trang, dữ liệu sẽ bị mất!</p>
-            
-            <div class="grid-2" style="margin-top: 5px;">
-                <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước Phiếu B1</button>
+            <h3>Kết Quả Phiếu B1</h3><div class="review-box" id="review-content-b1"></div>
+            <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Tải phiếu B1 tại đây trước khi đi tiếp!</p>
+            <div class="grid-2">
+                <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước</button>
                 <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="$('#dl-b1-options').slideToggle();">📥 Tải Phiếu B1 ▼</button>
             </div>
-
-            <!-- Khung chọn định dạng tải (Mặc định ẩn) -->
-            <div id="dl-b1-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;">
-                <p style="margin-top:0; font-size:14px; text-align:center; color: #155724;">Chọn định dạng anh/chị muốn tải về:</p>
+            <div id="dl-b1-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #28a745; background: #f8fff9;">
                 <div class="grid-2">
-                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">📄 File Word (.docx)</button>
-                    <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB1(this);">📕 File PDF (.pdf)</button>
+                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">📄 Word</button>
+                    <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB1(this);">📕 PDF</button>
+                </div>
+            </div><br>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="editB1()">Sửa</button>
+            <button class="btn" id="btn-submit-review-b1" style="width: 100%;" onclick="submitB1XacNhan()">Xác nhận (Tới Phiếu C)</button>
+        </div>
+
+        <!-- PHIẾU C - INIT -->
+        <div id="screen-nd-phieuc-init" class="screen">
+            <h3>Thu Thập Thông Tin Phiếu C & B2</h3>
+            <div class="form-group">
+                <label style="font-weight:bold; font-size:18px;">Hộ gia đình anh/chị có tổng cộng bao nhiêu thành viên?</label>
+                <input type="number" id="num_members" min="1" max="20" placeholder="Nhập số lượng..." style="font-size:18px;">
+            </div>
+            <button class="btn" style="width:100%; font-size:16px;" onclick="initPhieuCMembers()">Bắt đầu Khai báo</button>
+        </div>
+
+        <!-- PHIẾU C - MEMBER TABS -->
+        <div id="screen-nd-phieuc-members" class="screen">
+            <h3>Thông Tin Cá Nhân (<span id="count_members"></span>)</h3>
+            <div id="tabs-container" style="margin-bottom:15px; overflow-x:auto; white-space:nowrap; border-bottom: 2px solid #0056b3;"></div>
+            <div id="tabs-content-container"></div>
+            <br>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-phieuc-init')">Sửa số TV</button>
+            <button class="btn" style="background-color:#28a745; float:right;" onclick="checkAndGoHoGiaDinh()">Tiếp tục (Câu hỏi Hộ) →</button>
+            <div style="clear:both;"></div>
+        </div>
+
+        <!-- PHIẾU C - CÂU HỎI HỘ -->
+        <div id="screen-nd-phieuc-ho" class="screen">
+            <h3>Thông Tin Chung Của Hộ Gia Đình</h3>
+            <div id="phieuc-ho-container"></div>
+            <br>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-phieuc-members')">Quay lại</button>
+            <button class="btn" style="background-color:#e83e8c; float:right;" onclick="tinhToanLogicB2()">Chấm Điểm Phiếu B2</button>
+            <div style="clear:both;"></div>
+        </div>
+
+        <!-- PHIẾU B2 - REVIEW -->
+        <div id="screen-nd-phieub2-review" class="screen">
+            <h3 style="color:#e83e8c;">Kết Quả Đánh Giá Phiếu B2</h3>
+            <div class="review-box" id="review-content-b2"></div>
+            <br>
+            <div class="grid-2">
+                <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB2()">👀 Xem Phiếu B2</button>
+                <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="$('#dl-b2-options').slideToggle();">📥 Tải Phiếu B2 ▼</button>
+            </div>
+            <div id="dl-b2-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #28a745; background: #f8fff9;">
+                <div class="grid-2">
+                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%;" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();">📄 Word</button>
+                    <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB2(this);">📕 PDF</button>
                 </div>
             </div>
-
-            <br>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="editB1()">Quay lại câu hỏi để Sửa</button>
-            <button class="btn" id="btn-submit-review-b1" style="width: 100%;" onclick="submitB1XacNhan()">Xác nhận thông tin đã đúng</button>
+            <br><button class="btn btn-secondary" style="width: 100%;" onclick="switchScreen('screen-nd-phieuc-ho')">Sửa Lại Thông Tin</button>
         </div>
     </div>
 
     <!-- MODAL XEM TRƯỚC -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title">Xem Trước</h3>
-            <div id="modal-body"></div>
-            <br>
-            <button class="btn btn-secondary" onclick="document.getElementById('myModal').style.display='none'">Đóng Lại</button>
-        </div>
-    </div>
+    <div id="myModal" class="modal"><div class="modal-content"><h3 id="modal-title">Xem Trước</h3><div id="modal-body"></div><br><button class="btn btn-secondary" onclick="document.getElementById('myModal').style.display='none'">Đóng Lại</button></div></div>
 
     <script>
         const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev";
-        
-        let appConfig = {};
-        let activeCampaigns = [];
-        let currentUser = "";
-        let finalData = {};
+        let appConfig = {}; let activeCampaigns = []; let currentUser = ""; let finalData = {};
+        let currentB1Index = 0; let b1Answers = {}; 
 
-        // Biến chạy cho luồng B1
-        let currentB1Index = 0;
-        let b1Answers = {}; 
+        // State cho Phiếu C và B2
+        let numMembers = 0;
+        let phieuC_Data = []; // Mảng N phần tử, mỗi phần tử là 1 object { C1: val, C2: val... }
+        let hoGiaDinh_Data = {}; // Chứa B2.7, CS_DH...
 
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function initSelect2() { 
-            $('.searchable-select').select2(); 
-        }
+        function switchScreen(id) { $('.screen').removeClass('active'); $('#' + id).addClass('active'); }
+        function initSelect2() { $('.searchable-select').select2(); }
 
         window.onload = async () => {
             try {
                 const resConfig = await fetch(`${WORKER_URL}/api/config`);
                 if (resConfig.ok) {
                     appConfig = await resConfig.json();
-                    const cbTinh = document.getElementById('cb_tinh');
-                    const ndTinh = document.getElementById('nd_tinh');
-                    const ndDantoc = document.getElementById('nd_dantoc');
-
-                    Object.keys(appConfig.diachinh || {}).forEach(tinh => {
-                        cbTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
-                        ndTinh.innerHTML += `<option value="${tinh}">${tinh}</option>`;
+                    Object.keys(appConfig.diachinh || {}).forEach(t => {
+                        $('#cb_tinh').append(new Option(t,t)); $('#nd_tinh').append(new Option(t,t));
                     });
-
-                    // Đổ data Dân tộc
-                    if (appConfig.madantoc) {
-                        appConfig.madantoc.forEach(dt => {
-                            ndDantoc.innerHTML += `<option value="${dt.ma}">${dt.ten}</option>`;
-                        });
-                    }
-
+                    if (appConfig.madantoc) appConfig.madantoc.forEach(dt => $('#nd_dantoc').append(new Option(dt.ten, dt.ma)));
                     if (appConfig.cauhoi) {
-                        if (appConfig.cauhoi.A1) document.getElementById('title-a1').innerText = appConfig.cauhoi.A1.noi_dung;
-                        if (appConfig.cauhoi.A2) document.getElementById('title-a2').innerText = appConfig.cauhoi.A2.noi_dung;
+                        if (appConfig.cauhoi.A1) $('#title-a1').text(appConfig.cauhoi.A1.noi_dung);
+                        if (appConfig.cauhoi.A2) $('#title-a2').text(appConfig.cauhoi.A2.noi_dung);
                         if (appConfig.cauhoi.B1) {
-                            document.getElementById('title-b1').innerText = appConfig.cauhoi.B1.noi_dung;
-                            appConfig.cauhoi.B1.lua_chon.forEach(lc => {
-                                document.getElementById('list-b1').innerHTML += `<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`;
-                            });
+                            $('#title-b1').text(appConfig.cauhoi.B1.noi_dung);
+                            appConfig.cauhoi.B1.lua_chon.forEach(lc => $('#list-b1').append(`<label><input type="checkbox" class="cb-b1"> ${lc}</label><br><br>`));
                         }
                         if (appConfig.cauhoi.B2) {
-                            document.getElementById('title-b2').innerText = appConfig.cauhoi.B2.noi_dung;
-                            appConfig.cauhoi.B2.lua_chon.forEach(lc => {
-                                document.getElementById('list-b2').innerHTML += `<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`;
-                            });
+                            $('#title-b2').text(appConfig.cauhoi.B2.noi_dung);
+                            appConfig.cauhoi.B2.lua_chon.forEach(lc => $('#list-b2').append(`<label><input type="checkbox" class="cb-b2"> ${lc}</label><br><br>`));
                         }
                     }
                 }
-            } catch (e) { console.error("Lỗi Config:", e); }
-
+            } catch (e) {}
             try {
                 const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
                 const dotData = await resDots.json();
                 if(dotData.status === "success") activeCampaigns = dotData.dots;
-            } catch (e) { console.error("Lỗi lấy danh sách đợt:", e); }
-
+            } catch (e) {}
             initSelect2();
-            $('#cb_tinh').on('change', loadCbPhuong);
-            $('#nd_tinh').on('change', loadNdPhuong);
-            $('#nd_phuong').on('change', loadNdThon);
-            
-            $('#nd_thon').on('change', function() {
-                if ($(this).val() === 'Khác') {
-                    $('#nd_thon_khac').slideDown();
-                } else {
-                    $('#nd_thon_khac').slideUp();
-                }
-            });
+            $('#cb_tinh').on('change', loadCbPhuong); $('#nd_tinh').on('change', loadNdPhuong); $('#nd_phuong').on('change', loadNdThon);
+            $('#nd_thon').on('change', function() { $(this).val() === 'Khác' ? $('#nd_thon_khac').slideDown() : $('#nd_thon_khac').slideUp(); });
         };
 
-        // --- NGƯỜI DÂN ---
-        async function startNguoiDan() { 
-            switchScreen('screen-nd-step1'); 
-            try {
-                const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
-                const dotData = await resDots.json();
-                if(dotData.status === "success") {
-                    activeCampaigns = dotData.dots;
-                    loadNdThon(); 
-                }
-            } catch(e) { console.log("Lỗi lấy đợt:", e); }
-        }
-        
+        async function startNguoiDan() { switchScreen('screen-nd-step1'); loadNdThon(); }
+        function loadCbPhuong() { let t = $('#cb_tinh').val(); $('#cb_phuong').empty().append('<option value="">-- Chọn --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#cb_phuong').append(new Option(p,p))); }
+        function loadNdPhuong() { let t = $('#nd_tinh').val(); $('#nd_phuong').empty().append('<option value="">-- Chọn --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#nd_phuong').append(new Option(p,p))); loadNdThon(); }
+        function loadNdThon() { let t = $('#nd_tinh').val(), p = $('#nd_phuong').val(); $('#nd_thon').empty().append('<option value="">-- Chọn --</option>'); activeCampaigns.filter(d => d.tinh===t && d.phuong===p).forEach(d => $('#nd_thon').append(new Option(d.thon, d.id_dot))); $('#nd_thon').append(new Option("Khác", "Khác")); }
+
         function toiBuoc2() {
-            const cccd = document.getElementById('nd_cccd').value;
-            if (cccd.length !== 12) { alert("❌ Lỗi: Vui lòng nhập ĐỦ 12 chữ số CCCD!"); return; }
-            if (!document.getElementById('nd_dantoc').value) { alert("❌ Lỗi: Vui lòng chọn Dân tộc!"); return; }
-            if (!document.getElementById('nd_hoten').value) { alert("❌ Lỗi: Vui lòng nhập Họ Tên!"); return; }
-            
-            const thonVal = document.getElementById('nd_thon').value;
-            if (!thonVal) { alert("❌ Lỗi: Vui lòng chọn Thôn/Tổ dân phố!"); return; }
-            if (thonVal === "Khác" && !document.getElementById('nd_thon_khac').value.trim()) {
-                alert("❌ Lỗi: Vui lòng nhập tên Thôn/Tổ dân phố của anh chị!"); return;
-            }
+            if ($('#nd_cccd').val().length !== 12) return alert("❌ Nhập ĐỦ 12 số CCCD!");
+            if (!$('#nd_dantoc').val() || !$('#nd_hoten').val() || !$('#nd_thon').val()) return alert("❌ Nhập đủ thông tin!");
+            if ($('#nd_thon').val() === "Khác" && !$('#nd_thon_khac').val().trim()) return alert("❌ Nhập tên Thôn/Tổ!");
             switchScreen('screen-nd-step2');
         }
 
-        function loadNdPhuong() {
-            const tinh = $('#nd_tinh').val();
-            $('#nd_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>');
-            if (tinh && appConfig.diachinh[tinh]) {
-                appConfig.diachinh[tinh].forEach(p => $('#nd_phuong').append(new Option(p, p)));
-            }
-            $('#nd_phuong').trigger('change'); 
-            loadNdThon();
-        }
-
-        function loadNdThon() {
-            const tinh = $('#nd_tinh').val();
-            const phuong = $('#nd_phuong').val();
-            
-            $('#nd_thon').empty().append('<option value="">-- Chọn Thôn/Tổ --</option>');
-            const dotsInPhuong = activeCampaigns.filter(d => d.tinh === tinh && d.phuong === phuong);
-            dotsInPhuong.forEach(d => { 
-                $('#nd_thon').append(new Option(d.thon, d.id_dot)); 
-            });
-            $('#nd_thon').append(new Option("Khác (Tự kiểm tra)", "Khác"));
-            $('#nd_thon').trigger('change'); 
-        }
-
         async function ghiNhanDataNgam() {
-            const thonEl = document.getElementById('nd_thon');
-            finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-            finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
-            finalData.ID_Dot = thonEl.value !== "Khác" ? thonEl.value : "";
-            
-            const tinh = $('#nd_tinh').val();
-            const phuong = $('#nd_phuong').val();
-            const b1KhuvucType = (phuong || "").includes('Phường') ? 1 : 2;
-            
-            let baremText = "";
-            if (b1KhuvucType === 1) {
-                baremText = "Đô thị";
-            } else {
-                const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : null;
-                if (kvInfo && kvInfo.nt_rieng) {
-                    baremText = "Nông thôn - " + kvInfo.nt_rieng;
-                } else {
-                    baremText = "Nông thôn - " + (kvInfo ? kvInfo.chung : "");
-                }
-            }
-            
-            finalData.Tinh_thanh = tinh;
-            finalData.Phuong_xa = phuong;
-            finalData.Khuvuc = b1KhuvucType;
-            finalData.Barem = baremText;
-
-            if (finalData.ID_Dot) {
-                finalData.action = "submit_phieuA";
-                await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(finalData) });
-            }
+            finalData.B = $('#nd_hoten').val().toUpperCase(); finalData.CCCD = "'" + $('#nd_cccd').val();
+            finalData.ID_Dot = $('#nd_thon').val() !== "Khác" ? $('#nd_thon').val() : "";
+            const t = $('#nd_tinh').val(), p = $('#nd_phuong').val(), isDoThi = (p||"").includes('Phường')?1:2;
+            const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[t] : null;
+            finalData.Tinh_thanh = t; finalData.Phuong_xa = p; finalData.Khuvuc = isDoThi;
+            finalData.Barem = isDoThi===1 ? "Đô thị" : "Nông thôn - " + (kvInfo?.nt_rieng || kvInfo?.chung || "");
         }
 
         function checkB1() {
-            const checkedCount = document.querySelectorAll('.cb-b1:checked').length;
-            if (checkedCount > 0) {
-                finalData["0"] = 0; 
-                finalData["E"] = 0;
-                
-                const thonEl = document.getElementById('nd_thon');
-                const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
-                
-                finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-                finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
-                const cccdDisplay = document.getElementById('nd_cccd').value; 
-                
-                let reviewListB1 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Lý do không thuộc diện (Phần 1):</strong><br>";
-                document.querySelectorAll('.cb-b1:checked').forEach(cb => {
-                    reviewListB1 += `<div>✅ ${cb.parentElement.innerText.trim()}</div>`;
-                });
-                reviewListB1 += "</div>";
-
-                document.getElementById('review-content').innerHTML = `
-                    <p><strong>Họ tên:</strong> ${finalData.B}</p>
-                    <p><strong>CCCD:</strong> ${cccdDisplay}</p>
-                    <p><strong>Địa chỉ:</strong> ${thonText}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
-                    <p><strong>Kết luận:</strong> <span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp (Vi phạm điều kiện Phần 1)</span></p>
-                    ${reviewListB1}
-                `;
-
-                document.getElementById('btn-submit-review').innerText = "Xác nhận và Kết thúc";
-                switchScreen('screen-nd-review');
-
-            } else {
-                finalData["0"] = 1; 
-                switchScreen('screen-nd-step3');
-            }
+            if ($('.cb-b1:checked').length > 0) {
+                finalData["0"]=0; finalData["E"]=0; finalData.B=$('#nd_hoten').val().toUpperCase();
+                let html = "<div class='review-checklist'><strong>Lý do rớt:</strong><br>"; $('.cb-b1:checked').forEach(cb => html+=`<div>✅ ${cb.parentElement.innerText}</div>`); html+="</div>";
+                $('#review-content').html(`<p><strong>Kết luận:</strong> <span style="color:red;">Không thuộc diện rà soát tiếp</span></p>${html}`);
+                $('#btn-submit-review').text("Kết thúc"); switchScreen('screen-nd-review');
+            } else { finalData["0"]=1; switchScreen('screen-nd-step3'); }
         }
 
         function checkB2() {
-            let tongD = 0;
-            const cbs = document.querySelectorAll('.cb-b2');
-            let reviewListB2 = "<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'><strong>Chi tiết các tiêu chí (Phần 2):</strong><br>";
-            
-            cbs.forEach((cb, i) => {
-                const val = cb.checked ? 1 : 0;
-                finalData[`${i + 1}`] = val;
-                tongD += val;
-                const labelText = cb.parentElement.innerText.trim();
-                reviewListB2 += `<div>${val === 1 ? '✅' : '⬜'} ${labelText}</div>`;
-            });
-            reviewListB2 += "</div>";
-            finalData["D"] = tongD;
-
-            const isPass = tongD < 4;
-            finalData["E"] = isPass ? 1 : 0; 
-
-            const thonEl = document.getElementById('nd_thon');
-            const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
-            
-            finalData.B = document.getElementById('nd_hoten').value.toUpperCase();
-            finalData.CCCD = "'" + document.getElementById('nd_cccd').value;
-            const cccdDisplay = document.getElementById('nd_cccd').value; 
-            
-            let resultText = isPass 
-                ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Chuyển tới Phiếu B1)</span>` 
-                : `<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>`;
-
-            document.getElementById('review-content').innerHTML = `
-                <p><strong>Họ tên:</strong> ${finalData.B}</p>
-                <p><strong>CCCD:</strong> ${cccdDisplay}</p>
-                <p><strong>Địa chỉ:</strong> ${thonText}, ${$('#nd_phuong').val()}, ${$('#nd_tinh').val()}</p>
-                <p><strong>Tổng điểm Bước 2:</strong> <span style="color:red; font-weight:bold;">${finalData["D"]} / ${cbs.length}</span></p>
-                <p><strong>Kết luận:</strong> ${resultText}</p>
-                ${reviewListB2}
-            `;
-
-            const btnSubmit = document.getElementById('btn-submit-review');
-            btnSubmit.innerText = isPass ? "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B1)" : "Xác nhận và Kết thúc";
-            switchScreen('screen-nd-review');
+            let tongD=0; let html="<div class='review-checklist'>";
+            $('.cb-b2').each((i,cb) => { let v = cb.checked?1:0; finalData[i+1]=v; tongD+=v; html+=`<div>${v?'✅':'⬜'} ${cb.parentElement.innerText}</div>`; });
+            html+="</div>"; finalData["D"]=tongD; finalData["E"] = tongD<4 ? 1 : 0;
+            let res = finalData["E"] ? "<span style="color:green;">Đủ điều kiện (Tới Phiếu B1)</span>" : "<span style="color:red;">Không thuộc diện rà soát tiếp</span>";
+            $('#review-content').html(`<p><strong>Điểm B2 (Nhận dạng):</strong> ${tongD}</p><p><strong>Kết luận:</strong> ${res}</p>${html}`);
+            $('#btn-submit-review').text(finalData["E"] ? "Xác nhận (Tới Phiếu B1)" : "Kết thúc"); switchScreen('screen-nd-review');
         }
 
-        async function submitDataXacNhan() {
-            await ghiNhanDataNgam(); 
-            if (finalData["E"] === 1) {
-                startPhieuB1(); 
-            } else {
-                location.reload(); 
-            }
-        }
+        async function submitDataXacNhan() { await ghiNhanDataNgam(); finalData["E"]===1 ? startPhieuB1() : location.reload(); }
 
-        // ================== LUỒNG PHIẾU B1 ================== //
-        function startPhieuB1() {
-            if (!appConfig.phieu_b1 || appConfig.phieu_b1.length === 0) {
-                alert("Hệ thống chưa đồng bộ bộ câu hỏi Phiếu B1 từ máy chủ. Vui lòng liên hệ cán bộ.");
-                return;
-            }
-            currentB1Index = 0;
-            switchScreen('screen-nd-b1');
-            renderB1();
-        }
-
+        // --- PHIẾU B1 ---
+        function startPhieuB1() { currentB1Index=0; switchScreen('screen-nd-b1'); renderB1(); }
         function renderB1() {
-            let q = appConfig.phieu_b1[currentB1Index];
-            document.getElementById('b1-progress').innerText = `(Câu ${currentB1Index + 1}/${appConfig.phieu_b1.length})`;
-            document.getElementById('b1-question-text').innerText = q.noidung;
-            
-            if (q.ghichu && q.ghichu.trim() !== "") {
-                document.getElementById('b1-ghichu-container').style.display = 'block';
-                document.getElementById('b1-ghichu-content').innerText = q.ghichu;
-            } else {
-                document.getElementById('b1-ghichu-container').style.display = 'none';
-            }
-            
-            let optsHTML = "";
-            let savedAns = b1Answers[q.ma]; 
-            
+            let q = appConfig.phieu_b1[currentB1Index]; $('#b1-progress').text(`(${currentB1Index+1}/${appConfig.phieu_b1.length})`);
+            $('#b1-question-text').text(q.noidung);
+            q.ghichu ? $('#b1-ghichu-container').show() && $('#b1-ghichu-content').text(q.ghichu) : $('#b1-ghichu-container').hide();
+            let optsHTML=""; let saved = b1Answers[q.ma];
             q.options.forEach((opt, idx) => {
-                let inputType = q.isMulti ? "checkbox" : "radio";
-                let inputName = q.isMulti ? `b1_opt_${idx}` : "b1_opt";
-                
-                let checked = "";
-                if (q.isMulti) {
-                    if (Array.isArray(savedAns) && savedAns.includes(idx)) checked = "checked";
-                } else {
-                    if (savedAns === idx) checked = "checked";
-                }
-                
-                optsHTML += `<label class="b1-option-label">
-                    <input type="${inputType}" name="${inputName}" class="b1-input" value="${idx}" ${checked}> ${opt.text}
-                </label>`;
+                let type = q.isMulti?"checkbox":"radio", chk = (q.isMulti && Array.isArray(saved) && saved.includes(idx)) || (!q.isMulti && saved===idx) ? "checked" : "";
+                optsHTML+=`<label class="b1-option-label"><input type="${type}" name="b1_opt" class="b1-input" value="${idx}" ${chk}> ${opt.text}</label>`;
             });
-            document.getElementById('b1-options').innerHTML = optsHTML;
+            $('#b1-options').html(optsHTML);
         }
-
         function saveCurrentB1Answer() {
-            let q = appConfig.phieu_b1[currentB1Index];
-            
-            if (q.isMulti) {
-                let selected = document.querySelectorAll('.b1-input:checked');
-                if (selected.length > 0) {
-                    b1Answers[q.ma] = Array.from(selected).map(cb => parseInt(cb.value));
-                    return true;
-                }
-            } else {
-                let selected = document.querySelector('.b1-input:checked');
-                if (selected) {
-                    b1Answers[q.ma] = parseInt(selected.value);
-                    return true;
-                }
-            }
+            let q=appConfig.phieu_b1[currentB1Index], sel=$('.b1-input:checked');
+            if(sel.length>0){ b1Answers[q.ma] = q.isMulti ? Array.from(sel).map(e=>Number(e.value)) : Number(sel.val()); return true; }
             return false;
         }
+        function prevB1() { if(currentB1Index>0) { saveCurrentB1Answer(); currentB1Index--; renderB1(); } }
+        function nextB1() { if(!saveCurrentB1Answer()) return alert("Vui lòng chọn đáp án!"); if(currentB1Index<appConfig.phieu_b1.length-1){ currentB1Index++; renderB1(); } else showReviewB1(); }
 
-        function prevB1() {
-            if (currentB1Index > 0) {
-                saveCurrentB1Answer();
-                currentB1Index--;
-                renderB1();
-            } else {
-                alert("Đây là câu đầu tiên của Phiếu B1.");
-            }
-        }
-
-        function nextB1() {
-            if (!saveCurrentB1Answer()) {
-                let textCheck = appConfig.phieu_b1[currentB1Index].isMulti ? "ít nhất 1 đáp án" : "1 đáp án";
-                alert(`❌ Vui lòng chọn ${textCheck} trước khi qua câu tiếp theo!`);
-                return;
-            }
-            if (currentB1Index < appConfig.phieu_b1.length - 1) {
-                currentB1Index++;
-                renderB1();
-            } else {
-                showReviewB1();
-            }
-        }
-
-        // HÀM QUAN TRỌNG: XÁC ĐỊNH MÃ VÙNG VÀ ĐIỂM CHUẨN
         function getVungInfo() {
-            const tinh = $('#nd_tinh').val();
-            const phuong = $('#nd_phuong').val();
-            const isDoThi = (phuong || "").includes('Phường');
-            
-            const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[tinh] : null;
-            let tenVung = "", maVung = "";
-            
-            if (isDoThi) {
-                tenVung = kvInfo ? kvInfo.chung : "";
-                maVung = appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung] ? appConfig.diemcong_dothi[tenVung].ma : "TPTW";
-            } else {
-                if (kvInfo && kvInfo.nt_rieng) {
-                    tenVung = kvInfo.nt_rieng; // Xã của TPTW
-                } else {
-                    tenVung = kvInfo ? kvInfo.chung : ""; // Xã của tỉnh bình thường
-                }
-                maVung = appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung] ? appConfig.diemcong_dothi[tenVung].ma : "DBSH";
-            }
-            
-            const diemCongDoThi = (isDoThi && appConfig.diemcong_dothi && appConfig.diemcong_dothi[tenVung]) ? appConfig.diemcong_dothi[tenVung].diem : 0;
-            const colLookup = isDoThi ? "DoThi_Chung" : "NT_" + maVung;
-            
-            // ĐIỂM CHUẨN: Đô thị 280, Nông thôn 190
-            const diemChuan = isDoThi ? 280 : 190;
-            const loaiVungText = isDoThi ? "Đô thị" : "Nông thôn";
-
-            return { isDoThi, tenVung, maVung, diemCongDoThi, colLookup, diemChuan, loaiVungText };
+            const t=$('#nd_tinh').val(), p=$('#nd_phuong').val(), isDoThi=(p||"").includes('Phường');
+            const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[t] : null; let tenVung="", maVung="";
+            if(isDoThi){ tenVung = kvInfo?.chung||""; maVung = appConfig.diemcong_dothi?.[tenVung]?.ma || "TPTW"; }
+            else { tenVung = kvInfo?.nt_rieng || kvInfo?.chung || ""; maVung = appConfig.diemcong_dothi?.[tenVung]?.ma || "DBSH"; }
+            const diemCongDoThi = (isDoThi && appConfig.diemcong_dothi?.[tenVung]?.diem) || 0;
+            return { isDoThi, tenVung, maVung, diemCongDoThi, colLookup: isDoThi?"DoThi_Chung":"NT_"+maVung, diemChuan: isDoThi?220:190, txt: isDoThi?"Đô thị":"Nông thôn" };
         }
 
         function showReviewB1() {
-            const vi = getVungInfo();
-            let totalScore = 0;
-            let htmlList = `<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;'>`;
-            
+            const vi = getVungInfo(); let totalScore=0, html="<div class='review-checklist'>";
             appConfig.phieu_b1.forEach(q => {
-                let savedAns = b1Answers[q.ma];
-                htmlList += `<div style="padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
-                
-                if (q.isMulti) {
-                    if (Array.isArray(savedAns)) {
-                        savedAns.forEach(idx => {
-                            let ansObj = q.options[idx];
-                            let score = ansObj[vi.colLookup] || 0;
-                            let optTextLower = ansObj.text.trim().toLowerCase();
-                            // Chỉ cộng điểm nếu không phải đáp án "không có"
-                            if (!optTextLower.startsWith("không có")) {
-                                totalScore += score;
-                            }
-                            htmlList += `✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span><br>`;
-                        });
-                    }
-                } else {
-                    if (savedAns !== undefined) {
-                        let ansObj = q.options[savedAns];
-                        let score = ansObj[vi.colLookup] || 0;
-                        let optTextLower = ansObj.text.trim().toLowerCase();
-                        if (!optTextLower.startsWith("không có")) {
-                            totalScore += score;
-                        }
-                        htmlList += `✅ ${ansObj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${score} điểm)</span><br>`;
-                    }
-                }
-                htmlList += `</div>`;
+                let ans = b1Answers[q.ma]; html+=`<div><strong>${q.noidung}</strong><br>`;
+                let processOpt = (idx) => { let obj=q.options[idx], sc=obj[vi.colLookup]||0; if(!obj.text.toLowerCase().startsWith("không có")) totalScore+=sc; html+=`✅ ${obj.text} (+${sc})<br>`; };
+                if(q.isMulti && Array.isArray(ans)) ans.forEach(processOpt); else if(ans!==undefined) processOpt(ans);
+                html+="</div>";
             });
-            
-            if (vi.isDoThi && vi.diemCongDoThi > 0) {
-                totalScore += vi.diemCongDoThi;
-                htmlList += `<div style="padding-bottom:10px; background:#eef5ff; padding:8px; border-radius:3px;">
-                    <strong>Cộng điểm Đô thị vùng (${vi.tenVung})</strong>: <span style="color:#0056b3; font-weight:bold; float:right;">+${vi.diemCongDoThi} điểm</span>
-                </div>`;
-            }
-            htmlList += "</div>";
-            
-            // Xét kết quả dựa trên điểm chuẩn linh hoạt
-            let isPass = totalScore <= vi.diemChuan;
-            let resultText = isPass 
-                ? `<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Tới Phiếu B2)</span>` 
-                : `<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>`;
-                
-            document.getElementById('review-content-b1').innerHTML = `
-                <p><strong>Phân loại:</strong> ${vi.loaiVungText} - ${vi.tenVung || "Không xác định"}</p>
-                <p><strong>Điểm chuẩn tối đa để đi tiếp:</strong> ${vi.diemChuan} điểm</p>
-                <p><strong>Tổng điểm Phiếu B1 của anh/chị:</strong> <span style="color:red; font-weight:bold; font-size:18px;">${totalScore}</span></p>
-                <p><strong>Kết luận:</strong> ${resultText}</p>
-                ${htmlList}
-            `;
-            
-            const btnSubmit = document.getElementById('btn-submit-review-b1');
-            btnSubmit.innerText = isPass ? "Xác nhận thông tin đã đúng (Chuyển tới Phiếu B2)" : "Xác nhận và Kết thúc";
-            
-            finalData.TongDiemB1 = totalScore;
-            finalData.KetQuaB1 = isPass ? "Đậu" : "Rớt";
-            switchScreen('screen-nd-review-b1');
+            if(vi.diemCongDoThi>0) { totalScore+=vi.diemCongDoThi; html+=`<div><strong>Cộng Đô thị:</strong> +${vi.diemCongDoThi}</div>`; }
+            html+="</div>";
+            let isPass = totalScore <= vi.diemChuan; finalData.TongDiemB1 = totalScore; finalData.KetQuaB1 = isPass?"Đậu":"Rớt";
+            $('#review-content-b1').html(`<p><strong>Vùng:</strong> ${vi.txt} - ${vi.tenVung}</p><p><strong>Tổng điểm B1:</strong> <span style="color:red;font-weight:bold;font-size:18px">${totalScore}</span> / ${vi.diemChuan}</p><p><strong>Kết luận:</strong> ${isPass?'<span style="color:green">Đạt</span>':'<span style="color:red">Không đạt</span>'}</p>${html}`);
+            $('#btn-submit-review-b1').text(isPass?"Xác nhận (Tới Phiếu C)":"Kết thúc"); switchScreen('screen-nd-review-b1');
         }
 
-        // --- HÀM TẠO DATA & MAPPING CHO FILE WORD PHIẾU B1 ---
         function prepareWordDataB1() {
             const vi = getVungInfo();
-            const tinh = $('#nd_tinh').val();
-            const phuong = $('#nd_phuong').val();
-            const thonEl = document.getElementById('nd_thon');
-            const thonText = thonEl.value === "Khác" ? document.getElementById('nd_thon_khac').value : thonEl.options[thonEl.selectedIndex].text;
-            const cccd = document.getElementById('nd_cccd').value;
-
-            let wordData = {
-                Khuvuc: vi.isDoThi ? 1 : 2,
-                Tinh_thanh: tinh,
-                Phuong_xa: phuong,
-                Thon_to: thonText,
-                B: document.getElementById('nd_hoten').value.toUpperCase(),
-                Ma_Dantoc: document.getElementById('nd_dantoc').value,
-                TongDiem_B1: finalData.TongDiemB1 || 0,
-                C1: cccd[0]||"", C2: cccd[1]||"", C3: cccd[2]||"", C4: cccd[3]||"",
-                C5: cccd[4]||"", C6: cccd[5]||"", C7: cccd[6]||"", C8: cccd[7]||"",
-                C9: cccd[8]||"", C10: cccd[9]||"", C11: cccd[10]||"", C12: cccd[11]||""
-            };
-
-            // Loop B1.1 -> B1.14
+            let d = { Khuvuc:vi.isDoThi?1:2, Tinh_thanh:$('#nd_tinh').val(), Phuong_xa:$('#nd_phuong').val(), Thon_to:$('#nd_thon').val()==="Khác"?$('#nd_thon_khac').val():$('#nd_thon option:selected').text(), B:$('#nd_hoten').val().toUpperCase(), Ma_Dantoc:$('#nd_dantoc').val(), TongDiem_B1:finalData.TongDiemB1 };
+            let cccd = $('#nd_cccd').val(); for(let i=0;i<12;i++) d[`C${i+1}`] = cccd[i]||"";
             appConfig.phieu_b1.forEach(q => {
-                let m = q.ma.replace('.', '_'); // B1.1 -> B1_1
-                let savedAns = b1Answers[q.ma];
-                let diemCau = 0;
-                let hasValidAns = false;
+                let m = q.ma.replace('.','_'), ans = b1Answers[q.ma], diem=0, hasV=false;
+                q.options.forEach((o,i) => d[`x_${m}_${i}`]=""); d[`Diem_${m}`]="";
+                let checkObj = (i) => { let o=q.options[i]; if(!o.text.toLowerCase().startsWith("không có")){ d[`x_${m}_${i}`]="x"; diem+=o[vi.colLookup]||0; hasV=true; }};
+                if(q.isMulti && Array.isArray(ans)) ans.forEach(checkObj); else if(ans!==undefined) checkObj(ans);
+                if(hasV) d[`Diem_${m}`]=diem;
+            });
+            ["DBSH","MNPB","BTB","DHTN","DNB","DBSCL","TW"].forEach(v => { d[`x_B1_15_${v}`]=""; d[`Diem_B1_15_${v}`]=""; });
+            if(vi.isDoThi && vi.diemCongDoThi>0) { let vMap=vi.maVung==="TPTW"?"TW":vi.maVung; d[`x_B1_15_${vMap}`]="x"; d[`Diem_B1_15_${vMap}`]=vi.diemCongDoThi; }
+            return d;
+        }
 
-                q.options.forEach((opt, idx) => {
-                    wordData[`x_${m}_${idx}`] = ""; 
+        function getB1TemplateUrl() { return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${getVungInfo().isDoThi?"Dothi":getVungInfo().maVung}.docx`; }
+
+        async function handleDocxPreview(data, url, modalId, containerId) {
+            $(`#${modalId}`).show(); $(`#${containerId}`).html("<p>Đang tải...</p>");
+            try {
+                const zip = new PizZip(await (await fetch(url)).arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                $(`#${containerId}`).html(""); await docx.renderAsync(out, document.getElementById(containerId), null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
+            } catch(e) { $(`#${containerId}`).html("<p style='color:red'>Lỗi tải</p>"); }
+        }
+        async function handleDocxDownload(data, url, filename) {
+            try {
+                const zip = new PizZip(await (await fetch(url)).arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
+                saveAs(doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }), filename);
+            } catch(e) { alert("Lỗi tải file"); }
+        }
+        async function handlePdfDownload(data, url, filename, btn) {
+            let ogText = btn.innerText; btn.innerText="⏳ Đang PDF..."; btn.disabled=true;
+            try {
+                const zip = new PizZip(await (await fetch(url)).arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
+                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: doc.getZip().generate({ type: "base64" }) }) });
+                const pdfData = await pdfRes.json();
+                if(pdfData.status==="success"){
+                    const chars = atob(pdfData.pdfBase64), nums = new Array(chars.length);
+                    for(let i=0; i<chars.length; i++) nums[i] = chars.charCodeAt(i);
+                    saveAs(new Blob([new Uint8Array(nums)], { type: "application/pdf" }), filename);
+                } else alert("Lỗi convert PDF");
+            } catch(e) { alert("Lỗi"); }
+            btn.innerText=ogText; btn.disabled=false;
+        }
+
+        function xemTruocDocxB1() { $('#modal-title').text("Phiếu B1"); handleDocxPreview(prepareWordDataB1(), getB1TemplateUrl(), 'myModal', 'modal-body'); }
+        function taiFileWordB1() { taiFileWord(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.docx`); }
+        function taiFilePDFB1(btn) { handlePdfDownload(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b1-options').slideUp(); }
+        function editB1() { switchScreen('screen-nd-b1'); }
+        
+        function submitB1XacNhan() {
+            if(finalData.KetQuaB1==="Đậu") { switchScreen('screen-nd-phieuc-init'); } else location.reload();
+        }
+
+        // ================== PHIẾU C & B2 ENGINE ================== //
+        
+        function initPhieuCMembers() {
+            let n = parseInt($('#num_members').val());
+            if(isNaN(n) || n<1 || n>20) return alert("Nhập số hợp lệ (1-20)");
+            numMembers = n; phieuC_Data = Array.from({length: n}, () => ({})); hoGiaDinh_Data = {};
+            
+            let tabsHtml = "", contentHtml = "";
+            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !q.ghichu.includes('Matrix_CS')); // Tách lấy cá nhân
+
+            for(let i=0; i<n; i++) {
+                tabsHtml += `<div class="tab-member ${i===0?'active':''}" onclick="switchMemberTab(${i})">Thành viên ${i+1}</div>`;
+                contentHtml += `<div id="member-content-${i}" class="tab-content ${i===0?'active':''}">`;
+                
+                pCQuestions.forEach(q => {
+                    // Xử lý Giao diện Từng câu hỏi
+                    let m = q.ma, display = "block";
+                    contentHtml += `<div class="phieuc-question" id="q_${i}_${m}" style="display:${display}; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
+                        <strong>${m}. ${q.noidung}</strong> ${q.k_bat_buoc?'(Không bắt buộc)':''}<br>`;
+                    
+                    if(q.options && q.options.length > 0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
+                        // Trắc nghiệm
+                        q.options.forEach((opt, o_idx) => {
+                            let isFillKhac = opt.text.includes('(fill)');
+                            let textL = opt.text.replace('(fill)', '').trim();
+                            let type = q.isMulti ? 'checkbox' : 'radio';
+                            contentHtml += `<label style="display:block; margin-top:5px;"><input type="${type}" name="pC_${i}_${m}" value="${opt.ma_lc}" onchange="evalDieuKienTuoi(${i})"> ${textL}</label>`;
+                            if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" placeholder="Ghi rõ..." style="display:none; margin-left:20px; width:90%; margin-top:5px;">`;
+                        });
+                    } else if (q.options[0].text.includes('(date)')) {
+                        contentHtml += `<input type="date" id="pC_${i}_${m}" onchange="evalDieuKienTuoi(${i})">`;
+                    } else if (q.options[0].text.includes('(dropdown)')) {
+                        contentHtml += `<select id="pC_${i}_${m}" class="searchable-select" style="width:100%"><option value="">-- Chọn Dân tộc --</option>`;
+                        appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
+                        contentHtml += `</select>`;
+                    } else {
+                        // Fill thường (text/number)
+                        let isNum = m==='C8'||m==='C9', suffix = m==='C8'?" cm":m==='C9'?" kg":"";
+                        contentHtml += `<div style="display:flex; align-items:center;"><input type="${isNum?'text':'text'}" id="pC_${i}_${m}" placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); evalDieuKienTuoi(${i})"> <span style="margin-left:5px;">${suffix}</span></div>`;
+                    }
+                    contentHtml += `</div>`;
                 });
-                wordData[`Diem_${m}`] = "";
+                contentHtml += `</div>`;
+            }
+            $('#tabs-container').html(tabsHtml); $('#tabs-content-container').html(contentHtml);
+            $('.searchable-select').select2();
+            
+            // Xử lý show text "Khác"
+            $('input[type="radio"], input[type="checkbox"]').on('change', function() {
+                let name = $(this).attr('name'); let isChk = $(this).is(':checked'); let val =$(this).val();
+                let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.show() : txtBox.hide();
+            });
+            
+            switchScreen('screen-nd-phieuc-members'); evalDieuKienTuoi(0);
+        }
 
-                if (q.isMulti) {
-                    if (Array.isArray(savedAns)) {
-                        savedAns.forEach(idx => {
-                            let optText = q.options[idx].text.trim().toLowerCase();
-                            if (!optText.startsWith("không có")) {
-                                let score = q.options[idx][vi.colLookup] || 0;
-                                wordData[`x_${m}_${idx}`] = "x";
-                                diemCau += score;
-                                hasValidAns = true;
-                            }
+        function switchMemberTab(idx) {
+            $('.tab-member, .tab-content').removeClass('active');$($('.tab-member')[idx]).addClass('active');$(`#member-content-${idx}`).addClass('active');
+            evalDieuKienTuoi(idx);
+        }
+
+        function tinhTuoi(dateStr) {
+            if(!dateStr) return {nam: -1, thang: -1};
+            let d = new Date(dateStr), now = new Date();
+            let thang = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+            if(now.getDate() < d.getDate()) thang--;
+            return { nam: Math.floor(thang/12), thang: thang };
+        }
+
+        function evalDieuKienTuoi(idx) {
+            let ns = $(`#pC_${idx}_C4`).val(); let tObj = tinhTuoi(ns);
+            let ageY = tObj.nam;
+            (appConfig.phieu_c || []).forEach(q => {
+                if(q.dieu_kien && !q.isHo) {
+                    let show = false;
+                    if(ageY !== -1) {
+                        try { show = new Function("tuoi", "return tuoi " + q.dieu_kien)(ageY); } catch(e){}
+                    }
+                    show ? $(`#q_${idx}_${q.ma}`).slideDown() : $(`#q_${idx}_${q.ma}`).slideUp();
+                }
+            });
+        }
+
+        function savePhieuCMembers() {
+            let ok = true;
+            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !q.ghichu.includes('Matrix_CS'));
+            
+            for(let i=0; i<numMembers; i++) {
+                let ageObj = tinhTuoi($(`#pC_${i}_C4`).val());
+                pCQuestions.forEach(q => {
+                    let isVisible = $(`#q_${i}_${q.ma}`).is(':visible');
+                    if(!isVisible) { phieuC_Data[i][q.ma] = null; return; }
+                    
+                    let val = null;
+                    if(q.options && q.options.length>0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
+                        let sel = $(`input[name="pC_${i}_${q.ma}"]:checked`);
+                        if(q.isMulti) {
+                            val = []; sel.each(function(){ val.push($(this).val()); });
+                        } else {
+                            val = sel.val();
+                        }
+                    } else {
+                        val = $(`#pC_${i}_${q.ma}`).val();
+                        if(q.ma==='C8' || q.ma==='C9') val = parseFloat(val); // Convert to number
+                    }
+                    
+                    if(!q.k_bat_buoc && (val===null || val==="" || (Array.isArray(val) && val.length===0))) {
+                        ok = false;
+                    }
+                    phieuC_Data[i][q.ma] = val;
+                });
+            }
+            return ok;
+        }
+
+        function checkAndGoHoGiaDinh() {
+            if(!savePhieuCMembers()) return alert("⚠️ Vui lòng điền đủ thông tin các Thành viên ở những câu bắt buộc!");
+            
+            // Xây dựng Giao diện Hộ gia đình
+            let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
+            let html = "";
+            let matrixDH = hoQ.find(q => q.ma==='CS_DH'), matrixMM = hoQ.find(q => q.ma==='CS_MM');
+            
+            hoQ.forEach(q => {
+                if(q.ma==='CS_DH' || q.ma==='CS_MM') return; // Sẽ xử lý riêng ma trận
+                
+                html += `<div style="margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
+                if(q.options && q.options.length>0) {
+                    if(q.options[0].text.includes('(fill)') && q.options.length===1) {
+                        html += `<input type="text" id="ho_${q.ma}">`;
+                    } else {
+                        q.options.forEach(opt => {
+                            let textL = opt.text.replace('(fill)', '').trim();
+                            let isFillKhac = opt.text.includes('(fill)');
+                            let type = q.isMulti ? 'checkbox' : 'radio';
+                            html += `<label style="display:block; margin-top:5px;"><input type="${type}" name="ho_${q.ma}" value="${opt.ma_lc}"> ${textL}</label>`;
+                            if(isFillKhac) html += `<input type="text" id="txt_ho_${q.ma}_${opt.ma_lc}" placeholder="Ghi rõ..." style="display:none; margin-left:20px; width:90%; margin-top:5px;">`;
                         });
                     }
-                } else {
-                    if (savedAns !== undefined) {
-                        let optText = q.options[savedAns].text.trim().toLowerCase();
-                        if (!optText.startsWith("không có")) {
-                            let score = q.options[savedAns][vi.colLookup] || 0;
-                            wordData[`x_${m}_${savedAns}`] = "x";
-                            diemCau += score;
-                            hasValidAns = true;
-                        }
+                }
+                html += `</div>`;
+            });
+            
+            // Xử lý Ma trận CS
+            if(matrixDH && matrixMM) {
+                html += `<div style="margin-bottom:15px;"><strong>Ma trận Chính sách Hỗ trợ:</strong><br>
+                <table class="matrix-table"><tr><th>Chính sách</th><th>Đang Hưởng</th><th>Mong Muốn</th></tr>`;
+                matrixDH.options.forEach(opt => {
+                    let textL = opt.text.replace('(fill)', '').trim();
+                    html += `<tr><td>${textL}</td>
+                    <td><input type="checkbox" name="ho_CS_DH" value="${opt.ma_lc}"></td>
+                    <td><input type="checkbox" name="ho_CS_MM" value="${opt.ma_lc}"></td></tr>`;
+                });
+                html += `</table></div>`;
+            }
+            
+            $('#phieuc-ho-container').html(html);
+            
+            // Auto fill B2.7 và B2.11 từ bộ nhớ B1
+            if(b1Answers['B1.7']) { let ans = Array.isArray(b1Answers['B1.7']) ? b1Answers['B1.7'] : [b1Answers['B1.7']]; ans.forEach(a => $(`input[name="ho_B2.7"][value="${a}"]`).prop('checked', true)); }
+            if(b1Answers['B1.11']) { let ans = Array.isArray(b1Answers['B1.11']) ? b1Answers['B1.11'] : [b1Answers['B1.11']]; ans.forEach(a => $(`input[name="ho_B2.11"][value="${a}"]`).prop('checked', true)); }
+            
+            $('input[type="radio"], input[type="checkbox"]').on('change', function() {
+                let name = $(this).attr('name'); let isChk = $(this).is(':checked'); let val =$(this).val();
+                let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.show() : txtBox.hide();
+            });
+
+            switchScreen('screen-nd-phieuc-ho');
+        }
+
+        // --- HARDCORE LOGIC TÍNH TOÁN B2 ---
+        function tinhToanLogicB2() {
+            // Lưu data Hộ
+            let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
+            hoQ.forEach(q => {
+                if(q.options && q.options.length>1) {
+                    let sel = $(`input[name="ho_${q.ma}"]:checked`);
+                    if(q.isMulti) { hoGiaDinh_Data[q.ma] = []; sel.each(function(){ hoGiaDinh_Data[q.ma].push($(this).val()); }); }
+                    else hoGiaDinh_Data[q.ma] = sel.val();
+                } else if(q.options && q.options.length===1 && q.options[0].text.includes('(fill)')){
+                    hoGiaDinh_Data[q.ma] = $(`#ho_${q.ma}`).val();
+                }
+            });
+            
+            // Text input Khác
+            hoGiaDinh_Data.txt_NNKK_7 = $('#txt_ho_NNKK_8').val() || "";
+
+            let diemB2 = { B2_1: false, B2_2: false, B2_3: false, B2_4: false, B2_5: false, B2_6: false, B2_7: false, B2_8: false, B2_9: false, B2_10: false, B2_11: false, B2_12: false };
+            let N = numMembers;
+
+            // B2.1: Có C17=2 hoặc C19=2
+            diemB2.B2_1 = phieuC_Data.some(p => p.C17==='2' || p.C19==='2');
+
+            // B2.2: Tỷ lệ phụ thuộc > 50%
+            let phuThuocCount = phieuC_Data.filter(p => {
+                let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 18) || (p.C16 && p.C16.length > 0);
+            }).length;
+            diemB2.B2_2 = (phuThuocCount / N) > 0.5;
+
+            // B2.3: Trẻ < 16t SDD
+            diemB2.B2_3 = phieuC_Data.some(p => {
+                let t = tinhTuoi(p.C4), gioi = p.C7;
+                if(t.thang !== -1 && t.thang < 192) {
+                    let chuan = appConfig.chuan_dinh_duong.find(c => c.gioi_tinh == gioi && c.thang_tuoi == t.thang);
+                    if(chuan) {
+                        if(t.thang < 120) { return (p.C9 && p.C9 < chuan.can_nang) || (p.C8 && p.C8 < chuan.chieu_cao); } // < 10 tuổi
+                        else { return (p.C8 && p.C8 < chuan.chieu_cao); } // 10 - 16 tuổi
                     }
                 }
-                
-                if (hasValidAns) {
-                   wordData[`Diem_${m}`] = diemCau;
+                return false;
+            });
+
+            // B2.4: 6-75t không BHYT
+            diemB2.B2_4 = phieuC_Data.some(p => { let a=tinhTuoi(p.C4).nam; return a>=6 && a<=75 && p.C14==='2'; });
+
+            // B2.5: 16-30t không học/bằng cấp
+            diemB2.B2_5 = phieuC_Data.some(p => {
+                let a = tinhTuoi(p.C4).nam;
+                if(a>=16 && a<=30 && p.C10==='2') {
+                    if(a<=18) return (parseInt(p.C12||0)<3) && p.C13==='1'; // <THCS
+                    else return (parseInt(p.C12||0)<4) && p.C13==='1'; // <THPT
                 }
+                return false;
             });
 
-            // Mapping Câu 15: Điểm cộng đô thị
-            const vungKeys = ["DBSH", "MNPB", "BTB", "DHTN", "DNB", "DBSCL", "TW"];
-            vungKeys.forEach(v => {
-                wordData[`x_B1_15_${v}`] = "";
-                wordData[`Diem_B1_15_${v}`] = "";
+            // B2.6: 3-16t học ko đúng cấp
+            diemB2.B2_6 = phieuC_Data.some(p => {
+                let a = tinhTuoi(p.C4).nam, c = parseInt(p.C11||0);
+                if(a>=3 && a<16) {
+                    if(a>=3 && a<=5) return c !== 1;
+                    if(a===6) return c!==1 && c!==2;
+                    if(a>=7 && a<=10) return c!==2;
+                    if(a===11) return c!==2 && c!==3;
+                    if(a>=12 && a<=14) return c!==3;
+                    if(a===15) return c!==3 && c!==4;
+                }
+                return false;
             });
 
-            if (vi.isDoThi && vi.diemCongDoThi > 0 && vi.maVung) {
-                let vungMap = vi.maVung === "TPTW" ? "TW" : vi.maVung; 
-                wordData[`x_B1_15_${vungMap}`] = "x";
-                wordData[`Diem_B1_15_${vungMap}`] = vi.diemCongDoThi;
-            }
+            // B2.7: Nhà không bền (Tối đa 1 option 1,2,3)
+            let b27Ans = hoGiaDinh_Data['B2.7'] || []; let benChacCount = b27Ans.filter(x => x==='1'||x==='2'||x==='3').length;
+            diemB2.B2_7 = benChacCount < 2;
 
-            return wordData;
-        }
+            // B2.8: Bình quân < 8m2
+            let dt = parseFloat(hoGiaDinh_Data['B2.81'] || 0);
+            let hasGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
+            diemB2.B2_8 = (dt * (hasGac ? 1.5 : 1)) / N < 8;
 
-        // Tự động chọn file Template Word B1 dựa trên khu vực
-        function getB1TemplateUrl() {
-            const vi = getVungInfo();
-            if (vi.isDoThi) {
-                return "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_Dothi.docx";
-            } else {
-                return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${vi.maVung}.docx`;
-            }
-        }
+            // B2.9: 100% C15=2
+            diemB2.B2_9 = phieuC_Data.every(p => p.C15==='2');
 
-        async function xemTruocDocxB1() {
-            document.getElementById('modal-title').innerText = "Xem Trước Phiếu B1 (Docx)";
-            document.getElementById('modal-body').innerHTML = "<p>Đang xử lý dữ liệu và tạo file xem trước...</p>";
-            document.getElementById('myModal').style.display = 'block';
+            // B2.10, B2.11, B2.12
+            diemB2.B2_10 = (hoGiaDinh_Data['B2.10']||[]).includes('6'); // Option Không
+            diemB2.B2_11 = (hoGiaDinh_Data['B2.11']||[]).includes('3'); // Option Không
+            diemB2.B2_12 = (hoGiaDinh_Data['B2.12']||[]).includes('2'); // Option Không
 
-            try {
-                const wordData = prepareWordDataB1();
-                const githubTemplate = getB1TemplateUrl();
-                const templateRes = await fetch(githubTemplate);
-                const templateBuffer = await templateRes.arrayBuffer();
-
-                const zip = new PizZip(templateBuffer);
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-                doc.render(wordData);
-                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-                
-                document.getElementById('modal-body').innerHTML = ""; 
-                const container = document.getElementById('modal-body');
-                await docx.renderAsync(out, container, null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
-            } catch (error) { 
-                console.error(error); 
-                document.getElementById('modal-body').innerHTML = `<p style="color:red;">Lỗi hiển thị: ${error.message}</p>`; 
-            }
-        }
-
-        async function taiFileWordB1() {
-            try {
-                const wordData = prepareWordDataB1();
-                const githubTemplate = getB1TemplateUrl();
-                const templateRes = await fetch(githubTemplate);
-                const templateBuffer = await templateRes.arrayBuffer();
-
-                const zip = new PizZip(templateBuffer);
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-                doc.render(wordData);
-                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-                saveAs(out, `PhieuB1_${finalData.B.replace(/\s+/g, '_')}.docx`);
-            } catch (error) { 
-                console.error(error); 
-                alert("Lỗi tải file Phiếu B1. Vui lòng thử lại!"); 
-            }
-        }
-
-        async function taiFilePDFB1(btnElement) {
-            const orgText = btnElement.innerText;
-            btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
-            try {
-                const wordData = prepareWordDataB1();
-                const githubTemplate = getB1TemplateUrl();
-                const templateRes = await fetch(githubTemplate);
-                const zip = new PizZip(await templateRes.arrayBuffer());
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-                doc.render(wordData);
-                
-                const base64Docx = doc.getZip().generate({ type: "base64" });
-                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: base64Docx }) });
-                const pdfData = await pdfRes.json();
-                
-                if (pdfData.status === "success") {
-                    const byteChars = atob(pdfData.pdfBase64);
-                    const byteNums = new Array(byteChars.length);
-                    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
-                    const blob = new Blob([new Uint8Array(byteNums)], { type: "application/pdf" });
-                    saveAs(blob, `PhieuB1_${finalData.B.replace(/\s+/g, '_')}.pdf`);
-                } else alert("Lỗi convert PDF: " + pdfData.message);
-            } catch (error) { 
-                alert("Lỗi tải file PDF."); console.error(error); 
-            }
-            btnElement.innerText = orgText; btnElement.disabled = false;
-            $('#dl-b1-options').slideUp();
-        }
-
-        function editB1() {
-            switchScreen('screen-nd-b1');
-        }
-
-        async function submitB1XacNhan() {
-            if (finalData.KetQuaB1 === "Đậu") {
-                alert("Đã hoàn thành Phiếu B1. Chức năng Phiếu B2 đang được cập nhật!");
-            }
-            location.reload();
-        }
-
-        // --- CÁN BỘ QUẢN LÝ ---
-        function loadCbPhuong() {
-            const tinh = document.getElementById('cb_tinh').value;
-            const phuong = document.getElementById('cb_phuong');
-            phuong.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            if (tinh && appConfig.diachinh[tinh]) {
-                appConfig.diachinh[tinh].forEach(p => phuong.innerHTML += `<option value="${p}">${p}</option>`);
-            }
-            $('#cb_phuong').select2();
-        }
-
-        async function authCanBo(action, btnElement) {
-            const u = document.getElementById('cb_username').value;
-            const p = document.getElementById('cb_password').value;
-            if(!u || !p) return alert("Vui lòng nhập đủ thông tin!");
+            finalData.diemB2 = diemB2;
+            let b2Keys = Object.keys(diemB2), tickCount = 0;
+            let html = "<div class='review-checklist'>";
+            (appConfig.phieu_b2_list || []).forEach(q => {
+                let m = q.ma.replace('.','_'); // B2_1
+                let isDinh = diemB2[m]; if(isDinh) tickCount++;
+                html += `<div>${isDinh?'✅':'⬜'} [${q.section}] ${q.noidung}</div>`;
+            });
+            html += "</div>";
             
-            let originalText = "Đang xử lý...";
-            if (btnElement) {
-                originalText = btnElement.innerText;
-                btnElement.innerText = "Đang xử lý, chờ xíu nha...";
-                btnElement.disabled = true;
-                btnElement.style.opacity = "0.7";
+            finalData.TongDiemB2 = tickCount;
+            let ketLuan = tickCount >= 3 ? `<span style="color:red;">HỘ NGHÈO</span>` : `<span style="color:orange;">HỘ CẬN NGHÈO</span>`;
+            
+            $('#review-content-b2').html(`
+                <p><strong>Tổng số chỉ số thiếu hụt:</strong> <span style="font-size:18px; font-weight:bold;">${tickCount}</span> / 12</p>
+                <p><strong>Kết luận rà soát:</strong> <b>${ketLuan}</b></p>
+                ${html}
+            `);
+            switchScreen('screen-nd-phieub2-review');
+        }
+
+        // --- WORD EXPORT PHIẾU B2 & PHIẾU C ---
+        function prepareWordDataPhieuCB2() {
+            let d = { ...prepareWordDataB1() }; // Lấy metadata Hộ
+            d.B2_Tong = finalData.TongDiemB2;
+            
+            // Map B2_1 -> B2_12
+            Object.keys(finalData.diemB2).forEach(k => { d[`x_${k}`] = finalData.diemB2[k] ? "x" : ""; });
+            
+            // Map NNKK và Chính sách
+            for(let i=0;i<=7;i++) d[`x_NNKK_${i}`] = (hoGiaDinh_Data['NNKK']||[]).includes(String(i+1)) ? "x" : "";
+            d.txt_NNKK_7 = hoGiaDinh_Data.txt_NNKK_7 || "";
+            for(let i=0;i<=12;i++) {
+                d[`x_CSDH_${i}`] = (hoGiaDinh_Data['CS_DH']||[]).includes(String(i+1)) ? "x" : "";
+                d[`x_CSMM_${i}`] = (hoGiaDinh_Data['CS_MM']||[]).includes(String(i+1)) ? "x" : "";
             }
 
+            // Map Vòng lặp Thành Viên
+            d.ThanhVien = phieuC_Data.map((p, idx) => {
+                let row = { A: idx+1 };
+                for(let i=2; i<=21; i++) {
+                    let v = p[`C${i}`]; 
+                    row[`C${i}`] = Array.isArray(v) ? v.join(", ") : (v||"");
+                }
+                // Mapping mã sang cột (C17 -> C20 logic nếu cần thiết trên excel)
+                return row;
+            });
+            return d;
+        }
+
+        async function xemTruocDocxB2() { $('#modal-title').text("Phiếu B2"); handleDocxPreview(prepareWordDataPhieuCB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", 'myModal', 'modal-body'); }
+        async function taiFileWordB2() { handleDocxDownload(prepareWordDataPhieuCB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", `PhieuB2_${finalData.B.replace(/\s+/g,'_')}.docx`); }
+        async function taiFilePDFB2(btn) { handlePdfDownload(prepareWordDataPhieuCB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", `PhieuB2_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b2-options').slideUp(); }
+
+        // --- CÁN BỘ LOGIN ---
+        async function authCanBo(action, btn) {
+            const u = $('#cb_username').val(), p = $('#cb_password').val(); if(!u||!p) return alert("Nhập đủ thông tin!");
+            let ogText = btn.innerText; btn.innerText="⏳..."; btn.disabled=true;
             try {
-                const res = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: action, username: u, password: p }) });
-                const data = await res.json();
-                
-                if(data.status === "success") {
-                    currentUser = u;
-                    document.getElementById('cb_username').value = "";
-                    document.getElementById('cb_password').value = "";
-                    switchScreen('screen-canbo-dash');
-                    loadDanhSachDotCanBo();
-                } else { 
-                    alert("Sai tài khoản hoặc mật khẩu!"); 
-                }
-            } catch (error) {
-                alert("Lỗi kết nối máy chủ hoặc máy chủ phản hồi chậm. Vui lòng thử lại!");
-            } finally {
-                if (btnElement) {
-                    btnElement.innerText = originalText;
-                    btnElement.disabled = false;
-                    btnElement.style.opacity = "1";
-                }
-            }
+                const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action,username:u,password:p}) })).json();
+                if(data.status==="success"){ currentUser=u; switchScreen('screen-canbo-dash'); loadDanhSachDotCanBo(); } else alert("Sai tài khoản!");
+            } catch(e) {} btn.innerText=ogText; btn.disabled=false;
         }
 
         async function loadDanhSachDotCanBo() {
-            const listDiv = document.getElementById('canbo-dot-list');
-            listDiv.innerHTML = "<p>Đang tải dữ liệu...</p>";
-            
-            const res = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_canbo_dots", username: currentUser }) });
-            const data = await res.json();
-            
-            if (data.status === "success") {
-                listDiv.innerHTML = "";
-                if (data.dots.length === 0) return listDiv.innerHTML = "<p>Bạn chưa tạo đợt rà soát nào.</p>";
-                
-                data.dots.forEach(d => {
-                    const statusText = d.trang_thai === 'Open' ? '🟢 Đang mở' : '🔴 Đã đóng';
-                    listDiv.innerHTML += `
-                        <div class="dot-item" onclick="this.classList.toggle('open')">
-                            <h4 style="margin:0; cursor:pointer;">📋 Đợt: ${d.ten_dot} <br><small style="color:#555; font-weight:normal;">Hạn kết thúc: ${d.ngay_ket_thuc} | ${statusText}</small></h4>
-                            <div class="dot-actions">
-                                <button class="btn-sm" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">👀 Xem trước</button>
-                                
-                                <button class="btn-sm" style="background-color: #28a745;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">📥 Tải xuống ▼</button>
-                                
-                                <button class="btn-sm" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">✏️ Đổi Hạn</button>
-                                <button class="btn-sm btn-danger" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">🔒 Kết thúc</button>
-                                
-                                <div id="dl-${d.id_dot}" style="display:none; margin-top: 10px; padding: 10px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;" onclick="event.stopPropagation();">
-                                    <span style="font-size: 14px; margin-right: 10px; color: #155724; font-weight: bold;">Chọn định dạng:</span>
-                                    <button class="btn-sm" style="background:#28a745;" onclick="taiFileWord('${d.id_dot}')">📄 Word (.docx)</button>
-                                    <button class="btn-sm btn-pdf" onclick="taiFilePDF('${d.id_dot}', this)">📕 PDF (.pdf)</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        async function taoDot() {
-            const payload = {
-                action: "create_dot", username: currentUser,
-                tinh: document.getElementById('cb_tinh').value,
-                phuong: document.getElementById('cb_phuong').value,
-                thon: document.getElementById('cb_thon').value,
-                ngay_bat_dau: document.getElementById('cb_start').value,
-                ngay_ket_thuc: document.getElementById('cb_end').value
-            };
-            if(!payload.tinh || !payload.thon) return alert("Vui lòng điền đủ địa bàn!");
-            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
-            alert("✅ Đã tạo đợt rà soát thành công!");
-            
-            $('#cb_tinh').val(null).trigger('change');
-            $('#cb_phuong').val(null).trigger('change');
-            document.getElementById('cb_thon').value = "";
-            document.getElementById('cb_start').value = "";
-            document.getElementById('cb_end').value = "";
-            $('#form-tao-dot').slideUp(); 
-            loadDanhSachDotCanBo(); 
-        }
-
-        async function xemTruocDocx(idDot) {
-            document.getElementById('modal-title').innerText = "Xem Trước Phiếu A (Docx)";
-            document.getElementById('modal-body').innerHTML = "<p>Đang tải dữ liệu và tạo file xem trước...</p>";
-            document.getElementById('myModal').style.display = 'block';
-
+            $('#canbo-dot-list').html("<p>Đang tải...</p>");
             try {
-                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "preview_dot", ID_Dot: idDot }) });
-                const data = await resData.json();
-                if (!data.Hogiadinh || data.Hogiadinh.length === 0) {
-                    document.getElementById('modal-body').innerHTML = "<p>Chưa có hồ sơ nào được nộp trong đợt này!</p>";
-                    return;
+                const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
+                if(data.status==="success"){
+                    if(data.dots.length===0) return $('#canbo-dot-list').html("<p>Chưa có đợt</p>");
+                    let html="";
+                    data.dots.forEach(d => {
+                        html+=`<div class="dot-item" onclick="this.classList.toggle('open')"><h4 style="margin:0;">📋 ${d.ten_dot} <br><small>${d.ngay_ket_thuc} | ${d.trang_thai==='Open'?'🟢 Mở':'🔴 Đóng'}</small></h4>
+                        <div class="dot-actions"><button class="btn-sm" onclick="alert('Đang tải word...'); event.stopPropagation();">📥 Tải Word</button></div></div>`;
+                    }); $('#canbo-dot-list').html(html);
                 }
-
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx";
-                const templateRes = await fetch(githubTemplate);
-                const templateBuffer = await templateRes.arrayBuffer();
-
-                const zip = new PizZip(templateBuffer);
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
-
-                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-                
-                document.getElementById('modal-body').innerHTML = ""; 
-                const container = document.getElementById('modal-body');
-                await docx.renderAsync(out, container, null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
-
-            } catch (error) { 
-                console.error(error); 
-                document.getElementById('modal-body').innerHTML = `<p style="color:red;">Lỗi hiển thị bản xem trước: ${error.message}</p>`; 
-            }
-        }
-
-        async function chinhSua(idDot, currentEnd) {
-            document.getElementById('modal-title').innerText = "Đổi Ngày Kết Thúc";
-            document.getElementById('modal-body').innerHTML = `
-                <input type="date" id="new_end_date" value="${currentEnd}">
-                <button class="btn" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
-            `;
-            document.getElementById('myModal').style.display = 'block';
-        }
-
-        async function luuChinhSua(idDot) {
-            const newDate = document.getElementById('new_end_date').value;
-            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "edit_dot", ID_Dot: idDot, new_date: newDate }) });
-            alert("Đã cập nhật ngày kết thúc!");
-            document.getElementById('myModal').style.display = 'none';
-            loadDanhSachDotCanBo();
-        }
-
-        async function ketThuc(idDot) {
-            if(!confirm("Bạn có chắc muốn đóng đợt này? Người dân sẽ không thể nộp thêm.")) return;
-            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "close_dot", ID_Dot: idDot }) });
-            alert("Đã khóa sổ đợt rà soát!");
-            loadDanhSachDotCanBo();
-        }
-
-        async function taiFileWord(idDot) {
-            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
-            try {
-                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
-                const data = await resData.json();
-                if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
-
-                const githubTemplate = "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx";
-                const templateRes = await fetch(githubTemplate);
-                const templateBuffer = await templateRes.arrayBuffer();
-
-                const zip = new PizZip(templateBuffer);
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
-
-                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-                saveAs(out, `PhieuA_${idDot}.docx`);
-            } catch (error) { console.error(error); alert("Lỗi tải file Word."); }
-        }
-
-        async function taiFilePDF(idDot, btnElement) {
-            const orgText = btnElement.innerText;
-            btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
-            try {
-                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
-                const data = await resData.json();
-                if (!data.Hogiadinh || data.Hogiadinh.length === 0) { btnElement.innerText = orgText; btnElement.disabled = false; return alert("Không có hồ sơ nào!"); }
-
-                const templateRes = await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx");
-                const zip = new PizZip(await templateRes.arrayBuffer());
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
-                
-                const base64Docx = doc.getZip().generate({ type: "base64" });
-                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: base64Docx }) });
-                const pdfData = await pdfRes.json();
-                
-                if (pdfData.status === "success") {
-                    const byteChars = atob(pdfData.pdfBase64);
-                    const byteNums = new Array(byteChars.length);
-                    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
-                    const blob = new Blob([new Uint8Array(byteNums)], { type: "application/pdf" });
-                    saveAs(blob, `PhieuA_${idDot}.pdf`);
-                } else alert("Lỗi convert PDF: " + pdfData.message);
-            } catch (e) { alert("Lỗi kết nối tạo PDF!"); console.error(e); }
-            btnElement.innerText = orgText; btnElement.disabled = false;
+            } catch(e) {}
         }
     </script>
 </body>
