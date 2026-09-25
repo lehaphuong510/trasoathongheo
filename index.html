@@ -83,7 +83,7 @@
 
         <div id="screen-canbo-dash" class="screen">
             <h2>Dashboard Cán Bộ</h2>
-            <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT</button>
+            <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT MỚI</button>
             <div id="form-tao-dot" style="display: none; background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px;">
                 <div class="grid-2">
                     <div><label>Tỉnh/Thành:</label><select id="cb_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
@@ -490,8 +490,10 @@
                 contentHtml += navHtml + `</div>`;
             }
             $('#tabs-container').html(tabsHtml); $('#tabs-content-container').html(contentHtml);
-            $('.searchable-select').select2();$('input[type="radio"], input[type="checkbox"]').on('change', function() {
-                let name = $(this).attr('name'), isChk = $(this).is(':checked'), val =$(this).val();
+            $('.searchable-select').select2();
+            
+            $('input[type="radio"], input[type="checkbox"]').on('change', function() {
+                let name = $(this).attr('name'), isChk = $(this).is(':checked'), val = $(this).val();
                 let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.slideDown() : txtBox.slideUp();
             });
 
@@ -514,7 +516,8 @@
         }
 
         function switchMemberTab(idx) {
-            $('.tab-member').removeClass('active'); $('.tab-content').removeClass('active');$(`#tab-btn-${idx}`).addClass('active'); $(`#member-content-${idx}`).addClass('active');
+            $('.tab-member').removeClass('active'); $('.tab-content').removeClass('active');
+            $(`#tab-btn-${idx}`).addClass('active'); $(`#member-content-${idx}`).addClass('active');
             window.scrollTo(0,0);
         }
 
@@ -532,7 +535,7 @@
             let skipUntilMa = null;
 
             questions.forEach(q => {
-                let m = q.ma, $qDiv =$(`#q_${idx}_${m}`);
+                let m = q.ma, $qDiv = $(`#q_${idx}_${m}`);
                 if (skipUntilMa) {
                     if (m === skipUntilMa) skipUntilMa = null; 
                     else { $qDiv.hide(); return; }
@@ -561,8 +564,9 @@
             $(`#tab-btn-${idx}`).removeClass('error');
 
             pCQuestions.forEach(q => {
-                let $qDiv =$(`#q_${idx}_${q.ma}`);
-                let isVisible = $qDiv.is(':visible');$qDiv.removeClass('error');
+                let $qDiv = $(`#q_${idx}_${q.ma}`);
+                let isVisible = $qDiv.is(':visible');
+                $qDiv.removeClass('error');
 
                 if(!isVisible) { phieuC_Data[idx][q.ma] = null; return; } 
                 
@@ -733,7 +737,7 @@
                 groupedB2[sec].forEach(q => {
                     let m = q.ma.replace('.','_'); 
                     let isDinh = diemB2[m]; if(isDinh) tickCount++;
-                    htmlB2 += `<div style="padding-left:10px;">${isDinh?'<strong style="color:red;">✅</strong>':'<span style="color:#aaa;">⬜</span>'} ${q.noidung}</div>`; // FIX: DÙNG q.noidung
+                    htmlB2 += `<div style="padding-left:10px;">${isDinh?'<strong style="color:red;">✅</strong>':'<span style="color:#aaa;">⬜</span>'} ${q.noidung}</div>`;
                 });
             });
             htmlB2 += "</div>";
@@ -851,11 +855,137 @@
                     if(data.dots.length===0) return $('#canbo-dot-list').html("<p>Chưa có đợt</p>");
                     let html="";
                     data.dots.forEach(d => {
-                        html+=`<div class="dot-item" onclick="this.classList.toggle('open')"><h4 style="margin:0;">📋 ${d.ten_dot} <br><small>${d.ngay_ket_thuc} | ${d.trang_thai==='Open'?'🟢 Mở':'🔴 Đóng'}</small></h4>
-                        <div class="dot-actions"><button class="btn-sm" onclick="alert('Đang tải word...'); event.stopPropagation();">📥 Tải Word</button></div></div>`;
+                        const statusText = d.trang_thai === 'Open' ? '🟢 Đang mở' : '🔴 Đã đóng';
+                        html+=`<div class="dot-item" onclick="this.classList.toggle('open')">
+                            <h4 style="margin:0; cursor:pointer;">📋 Đợt: ${d.ten_dot} <br><small style="color:#555; font-weight:normal;">Hạn kết thúc: ${d.ngay_ket_thuc} | ${statusText}</small></h4>
+                            <div class="dot-actions">
+                                <button class="btn-sm" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">👀 Xem trước</button>
+                                <button class="btn-sm" style="background-color: #28a745;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">📥 Tải xuống ▼</button>
+                                <button class="btn-sm" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">✏️ Đổi Hạn</button>
+                                <button class="btn-sm btn-danger" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">🔒 Kết thúc</button>
+                                <div id="dl-${d.id_dot}" style="display:none; margin-top: 10px; padding: 10px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;" onclick="event.stopPropagation();">
+                                    <span style="font-size: 14px; margin-right: 10px; color: #155724; font-weight: bold;">Chọn định dạng (Phiếu A):</span>
+                                    <button class="btn-sm" style="background:#28a745;" onclick="taiFileWord('${d.id_dot}')">📄 Word (.docx)</button>
+                                    <button class="btn-sm btn-pdf" onclick="taiFilePDF('${d.id_dot}', this)">📕 PDF (.pdf)</button>
+                                </div>
+                            </div>
+                        </div>`;
                     }); $('#canbo-dot-list').html(html);
                 }
             } catch(e) {}
+        }
+        
+        async function taoDot() {
+            const payload = {
+                action: "create_dot", username: currentUser,
+                tinh: document.getElementById('cb_tinh').value,
+                phuong: document.getElementById('cb_phuong').value,
+                thon: document.getElementById('cb_thon').value,
+                ngay_bat_dau: document.getElementById('cb_start').value,
+                ngay_ket_thuc: document.getElementById('cb_end').value
+            };
+            if(!payload.tinh || !payload.thon) return alert("Vui lòng điền đủ địa bàn!");
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
+            alert("✅ Đã tạo đợt rà soát thành công!");
+            
+            $('#cb_tinh').val(null).trigger('change');
+            $('#cb_phuong').val(null).trigger('change');
+            document.getElementById('cb_thon').value = "";
+            document.getElementById('cb_start').value = "";
+            document.getElementById('cb_end').value = "";
+            $('#form-tao-dot').slideUp(); 
+            loadDanhSachDotCanBo(); 
+        }
+
+        async function xemTruocDocx(idDot) {
+            document.getElementById('modal-title').innerText = "Xem Trước Phiếu A (Docx)";
+            document.getElementById('modal-body').innerHTML = "<p style='padding:20px;'>Đang tải dữ liệu và tạo file xem trước...</p>";
+            document.getElementById('myModal').style.display = 'block';
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "preview_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) {
+                    document.getElementById('modal-body').innerHTML = "<p style='padding:20px;'>Chưa có hồ sơ nào được nộp trong đợt này!</p>";
+                    return;
+                }
+                const templateBuffer = await (await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx")).arrayBuffer();
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                document.getElementById('modal-body').innerHTML = ""; 
+                await docx.renderAsync(out, document.getElementById('modal-body'), null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
+            } catch (error) { 
+                document.getElementById('modal-body').innerHTML = `<p style="color:red; padding:20px;">Lỗi hiển thị bản xem trước: ${error.message}</p>`; 
+            }
+        }
+
+        async function chinhSua(idDot, currentEnd) {
+            document.getElementById('modal-title').innerText = "Đổi Ngày Kết Thúc";
+            document.getElementById('modal-body').innerHTML = `
+                <div style="padding:20px;">
+                    <input type="date" id="new_end_date" value="${currentEnd}">
+                    <button class="btn" style="margin-top:15px;" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
+                </div>
+            `;
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        async function luuChinhSua(idDot) {
+            const newDate = document.getElementById('new_end_date').value;
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "edit_dot", ID_Dot: idDot, new_date: newDate }) });
+            alert("Đã cập nhật ngày kết thúc!");
+            document.getElementById('myModal').style.display = 'none';
+            loadDanhSachDotCanBo();
+        }
+
+        async function ketThuc(idDot) {
+            if(!confirm("Bạn có chắc muốn đóng đợt này? Người dân sẽ không thể nộp thêm.")) return;
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "close_dot", ID_Dot: idDot }) });
+            alert("Đã khóa sổ đợt rà soát!");
+            loadDanhSachDotCanBo();
+        }
+
+        async function taiFileWord(idDot) {
+            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
+                const templateBuffer = await (await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx")).arrayBuffer();
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                saveAs(out, `PhieuA_${idDot}.docx`);
+            } catch (error) { console.error(error); alert("Lỗi tải file Word."); }
+        }
+
+        async function taiFilePDF(idDot, btnElement) {
+            const orgText = btnElement.innerText;
+            btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) { btnElement.innerText = orgText; btnElement.disabled = false; return alert("Không có hồ sơ nào!"); }
+                const templateRes = await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx");
+                const zip = new PizZip(await templateRes.arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                
+                const base64Docx = doc.getZip().generate({ type: "base64" });
+                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: base64Docx }) });
+                const pdfData = await pdfRes.json();
+                
+                if (pdfData.status === "success") {
+                    const byteChars = atob(pdfData.pdfBase64);
+                    const byteNums = new Array(byteChars.length);
+                    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+                    const blob = new Blob([new Uint8Array(byteNums)], { type: "application/pdf" });
+                    saveAs(blob, `PhieuA_${idDot}.pdf`);
+                } else alert("Lỗi convert PDF: " + pdfData.message);
+            } catch (e) { alert("Lỗi kết nối tạo PDF!"); console.error(e); }
+            btnElement.innerText = orgText; btnElement.disabled = false;
         }
     </script>
 </body>
