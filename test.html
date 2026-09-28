@@ -1018,14 +1018,32 @@
         async function taiFileWordB2() { handleDocxDownload(prepareWordDataB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", `PhieuB2_${finalData.B.replace(/\s+/g,'_')}.docx`); }
         async function taiFilePDFB2(btn) { handlePdfDownload(prepareWordDataB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", `PhieuB2_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b2-options').slideUp(); }
 
-        // --- CÁN BỘ LOGIN & DASHBOARD ---
+        // --- CÁN BỘ LOGIN & REGISTER ---
         async function authCanBo(action, btn) {
-            const u = $('#cb_username').val(), p = $('#cb_password').val(); if(!u||!p) return alert("Nhập đủ thông tin!");
-            let ogText = btn.innerText; btn.innerText="⏳..."; btn.disabled=true;
+            const u = $('#cb_username').val().trim(), p = $('#cb_password').val().trim(); 
+            if(!u || !p) return alert("❌ Nhập đủ Tên đăng nhập và Mật khẩu!");
+            if(u.includes(" ")) return alert("❌ Tên đăng nhập không được chứa khoảng trắng!");
+            
+            let ogText = btn.innerText; btn.innerText = "⏳..."; btn.disabled = true;
             try {
-                const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action,username:u,password:p}) })).json();
-                if(data.status==="success"){ currentUser=u; switchScreen('screen-canbo-dash'); loadDanhSachDotCanBo(); } else alert("Sai tài khoản!");
-            } catch(e) {} btn.innerText=ogText; btn.disabled=false;
+                const res = await fetch(WORKER_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ action: action, username: u, password: p }) 
+                });
+                const data = await res.json();
+                
+                if (data.status === "success") { 
+                    if(action === 'register') alert("✅ Tạo tài khoản thành công! Tự động đăng nhập...");
+                    currentUser = u; 
+                    switchScreen('screen-canbo-dash'); 
+                    loadDanhSachDotCanBo(); 
+                } else { 
+                    alert("❌ Lỗi: " + (data.message || "Kiểm tra lại thông tin!"));
+                }
+            } catch(e) { 
+                alert("❌ Lỗi kết nối máy chủ!"); 
+            } 
+            btn.innerText = ogText; btn.disabled = false;
         }
 
         async function loadDanhSachDotCanBo() {
