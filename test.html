@@ -222,6 +222,138 @@
         .modal-content { background-color: var(--bg-main); margin: 5% auto; padding: 24px; border: 1px solid var(--teal-sec); width: 95%; max-width: 1000px; border-radius: 16px; max-height: 90vh; overflow-y: auto; color: var(--ivory); }
         #modal-body { width: 100%; background: white; color: black; min-height: 50vh; border-radius: 8px; overflow-x: hidden; position: relative; padding: 10px;}
     </style>
+<style>
+/* =============== UX/UI REDESIGN OVERRIDES — LOGIC UNCHANGED =============== */
+:root{
+  --nav-h:82px;
+  --page-x:clamp(20px,6vw,96px);
+  --content-w:1120px;
+  --focus:0 0 0 4px rgba(223,92,80,.2);
+}
+html{scroll-behavior:smooth;background:var(--bg-main)}
+body{min-height:100svh;font-family:'Be Vietnam Pro','Noto Sans',Arial,sans-serif;letter-spacing:-.01em}
+.screen:not(.active){display:none!important}
+button,input,select,textarea,.btn-dna,.glass-input,.select2-container{font-family:inherit!important}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box-shadow:var(--focus)}
+.screen{width:100%;isolation:isolate}
+.screen.active.welcome-layout,.screen.active.form-center-layout{display:flex!important}
+.screen.active.form-top-layout{display:block!important}
+.bg-common{background-attachment:scroll!important;background-size:cover;background-position:center center;position:relative}
+.bg-common:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(27,57,64,.2),rgba(27,57,64,.04) 62%,rgba(27,57,64,0))}
+
+/* Navbar */
+.navbar,.navbar[style*="display: block"]{height:var(--nav-h);padding:0 var(--page-x);display:none;flex-direction:row;gap:24px;background:rgba(246,241,233,.97);border-bottom:1px solid rgba(27,57,64,.09);box-shadow:none;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.navbar[style*="display: block"]{display:flex!important}
+.nav-logo{font-size:clamp(15px,1.3vw,21px);font-weight:800;text-transform:uppercase;letter-spacing:-.025em;white-space:nowrap}
+.nav-logo img{width:40px!important;height:40px!important;padding:0!important;background:transparent!important;filter:none!important;border-radius:10px!important}
+.nav-links{gap:clamp(20px,3vw,46px);align-items:center;font-size:clamp(14px,1.15vw,18px);font-weight:650}
+.nav-item{position:relative;color:#98a1a2;white-space:nowrap}
+.nav-item:after{content:"";position:absolute;left:0;right:100%;bottom:-10px;height:2px;background:var(--coral);transition:right .2s ease}
+.nav-item:hover:after,.nav-item.active:after{right:0}
+.nav-item.active{color:var(--bg-main)}
+
+/* Welcome */
+.welcome-layout{min-height:100svh;height:auto;padding:0 var(--page-x);align-items:center;overflow:hidden}
+.welcome-layout .hero-content{width:min(620px,47vw);max-width:none;margin-left:9.5vw;transform:translateY(-1vh)}
+.tagline{margin:0 0 26px;font-size:clamp(12px,1.25vw,18px);font-weight:700;letter-spacing:.24em;color:rgba(246,241,233,.66)}
+.hero-title{margin:0 0 38px;font-size:clamp(36px,3.35vw,56px);line-height:1.08;letter-spacing:-.045em}
+.hero-title span{margin-top:8px;font-size:clamp(28px,2.65vw,44px);line-height:1.14;letter-spacing:-.035em}
+.hero-desc{max-width:690px;margin:0 0 40px;font-size:clamp(15px,1.35vw,21px);line-height:1.48;color:rgba(246,241,233,.62)}
+.btn-group{gap:14px}
+.btn-dna{min-height:48px;height:auto;padding:13px 24px;border-radius:10px;font-weight:700;line-height:1.2;box-shadow:none}
+.btn-dna img{flex:0 0 auto}
+.btn-primary-dna{background:var(--coral);color:#fff}
+.btn-primary-dna:hover{background:#d65348;transform:translateY(-1px);box-shadow:0 8px 24px rgba(223,92,80,.2)}
+.btn-outline-dna{background:rgba(246,241,233,.045);border-color:rgba(246,241,233,.35)}
+.btn-outline-dna:hover{background:rgba(246,241,233,.1);border-color:rgba(246,241,233,.55)}
+
+/* Shared layouts */
+.form-center-layout{min-height:100svh;padding:calc(var(--nav-h) + 48px) var(--page-x) 56px;justify-content:flex-start;align-items:center}
+.form-top-layout{min-height:100svh;padding:calc(var(--nav-h) + 44px) var(--page-x) 64px}
+.glass-card{background:rgba(27,57,64,.82);border:1px solid rgba(246,241,233,.16);border-radius:18px;box-shadow:0 22px 64px rgba(8,24,29,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.glass-card-sm{max-width:580px}
+.glass-card-lg{max-width:980px}
+.glass-card h2{font-size:clamp(23px,2vw,30px);letter-spacing:-.035em}
+.glass-card h3{letter-spacing:-.025em}
+.form-group-dna{margin-bottom:18px}
+.glass-label{font-size:13px;font-weight:650;letter-spacing:.01em}
+.glass-input,.select2-container--default .select2-selection--single{height:50px!important;border-radius:10px!important;background:rgba(246,241,233,.075)!important;border-color:rgba(246,241,233,.22)!important}
+.glass-input:hover,.select2-container--default .select2-selection--single:hover{border-color:rgba(246,241,233,.4)!important}
+.glass-input:focus{box-shadow:var(--focus);border-color:var(--coral)!important}
+.grid-2{gap:18px}
+
+/* Staff login: match approved visual */
+#screen-canbo-auth{padding-left:18vw;padding-right:52vw;background-position:center}
+#screen-canbo-auth .glass-card{max-width:640px;padding:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none}
+#screen-canbo-auth .glass-card h2{margin-bottom:30px;color:rgba(246,241,233,.7);font-size:24px;text-transform:uppercase;letter-spacing:.12em}
+#screen-canbo-auth .glass-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#screen-canbo-auth .glass-input{height:58px!important;background:rgba(246,241,233,.97)!important;color:var(--bg-main)!important;border:2px solid rgba(246,241,233,.45)!important;font-size:18px;padding:0 18px}
+#screen-canbo-auth .glass-input::placeholder{color:#9aa6a8}
+#screen-canbo-auth .btn-group{justify-content:flex-end;margin-top:26px!important}
+#screen-canbo-auth .btn-dna{min-width:190px;height:56px;font-size:16px}
+
+/* Citizen entry: focused declaration panel */
+#screen-nd-step1{padding-left:7vw;padding-right:48vw;background-position:center}
+#screen-nd-step1 .glass-card{max-width:640px;background:rgba(246,241,233,.96);border-color:rgba(246,241,233,.9);color:var(--bg-main);box-shadow:0 24px 70px rgba(8,24,29,.2)}
+#screen-nd-step1 .glass-card h2{color:var(--bg-main);font-size:26px;line-height:1.3}
+#screen-nd-step1 .glass-label{color:var(--teal-sec)}
+#screen-nd-step1 .glass-input,#screen-nd-step1 .select2-container--default .select2-selection--single{background:#fff!important;color:var(--bg-main)!important;border-color:rgba(27,57,64,.17)!important}
+#screen-nd-step1 .glass-input::placeholder{color:#8b989b}
+#screen-nd-step1 .select2-container--default .select2-selection--single .select2-selection__rendered{color:var(--bg-main)!important}
+.searchable-select{width:100%;height:50px;padding:0 14px;border:1px solid rgba(246,241,233,.22);border-radius:10px;background:rgba(246,241,233,.075);color:var(--ivory)}
+#screen-nd-step1 .searchable-select{background:#fff;color:var(--bg-main);border-color:rgba(27,57,64,.17)}
+
+/* Long flows: readable, stable content column */
+.form-top-layout>.glass-card{margin-inline:auto}
+#screen-canbo-dash>.glass-card{max-width:1060px}
+#screen-nd-routing{padding-left:9vw;padding-right:58vw}
+#screen-nd-routing .glass-card{max-width:620px}
+.b1-option-label{min-height:56px;padding:15px 18px;border-radius:11px;background:rgba(246,241,233,.045)}
+.b1-option-label:hover{border-color:rgba(246,241,233,.35);background:rgba(246,241,233,.07)}
+.review-box{line-height:1.65}
+.dot-item{padding:22px}
+.matrix-table{font-size:14px}
+.matrix-table th,.matrix-table td{padding:11px}
+
+/* Modal */
+.modal{backdrop-filter:blur(8px)}
+.modal-content{border-radius:18px;box-shadow:0 30px 90px rgba(0,0,0,.35)}
+
+/* Responsive */
+@media(max-width:1000px){
+  :root{--nav-h:76px}
+  .welcome-layout .hero-content{margin-left:2vw;width:min(570px,58vw)}
+  #screen-canbo-auth{padding-left:8vw;padding-right:47vw}
+  #screen-nd-step1,#screen-nd-routing{padding-left:5vw;padding-right:45vw}
+}
+@media(max-width:768px){
+  :root{--nav-h:116px;--page-x:20px}
+  .navbar,.navbar[style*="display: block"]{height:var(--nav-h);padding:12px 20px;flex-direction:column!important;justify-content:center;gap:9px}
+  .nav-logo{font-size:14px}.nav-logo img{width:30px!important;height:30px!important}.nav-links{width:100%;justify-content:center;gap:18px;font-size:12px}.nav-item:after{bottom:-5px}
+  .bg-common{background-position:bottom center}
+  .bg-common:before{background:linear-gradient(180deg,rgba(27,57,64,.08),rgba(27,57,64,.02) 55%,rgba(27,57,64,.08))}
+  .welcome-layout{align-items:flex-start;padding:10vh 22px 42vh;overflow:visible;background-position:bottom center}
+  .welcome-layout .hero-content{width:100%;margin:0;transform:none}
+  .tagline{margin-bottom:18px;font-size:11px}.hero-title{font-size:34px;margin-bottom:22px}.hero-title span{font-size:25px}.hero-desc{font-size:15px;margin-bottom:24px}.desktop-break{display:none}
+  .welcome-layout .btn-group{display:grid;grid-template-columns:1fr 1fr}.welcome-layout .btn-dna{padding:12px 13px;font-size:13px}
+  .form-center-layout,.form-top-layout{padding:calc(var(--nav-h) + 24px) 18px 44vh;align-items:flex-start}
+  #screen-canbo-auth,#screen-nd-step1,#screen-nd-routing{padding-left:18px;padding-right:18px}
+  #screen-canbo-auth .glass-card{max-width:none;padding:24px 0}
+  #screen-canbo-auth .glass-input{height:52px!important;font-size:16px}
+  #screen-canbo-auth .btn-group{display:grid;grid-template-columns:1fr 1fr}.btn-dna{min-height:46px;padding:12px 16px;font-size:14px}
+  #screen-nd-step1 .glass-card{padding:24px 18px;background:rgba(246,241,233,.95)}
+  #screen-nd-routing .glass-card{background:rgba(27,57,64,.9)}
+  .glass-card{padding:24px 18px;border-radius:15px}.glass-card h2{font-size:23px}.grid-2{grid-template-columns:1fr;gap:0}.form-top-layout{padding-bottom:40px}.form-top-layout>.glass-card{margin:0}
+  .matrix-table{min-width:720px}.btn-group{gap:10px}
+}
+@media(max-width:420px){
+  .welcome-layout{padding-top:8vh}.hero-title{font-size:30px}.hero-title span{font-size:23px}
+  .welcome-layout .btn-group,#screen-canbo-auth .btn-group{grid-template-columns:1fr}
+  .nav-links{gap:12px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+</style>
 </head>
 <body>
 
