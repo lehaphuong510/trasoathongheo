@@ -74,11 +74,14 @@
 
         <!-- CÁN BỘ AUTH -->
         <div id="screen-canbo-auth" class="screen">
-            <h2>Đăng Nhập Cán Bộ</h2>
-            <input type="text" id="cb_username" placeholder="Tên đăng nhập"><br><br>
+            <h2>Đăng Nhập / Đăng Ký Cán Bộ</h2>
+            <input type="text" id="cb_username" placeholder="Tên đăng nhập (viết liền không dấu)"><br><br>
             <input type="password" id="cb_password" placeholder="Mật khẩu"><br><br>
-            <button class="btn" onclick="authCanBo('login', this)">Đăng Nhập</button>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại</button>
+            <div class="grid-2">
+                <button class="btn" style="margin-top:0;" onclick="authCanBo('login', this)">Đăng Nhập</button>
+                <button class="btn btn-warning" style="margin-top:0;" onclick="authCanBo('register', this)">Tạo Tài Khoản</button>
+            </div>
+            <button class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="switchScreen('screen-welcome')">Quay Lại</button>
         </div>
 
         <div id="screen-canbo-dash" class="screen">
