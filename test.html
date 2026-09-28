@@ -146,13 +146,26 @@
             <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Sửa</button><button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
         </div>
 
+        
         <!-- PHIẾU B1 -->
         <div id="screen-nd-b1" class="screen">
             <h3>Phiếu B1 <span id="b1-progress" style="color:#0056b3;"></span></h3>
             <p id="b1-question-text" style="font-weight: bold; font-size: 18px;"></p>
-            <div id="b1-ghichu-container" style="display:none; margin-bottom:15px;"><details style="background:#eef2f5; padding:10px; border-radius:5px;"><summary style="color:#0056b3; font-weight:bold; cursor:pointer;">? Bấm xem chi tiết/danh sách bệnh</summary><div id="b1-ghichu-content" style="white-space: pre-wrap; margin-top:10px;"></div></details></div>
+            <div id="b1-ghichu-container" style="display:none; margin-bottom:15px;">
+                <details style="background:#eef2f5; padding:10px; border-radius:5px;">
+                    <summary style="color:#0056b3; font-weight:bold; cursor:pointer;">? Bấm xem chi tiết/danh sách</summary>
+                    <div id="b1-ghichu-content" style="white-space: pre-wrap; margin-top:10px;"></div>
+                </details>
+            </div>
             <div id="b1-options"></div><br>
-            <button class="btn btn-secondary" onclick="prevB1()">Quay lại câu trước</button><button class="btn" onclick="nextB1()">Tiếp tục</button>
+            
+            <div class="grid-2">
+                <button class="btn btn-secondary" style="margin-top:0;" onclick="prevB1()">Quay lại câu trước</button>
+                <button class="btn" style="margin-top:0;" onclick="nextB1()">Tiếp tục →</button>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba;" onclick="switchScreen('screen-nd-step2')">
+                ⚠️ Quay lại sửa Phiếu A (Nhận diện nhanh)
+            </button>
         </div>
 
         <div id="screen-nd-review-b1" class="screen">
@@ -352,38 +365,52 @@
         
         function nextB1() { 
             if(!saveCurrentB1Answer()) return alert("Vui lòng chọn đáp án trước khi đi tiếp!"); 
+            
+            // ================= REAL-TIME SECURITY CHECK (PHIẾU A vs CÂU B1 HIỆN TẠI) =================
+            let q = appConfig.phieu_b1[currentB1Index];
+            let ma = q.ma;
+            let ans = b1Answers[ma];
+            let err = "";
+
+            if (ma === 'B1.5') {
+                if (finalData["9"] && ans !== 1) err = "Phiếu A khai hộ có 'Người làm việc theo Hợp đồng lao động', nhưng ở câu này anh/chị lại không chọn mức tương ứng.";
+            }
+            else if (ma === 'B1.8') {
+                if ((ans === 1 || ans === 2) && !finalData["7"]) err = "Anh/chị đang chọn diện tích >= 30m2, nhưng ở Phiếu A (Nhận diện nhanh) lại không xác nhận nhà có diện tích >= 25m2.";
+            }
+            else if (ma === 'B1.9') {
+                if (finalData["6"] && ans !== 2) err = "Phiếu A khai hộ 'Tiêu thụ điện >= 150kWh/tháng', nhưng ở câu này anh/chị không chọn mức 'Từ 150 kWh trở lên'.";
+            }
+            else if (ma === 'B1.12') {
+                let b1_12 = Array.isArray(ans) ? ans : [ans];
+                let hasXeTau = b1_12.some(x => [1,2,3,4].includes(x));
+                if (finalData["1"] && !hasXeTau) err = "Phiếu A khai có 'Xe máy/Tàu thuyền > 20 triệu', nhưng ở câu này anh/chị không đánh dấu loại xe/tàu nào.";
+                if (finalData["2"] && !b1_12.some(x => [9,10,11].includes(x))) err = "Phiếu A khai có 'Điều hòa/Tủ lạnh', nhưng ở câu này không được đánh dấu.";
+                if (finalData["3"] && !b1_12.includes(13)) err = "Phiếu A khai có 'Bình tắm nóng', nhưng ở câu này không được đánh dấu.";
+                if (finalData["4"] && !b1_12.includes(12)) err = "Phiếu A khai có 'Máy giặt', nhưng ở câu này không được đánh dấu.";
+            }
+            else if (ma === 'B1.13') {
+                let b1_13_khong = Array.isArray(ans) ? ans.includes(9) : ans === 9;
+                if (!b1_13_khong && !finalData["5"]) err = "Anh/chị đang chọn CÓ đất đai/nuôi trồng, nhưng ở Phiếu A lại chưa xác nhận mục 'Có đất đai/nhà xưởng...'.";
+            }
+
+            // NẾU PHÁT HIỆN MÂU THUẪN -> BÁO LỖI VÀ CHẶN KHÔNG CHO TỚI CÂU TIẾP THEO
+            if (err !== "") {
+                alert("⚠️ CHƯA CÓ SỰ NHẤT QUÁN DỮ LIỆU:\n\n" + err + "\n\n👉 Vui lòng CHỌN LẠI ĐÁP ÁN cho khớp, hoặc dùng nút 'Quay lại sửa Phiếu A' bên dưới để cập nhật lại Phiếu A.");
+                return; 
+            }
+            // =========================================================================================
+
             if(currentB1Index < appConfig.phieu_b1.length - 1) { 
                 currentB1Index++; renderB1(); 
             } else { 
-                if(!validateAvsB1()) return; // CHỐT TRẠM 1: CHẶN LỖI PHIẾU A & B1
                 showReviewB1(); 
             } 
         }
 
-        // ================= SECURITY CHECK 1: PHIẾU A VS B1 =================
-        function validateAvsB1() {
-            let errs = [];
-            let b1_13 = b1Answers['B1.13']; let b1_13_khong = Array.isArray(b1_13) ? b1_13.includes(9) : b1_13 === 9;
-            if (!b1_13_khong && !finalData["5"]) errs.push("Phiếu B1 khai CÓ ĐẤT ĐAI (B1.13), nhưng Phiếu A mục 'Có đất đai/nhà xưởng...' chưa được chọn.");
-            
-            let b1_8 = b1Answers['B1.8'];
-            if ((b1_8 === 1 || b1_8 === 2) && !finalData["7"]) errs.push("Phiếu B1 khai Diện tích nhà >= 30m2 (B1.8), nhưng Phiếu A mục 'Diện tích >= 25m2' chưa được chọn.");
-            
-            let b1_12 = b1Answers['B1.12'] || []; if(!Array.isArray(b1_12)) b1_12 = [b1_12];
-            let hasXeTau = b1_12.some(x => [1,2,3,4].includes(x));
-            if (finalData["1"] && !hasXeTau) errs.push("Phiếu A khai Có Xe máy/Tàu thuyền, nhưng B1.12 không ghi nhận.");
-            if (finalData["2"] && !b1_12.some(x => [9,10,11].includes(x))) errs.push("Phiếu A khai Có Điều hòa/Tủ lạnh, nhưng B1.12 không ghi nhận.");
-            if (finalData["3"] && !b1_12.includes(13)) errs.push("Phiếu A khai Có Bình tắm nóng, nhưng B1.12 không có.");
-            if (finalData["4"] && !b1_12.includes(12)) errs.push("Phiếu A khai Có Máy giặt, nhưng B1.12 không có.");
-            if (finalData["6"] && b1Answers['B1.9'] !== 2) errs.push("Phiếu A khai Tiêu thụ điện >= 150kWh, nhưng B1.9 không chọn mức này.");
-            if (finalData["9"] && b1Answers['B1.5'] !== 1) errs.push("Phiếu A khai Có người làm việc theo Hợp đồng LĐ, nhưng B1.5 không chọn mục này.");
+        // XOÁ LUÔN function validateAvsB1() {...} CŨ ĐI VÌ ĐÃ TÍCH HỢP LÊN TRÊN RỒI
 
-            if (errs.length > 0) {
-                alert("⚠️ CHƯA CÓ SỰ NHẤT QUÁN GIỮA PHIẾU A & B1:\n\n- " + errs.join("\n- ") + "\n\nVui lòng quay lại Phiếu A (bằng nút Sửa ở bước trước) hoặc điều chỉnh Phiếu B1.");
-                return false;
-            }
-            return true;
-        }
+        
 
         function getVungInfo() {
             const t=$('#nd_tinh').val(), p=$('#nd_phuong').val(), isDoThi=(p||"").includes('Phường');
