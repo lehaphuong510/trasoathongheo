@@ -2,7 +2,15 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Rà Soát Hộ Nghèo</title>
+    
+    <!-- Font Be Vietnam Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Các thư viện cũ của m -->
     <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.11/build/docxtemplater.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
@@ -11,142 +19,269 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background-color: #f4f7f6; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .screen { display: none; }
-        .active { display: block; }
-        .btn-big { display: block; width: 100%; padding: 15px; margin: 10px 0; font-size: 18px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s;}
-        .btn-big:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn { padding: 10px 15px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; margin-top: 10px; font-weight:bold; }
-        .btn-secondary { background: #6c757d; }
-        .btn-danger { background: #dc3545; }
-        .btn-pdf { background: #e83e8c; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .form-group { margin-bottom: 15px; }
-        input[type="text"], input[type="date"], input[type="password"], input[type="number"], select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        .review-box { background: #e9ecef; padding: 15px; border-radius: 5px; border-left: 5px solid #0056b3; }
-        .select2-container .select2-selection--single { height: 40px; line-height: 40px; border: 1px solid #ccc; }
-        .dot-item { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .dot-actions { margin-top: 10px; display: none; }
-        .dot-item.open .dot-actions { display: block; }
-        .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; margin-bottom: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
-        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 10px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 95vh; overflow-y: auto; }
-        #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; border: 1px dashed #ccc; overflow-x: hidden; position: relative;}
-        .docx-wrapper { padding: 0 !important; background: transparent !important; margin: 0 !important; }
-        .docx-wrapper > section.docx { width: 100% !important; padding: 10px !important; margin: 0 auto !important; box-sizing: border-box !important; box-shadow: none !important; min-height: auto !important; }
-        .docx-wrapper table { width: 100% !important; table-layout: auto !important; word-break: break-word; }
+        /* ================= STYLE DNA CORE ================= */
+        :root {
+            --bg-main: #1B3940;
+            --teal-sec: #567781;
+            --blue-gray: #A3AAAE;
+            --coral: #DF5C50;
+            --ivory: #F6F1E9;
+            --beige: #DBC7BC;
+            --glass-bg: rgba(246, 241, 233, 0.06);
+            --glass-border: rgba(246, 241, 233, 0.12);
+        }
+
+        body { 
+            font-family: 'Be Vietnam Pro', sans-serif; 
+            background-color: var(--bg-main); 
+            color: var(--ivory); 
+            margin: 0; 
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .screen { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .screen.active { display: block; opacity: 1; }
+
+        /* ================= NAVIGATION BAR ================= */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 24px 5%; position: absolute; top: 0; left: 0; right: 0; z-index: 50;
+        }
+        .nav-logo { display: flex; align-items: center; font-weight: 700; font-size: 16px; gap: 12px; color: var(--ivory); }
         
-        .review-checklist div { padding: 8px 0; border-bottom: 1px dashed #ccc; }
-        .review-checklist div:last-child { border-bottom: none; }
-        .b1-option-label { display: block; padding: 15px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; background: #fdfdfd; font-size: 16px; transition: all 0.2s; }
-        .b1-option-label:hover { background: #eef5ff; border-color: #b8d4f2; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input[type="radio"], input[type="checkbox"] { transform: scale(1.2); margin-right: 10px; }
-        .text-blink { animation: blink 1.2s infinite; color: #dc3545; font-weight: bold; margin-bottom: 15px;}
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .nav-links { display: flex; gap: 32px; font-weight: 500; font-size: 15px; }
+        .nav-item { color: var(--blue-gray); cursor: pointer; transition: 0.2s; }
+        .nav-item:hover { color: var(--ivory); }
+        .nav-item.active { color: var(--ivory); font-weight: 700; }
+
+        /* ================= HERO LAYOUT (Negative Space) ================= */
+        .hero-layout {
+            min-height: 100vh;
+            display: flex; align-items: center;
+            padding: 0 5%;
+            background-size: cover;
+            background-position: right center;
+            background-repeat: no-repeat;
+        }
+        .hero-content {
+            width: 65%; /* Giữ 60-70% khoảng trống theo chuẩn DNA */
+            padding-top: 60px;
+        }
+
+        /* Background Images (Map với file Github của m) */
+        #screen-welcome { background-image: url('assets/images/welcome-desktop-16x9.webp'); }
+        #screen-canbo-auth { background-image: url('assets/images/staff-desktop-16x9.webp'); }
+        #screen-nd-step1 { background-image: url('assets/images/citizen-desktop-16x9.webp'); }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 16px 5%; flex-direction: column; gap: 16px; }
+            .nav-links { gap: 16px; font-size: 14px; }
+            .hero-layout { align-items: flex-start; padding-top: 140px; background-position: bottom center; }
+            .hero-content { width: 100%; }
+            /* Mobile BGs */
+            #screen-welcome { background-image: url('assets/images/welcome-mobile-9x16.webp'); }
+            #screen-canbo-auth { background-image: url('assets/images/staff-mobile-9x16.webp'); }
+            #screen-nd-step1 { background-image: url('assets/images/citizen-mobile-9x16.webp'); }
+        }
+
+        /* ================= TYPOGRAPHY ================= */
+        .tagline { font-size: 13px; font-weight: 600; letter-spacing: 2px; color: var(--blue-gray); text-transform: uppercase; margin-bottom: 16px; }
+        .hero-title { font-size: 40px; font-weight: 800; line-height: 1.3; margin: 0 0 20px 0; color: var(--ivory); }
+        .hero-title span { display: block; font-weight: 700; font-size: 32px; margin-top: 8px; }
+        .hero-desc { font-size: 16px; font-weight: 400; line-height: 1.55; color: var(--beige); max-width: 85%; margin-bottom: 36px; }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 32px; }
+            .hero-title span { font-size: 26px; }
+            .hero-desc { font-size: 15px; max-width: 100%; }
+        }
+
+        /* ================= BUTTONS ================= */
+        .btn-group { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-dna { 
+            height: 44px; padding: 0 24px; border-radius: 12px; 
+            font-family: 'Be Vietnam Pro'; font-weight: 600; font-size: 15px; 
+            cursor: pointer; transition: all 0.2s ease-out; 
+            display: inline-flex; align-items: center; justify-content: center; border: none;
+        }
+        .btn-primary-dna { background-color: var(--coral); color: var(--ivory); }
+        .btn-primary-dna:hover { background-color: #c94c41; transform: translateY(-2px); }
         
-        /* CSS cho Tab Thành viên */
-        .tab-member { display: inline-block; padding: 12px 20px; background: #ddd; margin-right: 5px; margin-bottom: 5px; border-radius: 5px; font-weight: bold; transition: 0.2s; color: #555; }
-        .tab-member.active { background: #0056b3; color: white; }
-        .tab-member.error { background: #dc3545; color: white; border: 2px solid #ffc107; } 
-        .tab-content { display: none; padding: 20px; border: 2px solid #0056b3; background: white; border-radius: 5px; margin-top: 5px; }
-        .tab-content.active { display: block; }
-        .phieuc-question { margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px; padding-left: 10px; transition: 0.3s; }
-        .phieuc-question.error { border-left: 4px solid #dc3545; background: #fff8f8; }
+        .btn-outline-dna { background-color: transparent; border: 1px solid rgba(86, 119, 129, 0.4); color: var(--ivory); }
+        .btn-outline-dna:hover { background-color: rgba(86, 119, 129, 0.15); border-color: var(--teal-sec); }
+
+        /* ================= RESTRAINED GLASSMORPHISM FORMS ================= */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+        }
+        .glass-card h2 { margin-top: 0; margin-bottom: 24px; font-size: 22px; font-weight: 700; color: var(--ivory); }
         
-        /* CSS Bảng */
-        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
-        .matrix-table th, .matrix-table td { border: 1px solid #dee2e6; padding: 12px; text-align: center; }
-        .matrix-table th { background: #e9ecef; font-weight: bold; }
-        .matrix-table td:first-child { text-align: left; font-weight: bold; }
+        .form-group-dna { margin-bottom: 20px; }
+        .glass-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--beige); }
+        .glass-input, .select2-container--default .select2-selection--single {
+            width: 100%; height: 44px !important;
+            background: rgba(255,255,255,0.04) !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            border-radius: 10px !important;
+            padding: 0 16px;
+            color: var(--ivory) !important;
+            font-family: 'Be Vietnam Pro';
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+        .glass-input:focus { border-color: var(--coral); outline: none; background: rgba(255,255,255,0.08) !important; }
+        .glass-input::placeholder { color: var(--blue-gray); }
+
+        /* Ghi đè select2 cho mượt với Glassmorphism */
+        .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--ivory) !important; line-height: 44px !important; padding-left: 0 !important;}
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 44px !important; }
+        .select2-dropdown { background-color: var(--bg-main); border: 1px solid var(--teal-sec); color: var(--ivory); }
+        .select2-results__option--selected { background-color: var(--teal-sec) !important; }
+        .select2-results__option--highlighted { background-color: var(--coral) !important; }
+
+        /* ================= OLD STYLES CỦA FORM CÂU HỎI TRẮNG ================= */
+        /* T giữ lại toàn bộ CSS gốc của m ở đây để Phiếu B1, C hiển thị nền trắng bình thường */
+        .white-container { max-width: 800px; margin: 40px auto; background: white; padding: 32px; border-radius: 16px; color: #333; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        /* ... M CỨ PASTE LẠI CÁC CSS CŨ DÀNH RIÊNG CHO PHIẾU B1, B2, C VÀO ĐÂY NHÉ ... */
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- SCREEN WELCOME -->
-        <div id="screen-welcome" class="screen active">
-            <h2 style="text-align: center;">Hệ Thống Rà Soát Hộ Nghèo</h2>
-            <button class="btn-big" onclick="switchScreen('screen-canbo-auth')">CÁN BỘ TRIỂN KHAI</button>
-            <button class="btn-big" onclick="startNguoiDan()">NGƯỜI DÂN KHAI BÁO</button>
-        </div>
 
-        <!-- CÁN BỘ AUTH -->
-        <div id="screen-canbo-auth" class="screen">
-            <h2>Đăng Nhập / Đăng Ký Cán Bộ</h2>
-            <input type="text" id="cb_username" placeholder="Tên đăng nhập (viết liền không dấu)"><br><br>
-            <input type="password" id="cb_password" placeholder="Mật khẩu"><br><br>
-            <div class="grid-2">
-                <button class="btn" style="margin-top:0;" onclick="authCanBo('login', this)">Đăng Nhập</button>
-                <button class="btn btn-warning" style="margin-top:0;" onclick="authCanBo('register', this)">Tạo Tài Khoản</button>
+    <!-- ================= NAVBAR CHUNG ================= -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="assets/images/icon-tick.svg" alt="Tick" width="24" height="24" style="background: var(--glass-bg); border-radius: 6px; padding: 2px;">
+            Hệ thống rà soát hộ nghèo
+        </div>
+        <div class="nav-links">
+            <span class="nav-item active" id="nav-home" onclick="switchScreenUI('screen-welcome', 'nav-home')">Trang chủ</span>
+            <span class="nav-item" id="nav-staff" onclick="switchScreenUI('screen-canbo-auth', 'nav-staff')">Dành cho cán bộ</span>
+            <span class="nav-item" id="nav-citizen" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">Dành cho người dân</span>
+        </div>
+    </nav>
+
+    <!-- ================= 1. MÀN HÌNH WELCOME ================= -->
+    <div id="screen-welcome" class="screen hero-layout active">
+        <div class="hero-content">
+            <div class="tagline">NỀN TẢNG AN SINH SỐ</div>
+            <h1 class="hero-title">
+                HỆ THỐNG RÀ SOÁT
+                <span>Nhận diện và phân loại hộ nghèo</span>
+            </h1>
+            <p class="hero-desc">
+                Hỗ trợ người dân khai báo và cán bộ thực hiện quy trình<br class="desktop-break">
+                đánh giá hộ gia đình nhanh chóng, tiện lợi và chính xác
+            </p>
+            <div class="btn-group">
+                <button class="btn-dna btn-primary-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
+                    <img src="assets/images/citizen.svg" width="18" height="18" style="margin-right: 8px;"> Bắt đầu khai báo →
+                </button>
+                <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-canbo-auth', 'nav-staff')">
+                    <img src="assets/images/staff.svg" width="18" height="18" style="margin-right: 8px;"> Dành cho cán bộ
+                </button>
             </div>
-            <button class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="switchScreen('screen-welcome')">Quay Lại</button>
         </div>
+    </div>
 
-        <div id="screen-canbo-dash" class="screen">
-            <h2>Dashboard Cán Bộ</h2>
-            <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT MỚI</button>
-            <div id="form-tao-dot" style="display: none; background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px;">
-                <div class="grid-2">
-                    <div><label>Tỉnh/Thành:</label><select id="cb_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
-                    <div><label>Phường/Xã:</label><select id="cb_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+    <!-- ================= 2. MÀN HÌNH CÁN BỘ (AUTH) ================= -->
+    <div id="screen-canbo-auth" class="screen hero-layout">
+        <div class="hero-content">
+            <div class="glass-card">
+                <h2>Dành cho cán bộ</h2>
+                <div class="form-group-dna">
+                    <label class="glass-label">Tên đăng nhập / Đăng ký</label>
+                    <input type="text" id="cb_username" class="glass-input" placeholder="User đăng nhập/ đăng ký">
                 </div>
-                <div class="form-group"><label>Thôn/Tổ:</label><input type="text" id="cb_thon"></div>
-                <div class="grid-2">
-                    <div><label>Bắt đầu:</label><input type="date" id="cb_start"></div>
-                    <div><label>Kết thúc:</label><input type="date" id="cb_end"></div>
+                <div class="form-group-dna">
+                    <label class="glass-label">Mật khẩu</label>
+                    <input type="password" id="cb_password" class="glass-input" placeholder="Password">
                 </div>
-                <button class="btn" onclick="taoDot()">Lưu Đợt</button>
+                <div class="btn-group" style="margin-top: 32px;">
+                    <button class="btn-dna btn-primary-dna" onclick="authCanBo('login', this)">ĐĂNG NHẬP</button>
+                    <button class="btn-dna btn-outline-dna" onclick="authCanBo('register', this)">ĐĂNG KÝ MỚI</button>
+                </div>
             </div>
-            <div style="background:#e9ecef; padding:15px; border-radius:5px;">
-                <h3>Đợt Khảo Sát Của Bạn</h3>
-                <div id="canbo-dot-list"><p>Đang tải...</p></div>
-            </div><br>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất</button>
         </div>
+    </div>
 
-        <!-- NGƯỜI DÂN - BƯỚC 1 -->
-        <div id="screen-nd-step1" class="screen">
-            <h2>Thông Tin Của Người Khai Báo (Chủ Hộ)</h2>
-            <div class="form-group"><label>Họ tên:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;" placeholder="Nhập họ và tên..."></div>
-            <div class="grid-2">
-                <div><label>CCCD (12 số):</label><input type="text" id="nd_cccd" maxlength="12" placeholder="Nhập CCCD..." oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
-                <div><label>Dân tộc:</label><select id="nd_dantoc" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+    <!-- ================= 3. MÀN HÌNH NGƯỜI DÂN (STEP 1) ================= -->
+    <div id="screen-nd-step1" class="screen hero-layout">
+        <div class="hero-content">
+            <div class="glass-card" style="max-width: 600px;">
+                <h2>Thông Tin Chủ Hộ / Người Khai Báo</h2>
+                
+                <div class="form-group-dna">
+                    <label class="glass-label">Họ và tên</label>
+                    <input type="text" id="nd_hoten" class="glass-input" style="text-transform: uppercase;" placeholder="Nhập họ và tên...">
+                </div>
+                
+                <div class="grid-2" style="gap: 16px;">
+                    <div class="form-group-dna" style="margin:0;">
+                        <label class="glass-label">CCCD (12 số)</label>
+                        <input type="text" id="nd_cccd" class="glass-input" maxlength="12" placeholder="Nhập CCCD..." oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
+                    <div class="form-group-dna" style="margin:0;">
+                        <label class="glass-label">Dân tộc</label>
+                        <select id="nd_dantoc" class="searchable-select"><option value="">-- Chọn --</option></select>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="gap: 16px; margin-top: 16px;">
+                    <div class="form-group-dna" style="margin:0;">
+                        <label class="glass-label">Tỉnh/Thành</label>
+                        <select id="nd_tinh" class="searchable-select"><option value="">-- Chọn --</option></select>
+                    </div>
+                    <div class="form-group-dna" style="margin:0;">
+                        <label class="glass-label">Phường/Xã</label>
+                        <select id="nd_phuong" class="searchable-select"><option value="">-- Chọn --</option></select>
+                    </div>
+                </div>
+
+                <div class="form-group-dna" style="margin-top: 16px;">
+                    <label class="glass-label">Thôn/Tổ</label>
+                    <select id="nd_thon" class="searchable-select"><option value="">-- Chọn --</option></select>
+                    <input type="text" id="nd_thon_khac" class="glass-input" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:12px;">
+                </div>
+
+                <button class="btn-dna btn-primary-dna" style="width:100%; margin-top: 24px;" onclick="toiBuocRouting()">Tiếp tục chọn phiếu →</button>
             </div>
-            <div class="grid-2">
-                <div><label>Tỉnh/Thành:</label><select id="nd_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
-                <div><label>Phường/Xã:</label><select id="nd_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
-            </div>
-            <div class="form-group">
-                <label>Thôn/Tổ:</label><select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select>
-                <input type="text" id="nd_thon_khac" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:10px;">
-            </div>
-            <button class="btn-big" onclick="toiBuocRouting()">TIẾP TỤC CHỌN PHIẾU</button>
-            <button class="btn btn-secondary" style="width:100%" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
         </div>
+    </div>
+
+    <!-- ... TỪ ĐOẠN NÀY TRỞ XUỐNG M CỨ ĐỂ NGUYÊN CÁC KHỐI <div id="screen-nd-routing"> VÀ JS CỦA M NHÉ ... -->
+
+    
+        
+        
 
         <!-- MÀN HÌNH ĐIỀU HƯỚNG -->
         <div id="screen-nd-routing" class="screen">
             <h2 style="text-align: center; color: #0056b3;">Anh/Chị muốn thực hiện quy trình nào?</h2>
-            <button class="btn-big" style="background-color: #17a2b8;" onclick="switchScreen('screen-nd-step2')">1. NHẬN DIỆN NHANH (Phiếu A)</button>
+            <button class="btn-big" style="background-color: #17a2b8;" onclick="switchScreenUI('screen-nd-step2')">1. NHẬN DIỆN NHANH (Phiếu A)</button>
             <button class="btn-big" style="background-color: #28a745;" onclick="startPhieuB1()">2. LÀM PHIẾU B1 (Tính Điểm Vùng)</button>
-            <button class="btn-big" style="background-color: #e83e8c;" onclick="switchScreen('screen-nd-phieuc-init')">3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)</button>
-            <button class="btn btn-secondary" style="width:100%" onclick="switchScreen('screen-nd-step1')">Quay lại sửa thông tin cá nhân</button>
+            <button class="btn-big" style="background-color: #e83e8c;" onclick="switchScreenUI('screen-nd-phieuc-init')">3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)</button>
+            <button class="btn btn-secondary" style="width:100%" onclick="switchScreenUI('screen-nd-step1')">Quay lại sửa thông tin cá nhân</button>
         </div>
 
         <!-- NHẬN DẠNG NHANH -->
         <div id="screen-nd-step2" class="screen">
             <h3>Nhận Dạng Nhanh - Phần 1</h3><p id="title-b1"></p><div id="list-b1"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-routing')">Quay lại</button><button class="btn" onclick="checkB1()">Tiếp tục</button>
+            <button class="btn btn-secondary" onclick="switchScreenUI('screen-nd-routing')">Quay lại</button><button class="btn" onclick="checkB1()">Tiếp tục</button>
         </div>
         <div id="screen-nd-step3" class="screen">
             <h3>Nhận Dạng Nhanh - Phần 2</h3><p id="title-b2"></p><div id="list-b2"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step2')">Quay lại</button><button class="btn" onclick="checkB2()">Hoàn tất</button>
+            <button class="btn btn-secondary" onclick="switchScreenUI('screen-nd-step2')">Quay lại</button><button class="btn" onclick="checkB2()">Hoàn tất</button>
         </div>
         <div id="screen-nd-review" class="screen">
             <h3>Xác Nhận Phiếu A</h3><div class="review-box" id="review-content"></div>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Sửa</button><button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
+            <button class="btn btn-secondary" onclick="switchScreenUI('screen-nd-step1')">Sửa</button><button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
         </div>
 
         
@@ -166,7 +301,7 @@
                 <button class="btn btn-secondary" style="margin-top:0;" onclick="prevB1()">Quay lại câu trước</button>
                 <button class="btn" style="margin-top:0;" onclick="nextB1()">Tiếp tục →</button>
             </div>
-            <button class="btn" style="width: 100%; margin-top: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba;" onclick="switchScreen('screen-nd-step2')">
+            <button class="btn" style="width: 100%; margin-top: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba;" onclick="switchScreenUI('screen-nd-step2')">
                 ⚠️ Quay lại sửa Phiếu A (Nhận diện nhanh)
             </button>
         </div>
@@ -197,7 +332,7 @@
                 <input type="number" id="num_members" min="1" max="20" placeholder="Nhập số lượng thành viên..." style="font-size:18px;">
             </div>
             <button class="btn" style="width:100%; font-size:16px;" onclick="initPhieuCMembers()">Bắt đầu Khai báo Từng người</button>
-            <button class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="switchScreen('screen-nd-routing')">Quay lại Menu chọn Phiếu</button>
+            <button class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="switchScreenUI('screen-nd-routing')">Quay lại Menu chọn Phiếu</button>
         </div>
 
         <!-- PHIẾU C - TABS THÀNH VIÊN -->
@@ -206,7 +341,7 @@
             <div id="tabs-container" style="margin-bottom:15px; overflow-x:auto; white-space:nowrap; border-bottom: 2px solid #0056b3; padding-bottom:5px;"></div>
             <div id="tabs-content-container"></div>
             <br>
-            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-phieuc-init')">Sửa tổng số TV</button>
+            <button class="btn btn-secondary" onclick="switchScreenUI('screen-nd-phieuc-init')">Sửa tổng số TV</button>
         </div>
 
         <!-- PHIẾU C - CÂU HỎI CHUNG HỘ GIA ĐÌNH -->
@@ -256,7 +391,7 @@
                 </div>
             </div>
 
-            <br><button class="btn btn-secondary" style="width: 100%;" onclick="switchScreen('screen-nd-phieuc-ho')">Quay lại Sửa Thông Tin Hộ</button>
+            <br><button class="btn btn-secondary" style="width: 100%;" onclick="switchScreenUI('screen-nd-phieuc-ho')">Quay lại Sửa Thông Tin Hộ</button>
             <button class="btn" style="width: 100%; background-color:#28a745; margin-top:10px;" onclick="location.reload()">Hoàn Thành & Khai Báo Mới</button>
         </div>
     </div>
@@ -265,12 +400,24 @@
     <div id="myModal" class="modal"><div class="modal-content"><h3 id="modal-title">Xem Trước</h3><div id="modal-body"></div><br><button class="btn btn-secondary" style="width:100%;" onclick="document.getElementById('myModal').style.display='none'">ĐÓNG XEM TRƯỚC</button></div></div>
 
     <script>
+        // Hàm mới t viết thêm để vừa đổi màn hình, vừa đổi Menu Bar cho khớp
+        function switchScreenUI(screenId, navId) {
+            $('.screen').removeClass('active'); 
+            $('#' + screenId).addClass('active');
+            
+            // Xử lý Menu sáng/mờ
+            $('.nav-item').removeClass('active');
+            $('#' + navId).addClass('active');
+            
+            window.scrollTo(0,0);
+        }
+        
         const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev";
         let appConfig = {}; let activeCampaigns = []; let currentUser = ""; let finalData = {};
         let currentB1Index = 0; let b1Answers = {}; 
         let numMembers = 0; let phieuC_Data = []; let hoGiaDinh_Data = {}; 
 
-        function switchScreen(id) { $('.screen').removeClass('active'); $('#' + id).addClass('active'); window.scrollTo(0,0); }
+        function switchScreenUI(id) { $('.screen').removeClass('active'); $('#' + id).addClass('active'); window.scrollTo(0,0); }
         function initSelect2() { $('.searchable-select').select2(); }
 
         window.onload = async () => {
@@ -304,7 +451,7 @@
             $('#nd_thon').on('change', function() { $(this).val() === 'Khác' ? $('#nd_thon_khac').slideDown() : $('#nd_thon_khac').slideUp(); });
         };
 
-        function startNguoiDan() { switchScreen('screen-nd-step1'); loadNdThon(); }
+        function startNguoiDan() { switchScreenUI('screen-nd-step1'); loadNdThon(); }
         function loadCbPhuong() { let t = $('#cb_tinh').val(); $('#cb_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#cb_phuong').append(new Option(p,p))); }
         function loadNdPhuong() { let t = $('#nd_tinh').val(); $('#nd_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#nd_phuong').append(new Option(p,p))); loadNdThon(); }
         function loadNdThon() { let t = $('#nd_tinh').val(), p = $('#nd_phuong').val(); $('#nd_thon').empty().append('<option value="">-- Chọn Thôn/Tổ --</option>'); activeCampaigns.filter(d => d.tinh===t && d.phuong===p).forEach(d => $('#nd_thon').append(new Option(d.thon, d.id_dot))); $('#nd_thon').append(new Option("Khác", "Khác")); }
@@ -313,7 +460,7 @@
             if ($('#nd_cccd').val().length !== 12) return alert("❌ Vui lòng nhập ĐỦ 12 số CCCD!");
             if (!$('#nd_dantoc').val() || !$('#nd_hoten').val() || !$('#nd_thon').val() || !$('#nd_phuong').val() || !$('#nd_tinh').val()) return alert("❌ Vui lòng nhập đủ thông tin cá nhân/địa chỉ!");
             if ($('#nd_thon').val() === "Khác" && !$('#nd_thon_khac').val().trim()) return alert("❌ Vui lòng nhập tên Thôn/Tổ!");
-            ghiNhanDataNgamSync(); switchScreen('screen-nd-routing');
+            ghiNhanDataNgamSync(); switchScreenUI('screen-nd-routing');
         }
 
         function ghiNhanDataNgamSync() {
@@ -331,8 +478,8 @@
                 finalData["0"]=0; finalData["E"]=0;
                 let html = "<div class='review-checklist'><strong>Lý do rớt (Nhận dạng 1):</strong><br>"; $('.cb-b1:checked').each(function(){ html+=`<div>✅ ${this.parentElement.innerText}</div>`; }); html+="</div>";
                 $('#review-content').html(`<p><strong>Kết luận:</strong> <span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span></p>${html}`);
-                $('#btn-submit-review').text("Kết thúc"); switchScreen('screen-nd-review');
-            } else { finalData["0"]=1; switchScreen('screen-nd-step3'); }
+                $('#btn-submit-review').text("Kết thúc"); switchScreenUI('screen-nd-review');
+            } else { finalData["0"]=1; switchScreenUI('screen-nd-step3'); }
         }
 
         function checkB2() {
@@ -341,13 +488,13 @@
             html+="</div>"; finalData["D"]=tongD; finalData["E"] = tongD<4 ? 1 : 0;
             let res = finalData["E"] ? '<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Tới Phiếu B1)</span>' : '<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>';
             $('#review-content').html(`<p><strong>Điểm Nhận dạng 2:</strong> ${tongD}/4</p><p><strong>Kết luận:</strong> ${res}</p>${html}`);
-            $('#btn-submit-review').text(finalData["E"] ? "Xác nhận & Tới Phiếu B1" : "Kết thúc"); switchScreen('screen-nd-review');
+            $('#btn-submit-review').text(finalData["E"] ? "Xác nhận & Tới Phiếu B1" : "Kết thúc"); switchScreenUI('screen-nd-review');
         }
 
         async function submitDataXacNhan() { await ghiNhanDataNgam(); finalData["E"]===1 ? startPhieuB1() : location.reload(); }
 
         // --- PHIẾU B1 ---
-        function startPhieuB1() { currentB1Index=0; switchScreen('screen-nd-b1'); renderB1(); }
+        function startPhieuB1() { currentB1Index=0; switchScreenUI('screen-nd-b1'); renderB1(); }
         function renderB1() {
             let q = appConfig.phieu_b1[currentB1Index]; $('#b1-progress').text(`(Câu ${currentB1Index+1}/${appConfig.phieu_b1.length})`);
             $('#b1-question-text').text(q.noidung);
@@ -436,7 +583,7 @@
             html+="</div>";
             let isPass = totalScore <= vi.diemChuan; finalData.TongDiemB1 = totalScore; finalData.KetQuaB1 = isPass?"Đậu":"Rớt";
             $('#review-content-b1').html(`<p><strong>Phân loại:</strong> ${vi.txt} - ${vi.tenVung||"KXĐ"}</p><p><strong>Điểm chuẩn tối đa:</strong> ${vi.diemChuan}</p><p><strong>Tổng điểm B1:</strong> <span style="color:red;font-weight:bold;font-size:18px">${totalScore}</span></p><p><strong>Kết luận:</strong> ${isPass?'<span style="color:green;font-weight:bold;">Đạt (Đủ điều kiện tới B2)</span>':'<span style="color:red;font-weight:bold;">Không thuộc diện rà soát tiếp</span>'}</p>${html}`);
-            $('#btn-submit-review-b1').text(isPass?"Xác nhận & Đi tới Phiếu B2 & C":"Kết thúc"); switchScreen('screen-nd-review-b1');
+            $('#btn-submit-review-b1').text(isPass?"Xác nhận & Đi tới Phiếu B2 & C":"Kết thúc"); switchScreenUI('screen-nd-review-b1');
         }
 
         function prepareWordDataB1() {
@@ -492,13 +639,13 @@
         function xemTruocDocxB1() { $('#modal-title').text("Xem Trước Phiếu B1"); handleDocxPreview(prepareWordDataB1(), getB1TemplateUrl(), 'myModal', 'modal-body'); }
         function taiFileWordB1() { taiFileWord(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.docx`); }
         function taiFilePDFB1(btn) { handlePdfDownload(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b1-options').slideUp(); }
-        function editB1() { switchScreen('screen-nd-b1'); }
+        function editB1() { switchScreenUI('screen-nd-b1'); }
         function submitB1XacNhan() { 
             if(b1Answers['B1.1'] !== undefined) {
                 let mapN = [1,2,3,4,5,6,7];
                 $('#num_members').val(mapN[b1Answers['B1.1']]);
             }
-            if(finalData.KetQuaB1==="Đậu") { switchScreen('screen-nd-phieuc-init'); } else location.reload(); 
+            if(finalData.KetQuaB1==="Đậu") { switchScreenUI('screen-nd-phieuc-init'); } else location.reload(); 
         }
 
         // ================== PHIẾU C & B2 ENGINE ================== //
@@ -566,7 +713,7 @@
                 $(`input[name="pC_0_C3"][value="1"]`).prop('checked', true).trigger('change');
             }
             
-            switchScreen('screen-nd-phieuc-members'); 
+            switchScreenUI('screen-nd-phieuc-members'); 
             for(let i=0; i<n; i++) evalLogicPhiencC(i); 
         }
 
@@ -700,7 +847,7 @@
                 let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.slideDown() : txtBox.slideUp();
             });
 
-            switchScreen('screen-nd-phieuc-ho');
+            switchScreenUI('screen-nd-phieuc-ho');
         }
 
         function getAnswerText(q, val) {
@@ -982,7 +1129,7 @@
                 <p style="margin-bottom:5px; color:#17a2b8; font-size:16px;"><strong>Các chính sách hỗ trợ Hộ mong muốn / đang hưởng:</strong></p>${csHtml}
             `);
 
-            switchScreen('screen-nd-phieub2-review');
+            switchScreenUI('screen-nd-phieub2-review');
         }
 
         // --- WORD EXPORT PHIẾU C ---
@@ -1035,7 +1182,7 @@
                 if (data.status === "success") { 
                     if(action === 'register') alert("✅ Tạo tài khoản thành công! Tự động đăng nhập...");
                     currentUser = u; 
-                    switchScreen('screen-canbo-dash'); 
+                    switchScreenUI('screen-canbo-dash'); 
                     loadDanhSachDotCanBo(); 
                 } else { 
                     alert("❌ Lỗi: " + (data.message || "Kiểm tra lại thông tin!"));
@@ -1051,21 +1198,38 @@
             try {
                 const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
                 if(data.status==="success"){
-                    if(data.dots.length===0) return $('#canbo-dot-list').html("<p>Chưa có đợt</p>");
+                    if(data.dots.length===0) return $('#canbo-dot-list').html("<p>Chưa có đợt rà soát nào.</p>");
                     let html="";
                     data.dots.forEach(d => {
-                        const statusText = d.trang_thai === 'Open' ? '🟢 Đang mở' : '🔴 Đã đóng';
+                        const statusText = d.trang_thai === 'Open' ? 'Đang mở' : 'Đã đóng';
+                        const statusColor = d.trang_thai === 'Open' ? '#28a745' : '#dc3545';
                         html+=`<div class="dot-item" onclick="this.classList.toggle('open')">
-                            <h4 style="margin:0; cursor:pointer;">📋 Đợt: ${d.ten_dot} <br><small style="color:#555; font-weight:normal;">Hạn kết thúc: ${d.ngay_ket_thuc} | ${statusText}</small></h4>
-                            <div class="dot-actions">
-                                <button class="btn-sm" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">👀 Xem trước Phiếu A</button>
-                                <button class="btn-sm" style="background-color: #28a745;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">📥 Tải Phiếu A ▼</button>
-                                <button class="btn-sm" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">✏️ Đổi Hạn</button>
-                                <button class="btn-sm btn-danger" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">🔒 Kết thúc đợt</button>
+                            <h4 style="margin:0; cursor:pointer; display: flex; align-items: center; gap: 8px;">
+                                <img src="assets/images/calendar.svg" width="20" height="20"> 
+                                Đợt: ${d.ten_dot} 
+                                <br><small style="color:#555; font-weight:normal; margin-left: 28px;">Hạn kết thúc: ${d.ngay_ket_thuc} | <span style="color:${statusColor}; font-weight:600;">${statusText}</span></small>
+                            </h4>
+                            <div class="dot-actions" style="margin-left: 28px;">
+                                <button class="btn-sm" style="display:inline-flex; align-items:center; gap:4px;" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">
+                                    <img src="assets/images/preview.svg" width="14" height="14"> Xem Phiếu A
+                                </button>
+                                <button class="btn-sm" style="background-color: #28a745; display:inline-flex; align-items:center; gap:4px;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">
+                                    <img src="assets/images/download.svg" width="14" height="14"> Tải Phiếu A ▼
+                                </button>
+                                <button class="btn-sm" style="display:inline-flex; align-items:center; gap:4px;" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">
+                                    <img src="assets/images/edit.svg" width="14" height="14"> Đổi Hạn
+                                </button>
+                                <button class="btn-sm btn-danger" style="display:inline-flex; align-items:center; gap:4px;" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">
+                                    <img src="assets/images/lock.svg" width="14" height="14"> Kết thúc
+                                </button>
                                 <div id="dl-${d.id_dot}" style="display:none; margin-top: 10px; padding: 10px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;" onclick="event.stopPropagation();">
                                     <span style="font-size: 14px; margin-right: 10px; color: #155724; font-weight: bold;">Định dạng:</span>
-                                    <button class="btn-sm" style="background:#28a745;" onclick="taiFileWord('${d.id_dot}')">📄 Word (.docx)</button>
-                                    <button class="btn-sm btn-pdf" onclick="taiFilePDF('${d.id_dot}', this)">📕 PDF (.pdf)</button>
+                                    <button class="btn-sm" style="background:#28a745; display:inline-flex; align-items:center; gap:4px;" onclick="taiFileWord('${d.id_dot}')">
+                                        <img src="assets/images/note.svg" width="14" height="14"> Word (.docx)
+                                    </button>
+                                    <button class="btn-sm btn-pdf" style="display:inline-flex; align-items:center; gap:4px;" onclick="taiFilePDF('${d.id_dot}', this)">
+                                        <img src="assets/images/note.svg" width="14" height="14"> PDF (.pdf)
+                                    </button>
                                 </div>
                             </div>
                         </div>`;
