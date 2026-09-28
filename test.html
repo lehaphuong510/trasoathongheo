@@ -1,4 +1,254 @@
-<script>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hệ Thống Rà Soát Hộ Nghèo</title>
+    <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.11/build/docxtemplater.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/docx-preview/dist/docx-preview.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background-color: #f4f7f6; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .screen { display: none; }
+        .active { display: block; }
+        .btn-big { display: block; width: 100%; padding: 15px; margin: 10px 0; font-size: 18px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s;}
+        .btn-big:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn { padding: 10px 15px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; margin-top: 10px; font-weight:bold; }
+        .btn-secondary { background: #6c757d; }
+        .btn-danger { background: #dc3545; }
+        .btn-pdf { background: #e83e8c; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        input[type="text"], input[type="date"], input[type="password"], input[type="number"], select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .review-box { background: #e9ecef; padding: 15px; border-radius: 5px; border-left: 5px solid #0056b3; }
+        .select2-container .select2-selection--single { height: 40px; line-height: 40px; border: 1px solid #ccc; }
+        .dot-item { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .dot-actions { margin-top: 10px; display: none; }
+        .dot-item.open .dot-actions { display: block; }
+        .btn-sm { padding: 5px 10px; font-size: 14px; margin-right: 5px; margin-bottom: 5px; background: #17a2b8; border: none; color: white; cursor: pointer; border-radius: 3px; }
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 10px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 95vh; overflow-y: auto; }
+        #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; border: 1px dashed #ccc; overflow-x: hidden; position: relative;}
+        .docx-wrapper { padding: 0 !important; background: transparent !important; margin: 0 !important; }
+        .docx-wrapper > section.docx { width: 100% !important; padding: 10px !important; margin: 0 auto !important; box-sizing: border-box !important; box-shadow: none !important; min-height: auto !important; }
+        .docx-wrapper table { width: 100% !important; table-layout: auto !important; word-break: break-word; }
+        
+        .review-checklist div { padding: 8px 0; border-bottom: 1px dashed #ccc; }
+        .review-checklist div:last-child { border-bottom: none; }
+        .b1-option-label { display: block; padding: 15px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; background: #fdfdfd; font-size: 16px; transition: all 0.2s; }
+        .b1-option-label:hover { background: #eef5ff; border-color: #b8d4f2; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input[type="radio"], input[type="checkbox"] { transform: scale(1.2); margin-right: 10px; }
+        .text-blink { animation: blink 1.2s infinite; color: #dc3545; font-weight: bold; margin-bottom: 15px;}
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        
+        /* CSS cho Tab Thành viên */
+        .tab-member { display: inline-block; padding: 12px 20px; background: #ddd; margin-right: 5px; margin-bottom: 5px; border-radius: 5px; font-weight: bold; transition: 0.2s; color: #555; }
+        .tab-member.active { background: #0056b3; color: white; }
+        .tab-member.error { background: #dc3545; color: white; border: 2px solid #ffc107; } 
+        .tab-content { display: none; padding: 20px; border: 2px solid #0056b3; background: white; border-radius: 5px; margin-top: 5px; }
+        .tab-content.active { display: block; }
+        .phieuc-question { margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px; padding-left: 10px; transition: 0.3s; }
+        .phieuc-question.error { border-left: 4px solid #dc3545; background: #fff8f8; }
+        
+        /* CSS Bảng */
+        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
+        .matrix-table th, .matrix-table td { border: 1px solid #dee2e6; padding: 12px; text-align: center; }
+        .matrix-table th { background: #e9ecef; font-weight: bold; }
+        .matrix-table td:first-child { text-align: left; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SCREEN WELCOME -->
+        <div id="screen-welcome" class="screen active">
+            <h2 style="text-align: center;">Hệ Thống Rà Soát Hộ Nghèo</h2>
+            <button class="btn-big" onclick="switchScreen('screen-canbo-auth')">CÁN BỘ TRIỂN KHAI</button>
+            <button class="btn-big" onclick="startNguoiDan()">NGƯỜI DÂN KHAI BÁO</button>
+        </div>
+
+        <!-- CÁN BỘ AUTH -->
+        <div id="screen-canbo-auth" class="screen">
+            <h2>Đăng Nhập Cán Bộ</h2>
+            <input type="text" id="cb_username" placeholder="Tên đăng nhập"><br><br>
+            <input type="password" id="cb_password" placeholder="Mật khẩu"><br><br>
+            <button class="btn" onclick="authCanBo('login', this)">Đăng Nhập</button>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Quay Lại</button>
+        </div>
+
+        <div id="screen-canbo-dash" class="screen">
+            <h2>Dashboard Cán Bộ</h2>
+            <button class="btn-big" onclick="$('#form-tao-dot').slideToggle();" style="background-color: #28a745;">TẠO ĐỢT RÀ SOÁT MỚI</button>
+            <div id="form-tao-dot" style="display: none; background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px;">
+                <div class="grid-2">
+                    <div><label>Tỉnh/Thành:</label><select id="cb_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+                    <div><label>Phường/Xã:</label><select id="cb_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+                </div>
+                <div class="form-group"><label>Thôn/Tổ:</label><input type="text" id="cb_thon"></div>
+                <div class="grid-2">
+                    <div><label>Bắt đầu:</label><input type="date" id="cb_start"></div>
+                    <div><label>Kết thúc:</label><input type="date" id="cb_end"></div>
+                </div>
+                <button class="btn" onclick="taoDot()">Lưu Đợt</button>
+            </div>
+            <div style="background:#e9ecef; padding:15px; border-radius:5px;">
+                <h3>Đợt Khảo Sát Của Bạn</h3>
+                <div id="canbo-dot-list"><p>Đang tải...</p></div>
+            </div><br>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-welcome')">Đăng Xuất</button>
+        </div>
+
+        <!-- NGƯỜI DÂN - BƯỚC 1 -->
+        <div id="screen-nd-step1" class="screen">
+            <h2>Thông Tin Của Người Khai Báo (Chủ Hộ)</h2>
+            <div class="form-group"><label>Họ tên:</label><input type="text" id="nd_hoten" style="text-transform: uppercase;" placeholder="Nhập họ và tên..."></div>
+            <div class="grid-2">
+                <div><label>CCCD (12 số):</label><input type="text" id="nd_cccd" maxlength="12" placeholder="Nhập CCCD..." oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                <div><label>Dân tộc:</label><select id="nd_dantoc" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+            </div>
+            <div class="grid-2">
+                <div><label>Tỉnh/Thành:</label><select id="nd_tinh" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+                <div><label>Phường/Xã:</label><select id="nd_phuong" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select></div>
+            </div>
+            <div class="form-group">
+                <label>Thôn/Tổ:</label><select id="nd_thon" class="searchable-select" style="width:100%"><option value="">-- Chọn --</option></select>
+                <input type="text" id="nd_thon_khac" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:10px;">
+            </div>
+            <button class="btn-big" onclick="toiBuocRouting()">TIẾP TỤC CHỌN PHIẾU</button>
+            <button class="btn btn-secondary" style="width:100%" onclick="switchScreen('screen-welcome')">Quay Lại Màn Hình Chính</button>
+        </div>
+
+        <!-- MÀN HÌNH ĐIỀU HƯỚNG -->
+        <div id="screen-nd-routing" class="screen">
+            <h2 style="text-align: center; color: #0056b3;">Anh/Chị muốn thực hiện quy trình nào?</h2>
+            <button class="btn-big" style="background-color: #17a2b8;" onclick="switchScreen('screen-nd-step2')">1. NHẬN DIỆN NHANH (Phiếu A)</button>
+            <button class="btn-big" style="background-color: #28a745;" onclick="startPhieuB1()">2. LÀM PHIẾU B1 (Tính Điểm Vùng)</button>
+            <button class="btn-big" style="background-color: #e83e8c;" onclick="switchScreen('screen-nd-phieuc-init')">3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)</button>
+            <button class="btn btn-secondary" style="width:100%" onclick="switchScreen('screen-nd-step1')">Quay lại sửa thông tin cá nhân</button>
+        </div>
+
+        <!-- NHẬN DẠNG NHANH -->
+        <div id="screen-nd-step2" class="screen">
+            <h3>Nhận Dạng Nhanh - Phần 1</h3><p id="title-b1"></p><div id="list-b1"></div>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-routing')">Quay lại</button><button class="btn" onclick="checkB1()">Tiếp tục</button>
+        </div>
+        <div id="screen-nd-step3" class="screen">
+            <h3>Nhận Dạng Nhanh - Phần 2</h3><p id="title-b2"></p><div id="list-b2"></div>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step2')">Quay lại</button><button class="btn" onclick="checkB2()">Hoàn tất</button>
+        </div>
+        <div id="screen-nd-review" class="screen">
+            <h3>Xác Nhận Phiếu A</h3><div class="review-box" id="review-content"></div>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-step1')">Sửa</button><button class="btn" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
+        </div>
+
+        <!-- PHIẾU B1 -->
+        <div id="screen-nd-b1" class="screen">
+            <h3>Phiếu B1 <span id="b1-progress" style="color:#0056b3;"></span></h3>
+            <p id="b1-question-text" style="font-weight: bold; font-size: 18px;"></p>
+            <div id="b1-ghichu-container" style="display:none; margin-bottom:15px;"><details style="background:#eef2f5; padding:10px; border-radius:5px;"><summary style="color:#0056b3; font-weight:bold; cursor:pointer;">? Bấm xem chi tiết/danh sách bệnh</summary><div id="b1-ghichu-content" style="white-space: pre-wrap; margin-top:10px;"></div></details></div>
+            <div id="b1-options"></div><br>
+            <button class="btn btn-secondary" onclick="prevB1()">Quay lại câu trước</button><button class="btn" onclick="nextB1()">Tiếp tục</button>
+        </div>
+
+        <div id="screen-nd-review-b1" class="screen">
+            <h3>Kết Quả Phiếu B1</h3><div class="review-box" id="review-content-b1"></div>
+            <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Vui lòng Xem và Tải phiếu B1 tại đây trước khi đi tiếp!</p>
+            <div class="grid-2">
+                <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước B1</button>
+                <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="$('#dl-b1-options').slideToggle();">📥 Tải Phiếu B1 ▼</button>
+            </div>
+            <div id="dl-b1-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #28a745; background: #f8fff9; border-radius:5px;">
+                <p style="margin-top:0; font-size:14px; text-align:center;">Chọn định dạng tải về:</p>
+                <div class="grid-2">
+                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">📄 Word (.docx)</button>
+                    <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB1(this);">📕 PDF (.pdf)</button>
+                </div>
+            </div><br>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="editB1()">Quay lại để Sửa</button>
+            <button class="btn" id="btn-submit-review-b1" style="width: 100%;" onclick="submitB1XacNhan()">Xác nhận (Đi tới Phiếu B2 & C)</button>
+        </div>
+
+        <!-- PHIẾU C - INIT (HỎI SỐ NGƯỜI) -->
+        <div id="screen-nd-phieuc-init" class="screen">
+            <h3>Thu Thập Thông Tin Phiếu C & B2</h3>
+            <div class="form-group">
+                <label style="font-weight:bold; font-size:18px;">Hộ gia đình anh/chị có tổng cộng bao nhiêu thành viên?</label>
+                <input type="number" id="num_members" min="1" max="20" placeholder="Nhập số lượng thành viên..." style="font-size:18px;">
+            </div>
+            <button class="btn" style="width:100%; font-size:16px;" onclick="initPhieuCMembers()">Bắt đầu Khai báo Từng người</button>
+            <button class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="switchScreen('screen-nd-routing')">Quay lại Menu chọn Phiếu</button>
+        </div>
+
+        <!-- PHIẾU C - TABS THÀNH VIÊN -->
+        <div id="screen-nd-phieuc-members" class="screen">
+            <h3>Thông Tin Chi Tiết Thành Viên</h3>
+            <div id="tabs-container" style="margin-bottom:15px; overflow-x:auto; white-space:nowrap; border-bottom: 2px solid #0056b3; padding-bottom:5px;"></div>
+            <div id="tabs-content-container"></div>
+            <br>
+            <button class="btn btn-secondary" onclick="switchScreen('screen-nd-phieuc-init')">Sửa tổng số TV</button>
+        </div>
+
+        <!-- PHIẾU C - CÂU HỎI CHUNG HỘ GIA ĐÌNH -->
+        <div id="screen-nd-phieuc-ho" class="screen">
+            <h3>Thông Tin Chung Của Hộ Gia Đình</h3>
+            <div id="phieuc-ho-container"></div>
+            <br>
+            <button class="btn btn-secondary" onclick="switchMemberTab(numMembers-1)">Quay lại Thành viên cuối</button>
+            <button class="btn" style="background-color:#e83e8c; float:right;" onclick="tinhToanLogicB2()">Hoàn tất & Chấm Điểm</button>
+            <div style="clear:both;"></div>
+        </div>
+
+        <!-- PHIẾU B2 - REVIEW TOÀN DIỆN -->
+        <div id="screen-nd-phieub2-review" class="screen">
+            <h2 style="color:#0056b3; text-align:center; margin-bottom: 20px;">KẾT QUẢ ĐÁNH GIÁ RÀ SOÁT</h2>
+            
+            <!-- BẢNG KẾT LUẬN VÀNG TRÊN CÙNG -->
+            <div id="review-top-result"></div>
+            
+            <div style="background:#fff; border:2px solid #17a2b8; border-radius:5px; padding:15px; margin-bottom:20px;">
+                <h3 style="margin-top:0; color:#17a2b8;">I. TÓM TẮT PHIẾU C</h3>
+                <div id="review-content-phieuc"></div>
+                <div class="grid-2" style="margin-top:15px;">
+                    <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxPhieuC()">👀 Xem Phiếu C</button>
+                    <button class="btn" style="background-color: #17a2b8; margin-top:0;" onclick="$('#dl-pc-options').slideToggle();">📥 Tải Phiếu C ▼</button>
+                </div>
+                <div id="dl-pc-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #17a2b8; background: #f4faff;">
+                    <div class="grid-2">
+                        <button class="btn" style="background-color: #17a2b8; margin-top:0; width:100%;" onclick="taiFileWordPhieuC(); $('#dl-pc-options').slideUp();">📄 Word (.docx)</button>
+                        <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFPhieuC(this);">📕 PDF (.pdf)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:#fff; border:2px solid #e83e8c; border-radius:5px; padding:15px;">
+                <h3 style="margin-top:0; color:#e83e8c;">II. CHI TIẾT THIẾU HỤT B2</h3>
+                <div id="review-content-b2"></div>
+                <div class="grid-2" style="margin-top:15px;">
+                    <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB2()">👀 Xem Phiếu B2</button>
+                    <button class="btn" style="background-color: #e83e8c; margin-top:0;" onclick="$('#dl-b2-options').slideToggle();">📥 Tải Phiếu B2 ▼</button>
+                </div>
+                <div id="dl-b2-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #e83e8c; background: #fff5f8;">
+                    <div class="grid-2">
+                        <button class="btn" style="background-color: #e83e8c; margin-top:0; width:100%;" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();">📄 Word (.docx)</button>
+                        <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB2(this);">📕 PDF (.pdf)</button>
+                    </div>
+                </div>
+            </div>
+
+            <br><button class="btn btn-secondary" style="width: 100%;" onclick="switchScreen('screen-nd-phieuc-ho')">Quay lại Sửa Thông Tin Hộ</button>
+            <button class="btn" style="width: 100%; background-color:#28a745; margin-top:10px;" onclick="location.reload()">Hoàn Thành & Khai Báo Mới</button>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="myModal" class="modal"><div class="modal-content"><h3 id="modal-title">Xem Trước</h3><div id="modal-body"></div><br><button class="btn btn-secondary" style="width:100%;" onclick="document.getElementById('myModal').style.display='none'">ĐÓNG XEM TRƯỚC</button></div></div>
+
+    <script>
         const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev";
         let appConfig = {}; let activeCampaigns = []; let currentUser = ""; let finalData = {};
         let currentB1Index = 0; let b1Answers = {}; 
@@ -889,3 +1139,5 @@
             btnElement.innerText = orgText; btnElement.disabled = false;
         }
     </script>
+</body>
+</html>
