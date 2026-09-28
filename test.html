@@ -30,7 +30,8 @@
             --ivory: #F6F1E9;
             --beige: #DBC7BC;
             --glass-bg: rgba(246, 241, 233, 0.06);
-            --glass-border: rgba(246, 241, 233, 0.12);
+            --glass-border: rgba(246, 241, 233, 0.15);
+            --glass-hover: rgba(246, 241, 233, 0.1);
         }
 
         body { 
@@ -40,17 +41,36 @@
             margin: 0; 
             padding: 0;
             overflow-x: hidden;
-            background-attachment: fixed;
         }
 
         .screen { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
         .screen.active { display: block; opacity: 1; }
 
+        /* ================= BACKGROUNDS (Cố định toàn trang) ================= */
+        .bg-welcome { background-image: url('assets/images/welcome-desktop-16x9.webp'); }
+        .bg-staff { background-image: url('assets/images/staff-desktop-16x9.webp'); }
+        .bg-citizen { background-image: url('assets/images/citizen-desktop-16x9.webp'); }
+
+        .bg-common {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed !important;
+        }
+
+        @media (max-width: 768px) {
+            .bg-welcome { background-image: url('assets/images/welcome-mobile-9x16.webp'); background-position: bottom center; }
+            .bg-staff { background-image: url('assets/images/staff-mobile-9x16.webp'); }
+            .bg-citizen { background-image: url('assets/images/citizen-mobile-9x16.webp'); }
+        }
+
         /* ================= NAVIGATION BAR ================= */
+        /* Navbar mặc định bị ẩn, JS sẽ gọi nó lên khi rời trang Welcome */
         .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-            background-color: var(--ivory);
+            display: none; justify-content: space-between; align-items: center;
+            padding: 16px 5%; position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(246, 241, 233, 0.95); /* Kính mờ sáng */
+            backdrop-filter: blur(10px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .nav-logo { display: flex; align-items: center; font-weight: 700; font-size: 16px; gap: 12px; color: var(--bg-main); }
@@ -59,47 +79,42 @@
         .nav-item:hover { color: var(--bg-main); }
         .nav-item.active { color: var(--bg-main); font-weight: 700; }
 
-        /* ================= HERO LAYOUT (Negative Space) ================= */
-        .hero-layout {
-            min-height: 100vh;
-            display: flex; align-items: center;
-            padding: 80px 5% 0 5%;
-            background-size: cover;
-            background-position: right center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
-        .hero-content {
-            width: 65%; /* Giữ 60-70% khoảng trống */
-            margin: auto 0;
-        }
-
-        /* Background Images (Map với file Github) */
-        #screen-welcome { background-image: url('assets/images/welcome-desktop-16x9.webp'); }
-        #screen-canbo-auth { background-image: url('assets/images/staff-desktop-16x9.webp'); }
-        #screen-nd-step1 { background-image: url('assets/images/citizen-desktop-16x9.webp'); }
-        #screen-nd-routing { background-image: url('assets/images/citizen-desktop-16x9.webp'); }
-
         @media (max-width: 768px) {
-            .navbar { padding: 16px 5%; flex-direction: column; gap: 16px; position: absolute; }
-            .nav-links { gap: 16px; font-size: 14px; }
-            .hero-layout { align-items: flex-start; padding-top: 160px; background-position: bottom center; }
-            .hero-content { width: 100%; margin: 0; }
-            #screen-welcome { background-image: url('assets/images/welcome-mobile-9x16.webp'); }
-            #screen-canbo-auth { background-image: url('assets/images/staff-mobile-9x16.webp'); }
-            #screen-nd-step1 { background-image: url('assets/images/citizen-mobile-9x16.webp'); }
-            #screen-nd-routing { background-image: url('assets/images/citizen-mobile-9x16.webp'); }
+            .navbar { flex-direction: column; gap: 12px; padding: 12px 5%; }
+            .nav-links { gap: 16px; font-size: 13px; }
+        }
+
+        /* ================= LAYOUTS ================= */
+        /* Màn hình Welcome: 100vh tuyệt đối, thụt trái 15%, canh giữa dọc */
+        .welcome-layout {
+            height: 100vh; width: 100vw;
+            display: flex; align-items: center;
+            padding-left: 15vw; box-sizing: border-box;
+            overflow: hidden; /* Cắt bỏ hoàn toàn scroll */
+        }
+        .welcome-layout .hero-content { width: 100%; max-width: 550px; }
+
+        /* Màn hình form ngắn (Đăng nhập, Route): Canh giữa màn hình */
+        .form-center-layout {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 80px 5% 40px; box-sizing: border-box;
+        }
+
+        /* Màn hình form dài (B1, C, Dashboard): Bắt đầu từ top để scroll */
+        .form-top-layout {
+            min-height: 100vh; padding: 100px 5% 60px; box-sizing: border-box;
         }
 
         /* ================= TYPOGRAPHY ================= */
         .tagline { font-size: 13px; font-weight: 600; letter-spacing: 2px; color: var(--blue-gray); text-transform: uppercase; margin-bottom: 16px; }
         .hero-title { font-size: 40px; font-weight: 800; line-height: 1.3; margin: 0 0 20px 0; color: var(--ivory); }
         .hero-title span { display: block; font-weight: 700; font-size: 32px; margin-top: 8px; }
-        .hero-desc { font-size: 16px; font-weight: 400; line-height: 1.55; color: var(--beige); max-width: 85%; margin-bottom: 36px; }
+        .hero-desc { font-size: 16px; font-weight: 400; line-height: 1.55; color: var(--beige); margin-bottom: 36px; }
         @media (max-width: 768px) {
+            .welcome-layout { padding-left: 5vw; padding-right: 5vw; align-items: flex-start; padding-top: 15vh; }
             .hero-title { font-size: 32px; }
             .hero-title span { font-size: 26px; }
-            .hero-desc { font-size: 15px; max-width: 100%; }
+            .form-top-layout { padding-top: 120px; }
         }
 
         /* ================= BUTTONS ================= */
@@ -108,40 +123,39 @@
             height: 48px; padding: 0 24px; border-radius: 12px; 
             font-family: 'Be Vietnam Pro'; font-weight: 600; font-size: 15px; 
             cursor: pointer; transition: all 0.2s ease-out; 
-            display: inline-flex; align-items: center; justify-content: center; border: none;
+            display: inline-flex; align-items: center; justify-content: center; border: none; gap: 8px;
         }
         .btn-primary-dna { background-color: var(--coral); color: var(--ivory); }
         .btn-primary-dna:hover { background-color: #c94c41; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(223, 92, 80, 0.3); }
         
-        .btn-outline-dna { background-color: transparent; border: 1px solid rgba(86, 119, 129, 0.6); color: var(--ivory); }
-        .btn-outline-dna:hover { background-color: rgba(86, 119, 129, 0.15); border-color: var(--teal-sec); }
+        .btn-outline-dna { background-color: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--ivory); }
+        .btn-outline-dna:hover { background-color: var(--glass-hover); border-color: var(--ivory); }
 
-        .btn-dark-teal { background-color: var(--bg-main); color: var(--ivory); }
-        .btn-dark-teal:hover { background-color: #12282d; transform: translateY(-2px); }
+        .btn-teal-dna { background-color: var(--teal-sec); color: var(--ivory); }
+        .btn-teal-dna:hover { background-color: #45626a; transform: translateY(-2px); }
 
-        /* ================= RESTRAINED GLASSMORPHISM FORMS ================= */
+        /* ================= GLASSMORPHISM CARDS (DNA STYLE) ================= */
         .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 480px;
+            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 16px;
+            padding: 32px; width: 100%; box-sizing: border-box;
         }
-        .glass-card h2 { margin-top: 0; margin-bottom: 24px; font-size: 22px; font-weight: 700; color: var(--ivory); }
+        .glass-card-sm { max-width: 500px; }
+        .glass-card-lg { max-width: 900px; margin: 0 auto; }
         
+        .glass-card h2, .glass-card h3 { margin-top: 0; color: var(--ivory); }
+        .glass-card h2 { font-size: 24px; margin-bottom: 24px; }
+        .glass-card h3 { font-size: 20px; margin-bottom: 20px; font-weight: 600; }
+
+        /* Form Inputs */
         .form-group-dna { margin-bottom: 20px; }
         .glass-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--beige); }
         .glass-input, .select2-container--default .select2-selection--single {
             width: 100% !important; height: 48px !important;
             background: rgba(255,255,255,0.06) !important;
-            border: 1px solid rgba(255,255,255,0.2) !important;
-            border-radius: 12px !important;
-            padding: 0 16px;
-            color: var(--ivory) !important;
-            font-family: 'Be Vietnam Pro';
-            box-sizing: border-box;
-            transition: 0.2s;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 12px !important; padding: 0 16px;
+            color: var(--ivory) !important; font-family: 'Be Vietnam Pro'; box-sizing: border-box; transition: 0.2s;
         }
         .glass-input:focus { border-color: var(--coral) !important; outline: none; background: rgba(255,255,255,0.1) !important; }
         .glass-input::placeholder { color: var(--blue-gray); }
@@ -154,98 +168,78 @@
         .select2-results__option--selected { background-color: var(--teal-sec) !important; }
         .select2-results__option--highlighted { background-color: var(--coral) !important; }
 
-        /* ================= WHITE CONTAINER (PHIẾU B1, C, DASHBOARD) ================= */
-        .white-container { 
-            max-width: 800px; margin: 100px auto 40px auto; 
-            background: #FFFFFF; padding: 40px; 
-            border-radius: 20px; color: #1B3940; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
-        }
-        @media (max-width: 768px) {
-            .white-container { margin: 100px 15px 30px 15px; padding: 24px; }
-        }
-
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; gap: 0; } }
 
-        /* STYLE ĐÁP ÁN (Dựa trên Hình 7) */
+        /* ================= STYLE ĐÁP ÁN B1, C (DARK THEME) ================= */
         .b1-option-label { 
             display: flex; align-items: center; 
             padding: 16px 20px; margin-bottom: 12px; 
-            border: 1px solid #D1D5DB; border-radius: 12px; 
-            cursor: pointer; background: #FFFFFF; 
-            font-size: 16px; color: #1F2937; 
+            border: 1px solid var(--glass-border); border-radius: 12px; 
+            cursor: pointer; background: rgba(255,255,255,0.03); 
+            font-size: 16px; color: var(--ivory); 
             transition: all 0.2s ease; font-weight: 500; 
         }
-        /* Hiệu ứng khi chọn đáp án */
         .b1-option-label:has(input:checked) { 
-            border: 2px solid var(--teal-sec); 
-            background-color: rgba(86, 119, 129, 0.06); 
+            border: 2px solid var(--coral); 
+            background-color: rgba(223, 92, 80, 0.1); 
         }
         input[type="radio"], input[type="checkbox"] { 
-            accent-color: var(--teal-sec); 
+            accent-color: var(--coral); 
             width: 22px; height: 22px; margin-right: 16px; cursor: pointer; 
         }
-        
-        /* Modal ẩn triệt để */
-        .modal { display: none !important; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
-        .modal[style*="display: block"] { display: block !important; }
-        
-        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 10px; border: 1px solid #888; width: 95%; max-width: 1000px; border-radius: 8px; max-height: 95vh; overflow-y: auto; }
-        #modal-body { width: 100%; background: #eaeaea; min-height: 50vh; border: 1px dashed #ccc; overflow-x: hidden; position: relative;}
-        
-        .review-checklist div { padding: 12px 0; border-bottom: 1px dashed #ccc; }
+
+        /* Review box */
+        .review-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid var(--coral); margin-bottom: 20px; }
+        .review-checklist div { padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
         .review-checklist div:last-child { border-bottom: none; }
-        .text-blink { animation: blink 1.2s infinite; color: #dc3545; font-weight: bold; margin-bottom: 15px;}
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        
-        /* Tabs Thành viên */
-        .tab-member { display: inline-block; padding: 12px 20px; background: #f1f5f9; margin-right: 5px; margin-bottom: 5px; border-radius: 8px; font-weight: 600; transition: 0.2s; color: #475569; cursor: pointer; border: 1px solid #e2e8f0; }
-        .tab-member.active { background: var(--teal-sec); color: white; border-color: var(--teal-sec); }
-        .tab-member.error { background: #dc3545; color: white; border: 2px solid #ffc107; } 
-        .tab-content { display: none; padding: 24px; border: 2px solid var(--teal-sec); background: white; border-radius: 12px; margin-top: 5px; }
-        .tab-content.active { display: block; }
-        .phieuc-question { margin-bottom:15px; border-bottom:1px dashed #e2e8f0; padding-bottom:15px; padding-left: 10px; transition: 0.3s; }
-        .phieuc-question.error { border-left: 4px solid #dc3545; background: #fff8f8; border-radius: 0 8px 8px 0; }
-        
-        /* Dashboard table & items */
-        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
-        .matrix-table th, .matrix-table td { border: 1px solid #dee2e6; padding: 12px; text-align: center; }
-        .matrix-table th { background: #f8fafc; font-weight: bold; color: var(--bg-main); }
-        .matrix-table td:first-child { text-align: left; font-weight: bold; color: var(--teal-sec); }
-        
-        .dot-item { background: #fff; border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 12px; border-radius: 12px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .dot-item:hover { border-color: var(--teal-sec); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .dot-actions { margin-top: 16px; display: none; }
+        .text-blink { animation: blink 1.2s infinite; color: var(--coral); font-weight: bold; margin-bottom: 15px;}
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Dashboard Items */
+        .dot-item { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 20px; margin-bottom: 16px; border-radius: 12px; transition: 0.2s; }
+        .dot-item:hover { border-color: var(--teal-sec); background: rgba(255,255,255,0.08); }
+        .dot-actions { margin-top: 16px; display: none; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .dot-item.open .dot-actions { display: block; }
-        .btn-sm { padding: 8px 16px; font-size: 14px; font-weight: 600; font-family: 'Be Vietnam Pro'; margin-right: 8px; margin-bottom: 8px; background: #f1f5f9; border: 1px solid #cbd5e1; color: var(--bg-main); cursor: pointer; border-radius: 8px; transition: 0.2s; }
-        .btn-sm:hover { background: #e2e8f0; }
-        .btn-danger { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
-        .btn-danger:hover { background: #fecaca; }
         
-        /* Custom Inputs for White Container */
-        .white-container input[type="text"], .white-container input[type="date"], .white-container input[type="number"] {
-            width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Be Vietnam Pro'; font-size: 15px; transition: 0.2s; box-sizing: border-box;
-        }
-        .white-container input:focus { outline: none; border-color: var(--teal-sec); box-shadow: 0 0 0 3px rgba(86,119,129,0.1); }
+        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.03); }
+        .matrix-table th, .matrix-table td { border: 1px solid rgba(255,255,255,0.1); padding: 12px; text-align: center; }
+        .matrix-table th { background: rgba(255,255,255,0.1); font-weight: 600; color: var(--ivory); }
+        .matrix-table td:first-child { text-align: left; font-weight: bold; color: var(--beige); }
+
+        /* Tabs Thành viên */
+        .tab-member { display: inline-block; padding: 12px 20px; background: rgba(255,255,255,0.05); margin-right: 8px; margin-bottom: 8px; border-radius: 8px; font-weight: 600; transition: 0.2s; color: var(--blue-gray); cursor: pointer; border: 1px solid var(--glass-border); }
+        .tab-member.active { background: var(--teal-sec); color: var(--ivory); border-color: var(--teal-sec); }
+        .tab-member.error { background: rgba(223, 92, 80, 0.2); color: var(--coral); border: 1px solid var(--coral); } 
+        .tab-content { display: none; padding: 24px; border: 1px solid var(--teal-sec); background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 8px; }
+        .tab-content.active { display: block; }
+        .phieuc-question { margin-bottom:16px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:16px; transition: 0.3s; }
+        .phieuc-question.error { border-left: 4px solid var(--coral); padding-left: 12px; background: rgba(223, 92, 80, 0.05); }
+
+        /* Modal ẩn triệt để */
+        .modal { display: none !important; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+        .modal[style*="display: block"] { display: block !important; }
+        .modal-content { background-color: var(--bg-main); margin: 5% auto; padding: 24px; border: 1px solid var(--teal-sec); width: 95%; max-width: 1000px; border-radius: 16px; max-height: 90vh; overflow-y: auto; color: var(--ivory); }
+        #modal-body { width: 100%; background: white; color: black; min-height: 50vh; border-radius: 8px; overflow-x: hidden; position: relative; padding: 10px;}
     </style>
 </head>
 <body>
 
-    <!-- ================= NAVBAR ================= -->
-    <nav class="navbar">
+    <!-- ================= NAVBAR CHUNG ================= -->
+    <nav class="navbar" id="main-navbar">
         <div class="nav-logo">
             <img src="assets/images/icon-tick.svg" alt="Tick" width="24" height="24" style="background: var(--teal-sec); border-radius: 6px; padding: 2px; filter: brightness(2);">
             Hệ thống rà soát hộ nghèo
         </div>
         <div class="nav-links">
-            <span class="nav-item active" id="nav-home" onclick="switchScreenUI('screen-welcome', 'nav-home')">Trang chủ</span>
+            <span class="nav-item" id="nav-home" onclick="switchScreenUI('screen-welcome', 'nav-home')">Trang chủ</span>
             <span class="nav-item" id="nav-staff" onclick="switchScreenUI('screen-canbo-auth', 'nav-staff')">Dành cho cán bộ</span>
             <span class="nav-item" id="nav-citizen" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">Dành cho người dân</span>
         </div>
     </nav>
 
     <!-- ================= 1. MÀN HÌNH WELCOME ================= -->
-    <div id="screen-welcome" class="screen hero-layout active">
+    <div id="screen-welcome" class="screen bg-welcome bg-common welcome-layout active">
         <div class="hero-content">
             <div class="tagline">NỀN TẢNG AN SINH SỐ</div>
             <h1 class="hero-title">
@@ -258,309 +252,315 @@
             </p>
             <div class="btn-group">
                 <button class="btn-dna btn-primary-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
-                    <img src="assets/images/citizen.svg" width="18" height="18" style="margin-right: 8px; filter: brightness(2);"> Bắt đầu khai báo →
+                    <img src="assets/images/citizen.svg" width="18" height="18" style="filter: brightness(2);"> Bắt đầu khai báo →
                 </button>
                 <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-canbo-auth', 'nav-staff')">
-                    <img src="assets/images/staff.svg" width="18" height="18" style="margin-right: 8px; filter: brightness(2);"> Dành cho cán bộ
+                    <img src="assets/images/staff.svg" width="18" height="18"> Dành cho cán bộ
                 </button>
             </div>
         </div>
     </div>
 
     <!-- ================= 2. MÀN HÌNH CÁN BỘ (AUTH) ================= -->
-    <div id="screen-canbo-auth" class="screen hero-layout">
-        <div class="hero-content">
-            <div class="glass-card">
-                <h2>Dành cho cán bộ</h2>
-                <div class="form-group-dna">
-                    <label class="glass-label">Tên đăng nhập / Đăng ký</label>
-                    <input type="text" id="cb_username" class="glass-input" placeholder="User đăng nhập/ đăng ký">
-                </div>
-                <div class="form-group-dna">
-                    <label class="glass-label">Mật khẩu</label>
-                    <input type="password" id="cb_password" class="glass-input" placeholder="Password">
-                </div>
-                <div class="btn-group" style="margin-top: 32px;">
-                    <button class="btn-dna btn-primary-dna" onclick="authCanBo('login', this)">ĐĂNG NHẬP</button>
-                    <button class="btn-dna btn-outline-dna" onclick="authCanBo('register', this)">ĐĂNG KÝ MỚI</button>
-                </div>
+    <div id="screen-canbo-auth" class="screen bg-staff bg-common form-center-layout">
+        <div class="glass-card glass-card-sm">
+            <h2>Dành cho cán bộ</h2>
+            <div class="form-group-dna">
+                <label class="glass-label">Tên đăng nhập / Đăng ký</label>
+                <input type="text" id="cb_username" class="glass-input" placeholder="User đăng nhập/ đăng ký">
             </div>
-        </div>
-    </div>
-
-    <!-- ================= 3. MÀN HÌNH NGƯỜI DÂN (STEP 1) ================= -->
-    <div id="screen-nd-step1" class="screen hero-layout">
-        <div class="hero-content">
-            <div class="glass-card" style="max-width: 600px;">
-                <h2>Thông Tin Chủ Hộ / Người Khai Báo</h2>
-                
-                <div class="form-group-dna">
-                    <label class="glass-label">Họ và tên</label>
-                    <input type="text" id="nd_hoten" class="glass-input" style="text-transform: uppercase;" placeholder="Nhập họ và tên...">
-                </div>
-                
-                <div class="form-group-dna">
-                    <label class="glass-label">CCCD (12 số)</label>
-                    <input type="text" id="nd_cccd" class="glass-input" maxlength="12" placeholder="Nhập CCCD..." oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                </div>
-                
-                <!-- Gộp Dân tộc và Tỉnh/thành 1 hàng -->
-                <div class="grid-2" style="gap: 16px;">
-                    <div class="form-group-dna" style="margin:0;">
-                        <label class="glass-label">Dân tộc</label>
-                        <select id="nd_dantoc" class="searchable-select"><option value="">-- Chọn --</option></select>
-                    </div>
-                    <div class="form-group-dna" style="margin:0;">
-                        <label class="glass-label">Tỉnh/Thành</label>
-                        <select id="nd_tinh" class="searchable-select"><option value="">-- Chọn --</option></select>
-                    </div>
-                </div>
-
-                <!-- Gộp Phường và Thôn 1 hàng -->
-                <div class="grid-2" style="gap: 16px; margin-top: 16px;">
-                    <div class="form-group-dna" style="margin:0;">
-                        <label class="glass-label">Phường/Xã</label>
-                        <select id="nd_phuong" class="searchable-select"><option value="">-- Chọn --</option></select>
-                    </div>
-                    <div class="form-group-dna" style="margin:0;">
-                        <label class="glass-label">Thôn/Tổ</label>
-                        <select id="nd_thon" class="searchable-select"><option value="">-- Chọn --</option></select>
-                        <input type="text" id="nd_thon_khac" class="glass-input" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:12px;">
-                    </div>
-                </div>
-
-                <button class="btn-dna btn-primary-dna" style="width:100%; margin-top: 24px;" onclick="toiBuocRouting()">Tiếp tục chọn phiếu →</button>
+            <div class="form-group-dna">
+                <label class="glass-label">Mật khẩu</label>
+                <input type="password" id="cb_password" class="glass-input" placeholder="Password">
             </div>
-        </div>
-    </div>
-
-    <!-- MÀN HÌNH ĐIỀU HƯỚNG -->
-    <div id="screen-nd-routing" class="screen hero-layout">
-        <div class="hero-content">
-            <div class="glass-card" style="max-width: 600px;">
-                <h2 style="text-align: center;">Anh/Chị muốn thực hiện quy trình nào?</h2>
-                
-                <button class="btn-dna btn-primary-dna" style="width:100%; margin-bottom: 16px; height: 56px; justify-content: flex-start; gap: 12px;" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">
-                    <img src="assets/images/form-check.svg" width="24" height="24" style="filter: brightness(2);"> 1. NHẬN DIỆN NHANH (Phiếu A)
-                </button>
-                
-                <button class="btn-dna" style="width:100%; margin-bottom: 16px; background-color: var(--teal-sec); color: var(--ivory); height: 56px; justify-content: flex-start; gap: 12px;" onclick="startPhieuB1()">
-                    <img src="assets/images/form-check.svg" width="24" height="24" style="filter: brightness(2);"> 2. LÀM PHIẾU B1 (Tính Điểm Vùng)
-                </button>
-                
-                <button class="btn-dna" style="width:100%; margin-bottom: 24px; background-color: var(--blue-gray); color: var(--bg-main); height: 56px; justify-content: flex-start; gap: 12px;" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')">
-                    <img src="assets/images/family.svg" width="24" height="24"> 3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)
-                </button>
-                
-                <button class="btn-dna btn-outline-dna" style="width:100%; justify-content: center; gap: 8px;" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
-                    <img src="assets/images/edit.svg" width="18" height="18" style="filter: brightness(2);"> Quay lại sửa thông tin cá nhân
-                </button>
+            <div class="btn-group" style="margin-top: 32px;">
+                <button class="btn-dna btn-primary-dna" onclick="authCanBo('login', this)">ĐĂNG NHẬP</button>
+                <button class="btn-dna btn-outline-dna" onclick="authCanBo('register', this)">ĐĂNG KÝ MỚI</button>
             </div>
         </div>
     </div>
 
     <!-- CÁN BỘ DASHBOARD -->
-    <div id="screen-canbo-dash" class="screen">
-        <div class="white-container">
+    <div id="screen-canbo-dash" class="screen bg-staff bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
             <h2>Dashboard Cán Bộ</h2>
-            <button class="btn-dna btn-primary-dna" style="margin-bottom: 20px; background-color: #28a745;" onclick="$('#form-tao-dot').slideToggle();">TẠO ĐỢT RÀ SOÁT MỚI</button>
-            <div id="form-tao-dot" style="display: none; background:#f8fafc; padding:24px; border-radius:12px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+            <button class="btn-dna btn-teal-dna" style="margin-bottom: 24px;" onclick="$('#form-tao-dot').slideToggle();">
+                <img src="assets/images/edit.svg" width="18" height="18" style="filter: brightness(2);"> TẠO ĐỢT RÀ SOÁT MỚI
+            </button>
+            
+            <div id="form-tao-dot" style="display: none; background: rgba(0,0,0,0.2); padding:24px; border-radius:12px; margin-bottom: 24px; border: 1px solid var(--glass-border);">
                 <div class="grid-2">
-                    <div><label style="font-weight:600; font-size:14px; color:#475569;">Tỉnh/Thành:</label><select id="cb_tinh" class="searchable-select"><option value="">-- Chọn --</option></select></div>
-                    <div><label style="font-weight:600; font-size:14px; color:#475569;">Phường/Xã:</label><select id="cb_phuong" class="searchable-select"><option value="">-- Chọn --</option></select></div>
+                    <div class="form-group-dna" style="margin:0;"><label class="glass-label">Tỉnh/Thành:</label><select id="cb_tinh" class="searchable-select"><option value="">-- Chọn --</option></select></div>
+                    <div class="form-group-dna" style="margin:0;"><label class="glass-label">Phường/Xã:</label><select id="cb_phuong" class="searchable-select"><option value="">-- Chọn --</option></select></div>
                 </div>
-                <div style="margin-bottom:16px;"><label style="font-weight:600; font-size:14px; color:#475569;">Thôn/Tổ:</label><input type="text" id="cb_thon"></div>
+                <div class="form-group-dna" style="margin-top:16px;"><label class="glass-label">Thôn/Tổ:</label><input type="text" id="cb_thon" class="glass-input"></div>
                 <div class="grid-2">
-                    <div><label style="font-weight:600; font-size:14px; color:#475569;">Ngày Bắt đầu:</label><input type="date" id="cb_start"></div>
-                    <div><label style="font-weight:600; font-size:14px; color:#475569;">Ngày Kết thúc:</label><input type="date" id="cb_end"></div>
+                    <div class="form-group-dna" style="margin:0;"><label class="glass-label">Ngày Bắt đầu:</label><input type="date" id="cb_start" class="glass-input"></div>
+                    <div class="form-group-dna" style="margin:0;"><label class="glass-label">Ngày Kết thúc:</label><input type="date" id="cb_end" class="glass-input"></div>
                 </div>
-                <button class="btn-dna btn-dark-teal" style="margin-top:16px;" onclick="taoDot()">Lưu Đợt</button>
+                <button class="btn-dna btn-primary-dna" style="margin-top:16px;" onclick="taoDot()">Lưu Đợt</button>
             </div>
             
-            <div style="background:#f1f5f9; padding:24px; border-radius:16px;">
-                <h3 style="margin-top:0; color: var(--bg-main);">Đợt Khảo Sát Của Bạn</h3>
+            <div style="background: rgba(255,255,255,0.03); padding:24px; border-radius:16px; border: 1px solid var(--glass-border);">
+                <h3 style="margin-top:0;">Đợt Khảo Sát Của Bạn</h3>
                 <div id="canbo-dot-list"><p>Đang tải...</p></div>
             </div><br>
-            <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main);" onclick="switchScreenUI('screen-welcome', 'nav-home')">Đăng Xuất</button>
+            <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-welcome', 'nav-home')">
+                <img src="assets/images/logout.svg" width="18" height="18"> Đăng Xuất
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= 3. MÀN HÌNH NGƯỜI DÂN (STEP 1) ================= -->
+    <div id="screen-nd-step1" class="screen bg-citizen bg-common form-center-layout">
+        <div class="glass-card glass-card-sm">
+            <h2>Thông Tin Chủ Hộ / Người Khai Báo</h2>
+            
+            <div class="form-group-dna">
+                <label class="glass-label">Họ và tên</label>
+                <input type="text" id="nd_hoten" class="glass-input" style="text-transform: uppercase;" placeholder="Nhập họ và tên...">
+            </div>
+            
+            <div class="form-group-dna">
+                <label class="glass-label">CCCD (12 số)</label>
+                <input type="text" id="nd_cccd" class="glass-input" maxlength="12" placeholder="Nhập CCCD..." oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group-dna" style="margin:0;">
+                    <label class="glass-label">Dân tộc</label>
+                    <select id="nd_dantoc" class="searchable-select"><option value="">-- Chọn --</option></select>
+                </div>
+                <div class="form-group-dna" style="margin:0;">
+                    <label class="glass-label">Tỉnh/Thành</label>
+                    <select id="nd_tinh" class="searchable-select"><option value="">-- Chọn --</option></select>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 16px;">
+                <div class="form-group-dna" style="margin:0;">
+                    <label class="glass-label">Phường/Xã</label>
+                    <select id="nd_phuong" class="searchable-select"><option value="">-- Chọn --</option></select>
+                </div>
+                <div class="form-group-dna" style="margin:0;">
+                    <label class="glass-label">Thôn/Tổ</label>
+                    <select id="nd_thon" class="searchable-select"><option value="">-- Chọn --</option></select>
+                    <input type="text" id="nd_thon_khac" class="glass-input" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:12px;">
+                </div>
+            </div>
+
+            <button class="btn-dna btn-primary-dna" style="width:100%; margin-top: 24px;" onclick="toiBuocRouting()">Tiếp tục chọn phiếu →</button>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH ĐIỀU HƯỚNG -->
+    <div id="screen-nd-routing" class="screen bg-citizen bg-common form-center-layout">
+        <div class="glass-card glass-card-sm">
+            <h2 style="text-align: center;">Anh/Chị muốn thực hiện quy trình nào?</h2>
+            
+            <button class="btn-dna btn-primary-dna" style="width:100%; margin-bottom: 16px; height: 56px; justify-content: flex-start;" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">
+                <img src="assets/images/form-check.svg" width="24" height="24" style="filter: brightness(2);"> 1. NHẬN DIỆN NHANH (Phiếu A)
+            </button>
+            
+            <button class="btn-dna btn-teal-dna" style="width:100%; margin-bottom: 16px; height: 56px; justify-content: flex-start;" onclick="startPhieuB1()">
+                <img src="assets/images/form-check.svg" width="24" height="24" style="filter: brightness(2);"> 2. LÀM PHIẾU B1 (Tính Điểm Vùng)
+            </button>
+            
+            <button class="btn-dna btn-outline-dna" style="width:100%; margin-bottom: 24px; height: 56px; justify-content: flex-start;" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')">
+                <img src="assets/images/family.svg" width="24" height="24"> 3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)
+            </button>
+            
+            <button class="btn-dna btn-outline-dna" style="width:100%; justify-content: center; border: none; background: transparent;" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
+                <img src="assets/images/edit.svg" width="18" height="18"> Quay lại sửa thông tin
+            </button>
         </div>
     </div>
 
     <!-- NHẬN DẠNG NHANH -->
-    <div id="screen-nd-step2" class="screen">
-        <div class="white-container">
-            <h3 style="color: var(--bg-main);">Nhận Dạng Nhanh - Phần 1</h3>
-            <p id="title-b1" style="font-weight: 600; font-size: 18px; color: var(--teal-sec);"></p>
-            <div id="list-b1"></div>
-            <div style="margin-top: 24px; display: flex; gap: 12px;">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main);" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">Quay lại</button>
-                <button class="btn-dna btn-dark-teal" onclick="checkB1()">Tiếp tục →</button>
+    <div id="screen-nd-step2" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h3 style="color: var(--beige);">Nhận Dạng Nhanh - Phần 1</h3>
+            <p id="title-b1" style="font-weight: 600; font-size: 20px; color: var(--ivory);"></p>
+            <div id="list-b1" style="margin-top: 20px;"></div>
+            <div style="margin-top: 32px; display: flex; gap: 16px;">
+                <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại</button>
+                <button class="btn-dna btn-primary-dna" onclick="checkB1()">Tiếp tục →</button>
             </div>
         </div>
     </div>
-    <div id="screen-nd-step3" class="screen">
-        <div class="white-container">
-            <h3 style="color: var(--bg-main);">Nhận Dạng Nhanh - Phần 2</h3>
-            <p id="title-b2" style="font-weight: 600; font-size: 18px; color: var(--teal-sec);"></p>
-            <div id="list-b2"></div>
-            <div style="margin-top: 24px; display: flex; gap: 12px;">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main);" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">Quay lại</button>
-                <button class="btn-dna btn-dark-teal" onclick="checkB2()">Hoàn tất →</button>
+    <div id="screen-nd-step3" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h3 style="color: var(--beige);">Nhận Dạng Nhanh - Phần 2</h3>
+            <p id="title-b2" style="font-weight: 600; font-size: 20px; color: var(--ivory);"></p>
+            <div id="list-b2" style="margin-top: 20px;"></div>
+            <div style="margin-top: 32px; display: flex; gap: 16px;">
+                <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">← Quay lại</button>
+                <button class="btn-dna btn-primary-dna" onclick="checkB2()">Hoàn tất →</button>
             </div>
         </div>
     </div>
-    <div id="screen-nd-review" class="screen">
-        <div class="white-container">
-            <h3 style="color: var(--bg-main);">Xác Nhận Phiếu A</h3>
-            <div class="review-box" id="review-content" style="background:#f8fafc; border-left-color: var(--teal-sec);"></div>
-            <div style="margin-top: 24px; display: flex; gap: 12px;">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main);" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">Quay lại Sửa</button>
-                <button class="btn-dna btn-dark-teal" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
+    <div id="screen-nd-review" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h3>Xác Nhận Phiếu A</h3>
+            <div class="review-box" id="review-content"></div>
+            <div style="margin-top: 32px; display: flex; gap: 16px;">
+                <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
+                    <img src="assets/images/edit.svg" width="16" height="16"> Sửa Khai Báo
+                </button>
+                <button class="btn-dna btn-primary-dna" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button>
             </div>
         </div>
     </div>
 
     <!-- PHIẾU B1 -->
-    <div id="screen-nd-b1" class="screen">
-        <div class="white-container">
-            <h3 style="color: var(--blue-gray); font-size:14px; text-transform:uppercase;">Phiếu B1 <span id="b1-progress" style="color:var(--coral);"></span></h3>
-            <p id="b1-question-text" style="font-weight: 700; font-size: 20px; color: var(--bg-main);"></p>
-            <div id="b1-ghichu-container" style="display:none; margin-bottom:20px;">
-                <details style="background:#f8fafc; padding:12px 16px; border-radius:12px; border:1px solid #e2e8f0;">
-                    <summary style="color:var(--teal-sec); font-weight:600; cursor:pointer;">? Bấm xem chi tiết/danh sách</summary>
-                    <div id="b1-ghichu-content" style="white-space: pre-wrap; margin-top:10px; font-size:14px; color:#475569;"></div>
+    <div id="screen-nd-b1" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h3 style="color: var(--beige); font-size:14px; text-transform:uppercase; letter-spacing: 1px;">Phiếu B1 <span id="b1-progress" style="color:var(--coral);"></span></h3>
+            <p id="b1-question-text" style="font-weight: 700; font-size: 24px; color: var(--ivory); margin-bottom: 24px;"></p>
+            
+            <div id="b1-ghichu-container" style="display:none; margin-bottom:24px;">
+                <details style="background:rgba(255,255,255,0.05); padding:16px; border-radius:12px; border:1px solid var(--glass-border);">
+                    <summary style="color:var(--coral); font-weight:600; cursor:pointer;">? Bấm xem chi tiết/danh sách</summary>
+                    <div id="b1-ghichu-content" style="white-space: pre-wrap; margin-top:12px; font-size:15px; color:var(--beige); line-height: 1.6;"></div>
                 </details>
             </div>
-            <div id="b1-options"></div><br>
             
-            <div class="grid-2">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main); width:100%;" onclick="prevB1()">← Quay lại câu trước</button>
-                <button class="btn-dna btn-dark-teal" style="width:100%;" onclick="nextB1()">Tiếp tục →</button>
+            <div id="b1-options"></div>
+            
+            <div class="grid-2" style="margin-top: 32px;">
+                <button class="btn-dna btn-outline-dna" style="width:100%;" onclick="prevB1()">← Quay lại câu trước</button>
+                <button class="btn-dna btn-teal-dna" style="width:100%;" onclick="nextB1()">Tiếp tục →</button>
             </div>
-            <button class="btn-dna" style="width: 100%; margin-top: 16px; color: #b45309; background-color: #fef3c7; border: 1px solid #fde68a; justify-content: center; gap: 8px;" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">
-                <img src="assets/images/warning.svg" width="20" height="20" style="filter: brightness(0.5) sepia(1) hue-rotate(5deg) saturate(3);"> Quay lại sửa Phiếu A (Nhận diện nhanh)
+            <button class="btn-dna" style="width: 100%; margin-top: 16px; color: #fca5a5; background-color: rgba(220, 38, 38, 0.1); border: 1px dashed #fca5a5;" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">
+                <img src="assets/images/warning.svg" width="20" height="20" style="filter: invert(72%) sepia(41%) saturate(1455%) hue-rotate(313deg) brightness(101%) contrast(98%);"> Phát hiện sai sót? Quay lại sửa Phiếu A
             </button>
         </div>
     </div>
 
-    <div id="screen-nd-review-b1" class="screen">
-        <div class="white-container">
-            <h3 style="color: var(--bg-main); font-size: 24px;">Kết Quả Phiếu B1</h3>
-            <div class="review-box" id="review-content-b1" style="background:#f8fafc; border-left-color: var(--teal-sec);"></div>
+    <!-- KẾT QUẢ B1 -->
+    <div id="screen-nd-review-b1" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h2>Kết Quả Phiếu B1</h2>
+            <div class="review-box" id="review-content-b1"></div>
             <p class="text-blink" style="text-align: center; margin-top: 24px; font-size: 15px;">⚠️ Lưu ý: Vui lòng Xem và Tải phiếu B1 tại đây trước khi đi tiếp!</p>
             
             <div class="grid-2">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main); width:100%; gap:8px;" onclick="xemTruocDocxB1()">
+                <button class="btn-dna btn-outline-dna" style="width:100%;" onclick="xemTruocDocxB1()">
                     <img src="assets/images/preview.svg" width="18" height="18"> Xem trước B1
                 </button>
-                <button class="btn-dna" style="background-color: #10b981; color:white; width:100%; gap:8px;" onclick="$('#dl-b1-options').slideToggle();">
+                <button class="btn-dna btn-teal-dna" style="width:100%;" onclick="$('#dl-b1-options').slideToggle();">
                     <img src="assets/images/download.svg" width="18" height="18" style="filter: brightness(2);"> Tải Phiếu B1 ▼
                 </button>
             </div>
-            <div id="dl-b1-options" style="display:none; margin-top: 12px; padding: 20px; border: 1px dashed #10b981; background: #ecfdf5; border-radius:12px;">
-                <p style="margin-top:0; font-size:14px; text-align:center; color:#065f46; font-weight:600;">Chọn định dạng tải về:</p>
+            <div id="dl-b1-options" style="display:none; margin-top: 12px; padding: 20px; border: 1px dashed var(--teal-sec); background: rgba(0,0,0,0.2); border-radius:12px;">
+                <p style="margin-top:0; font-size:14px; text-align:center; color:var(--beige); font-weight:600;">Chọn định dạng tải về:</p>
                 <div class="grid-2" style="margin-bottom:0;">
-                    <button class="btn-dna" style="background-color: #059669; color:white; width:100%; gap:8px;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">
+                    <button class="btn-dna btn-teal-dna" style="width:100%;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">
                         <img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> Word (.docx)
                     </button>
-                    <button class="btn-dna" style="background-color: #dc2626; color:white; width:100%; gap:8px;" onclick="taiFilePDFB1(this);">
+                    <button class="btn-dna" style="background-color: #dc2626; color:white; width:100%;" onclick="taiFilePDFB1(this);">
                         <img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> PDF (.pdf)
                     </button>
                 </div>
-            </div><br>
+            </div>
             
-            <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main); width:100%;" onclick="editB1()">Quay lại để Sửa</button>
+            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 16px;">
+                <button class="btn-dna btn-outline-dna" style="width:100%;" onclick="editB1()">Quay lại để Sửa</button>
                 <button class="btn-dna btn-primary-dna" id="btn-submit-review-b1" style="width: 100%;" onclick="submitB1XacNhan()">Xác nhận (Đi tới Phiếu B2 & C) →</button>
             </div>
         </div>
     </div>
 
-    <!-- PHIẾU C - INIT (HỎI SỐ NGƯỜI) -->
-    <div id="screen-nd-phieuc-init" class="screen">
-        <div class="white-container">
-            <h3 style="color: var(--bg-main); font-size: 24px;">Thu Thập Thông Tin Phiếu C & B2</h3>
+    <!-- PHIẾU C - INIT -->
+    <div id="screen-nd-phieuc-init" class="screen bg-citizen bg-common form-center-layout">
+        <div class="glass-card glass-card-sm">
+            <h2>Thu Thập Thông Tin Phiếu C & B2</h2>
             <div class="form-group-dna" style="margin-top:24px;">
-                <label style="font-weight:700; font-size:18px; color: var(--bg-main); display:block; margin-bottom:12px;">Hộ gia đình anh/chị có tổng cộng bao nhiêu thành viên?</label>
-                <input type="number" id="num_members" min="1" max="20" placeholder="Nhập số lượng thành viên..." style="font-size:18px; padding:16px; border: 2px solid #cbd5e1; border-radius: 12px; width:100%; box-sizing:border-box;">
+                <label class="glass-label" style="font-size: 16px; margin-bottom: 12px;">Hộ gia đình anh/chị có tổng cộng bao nhiêu thành viên?</label>
+                <input type="number" id="num_members" min="1" max="20" class="glass-input" placeholder="Nhập số lượng..." style="font-size:18px; text-align: center;">
             </div>
-            <button class="btn-dna btn-dark-teal" style="width:100%; margin-top:16px;" onclick="initPhieuCMembers()">Bắt đầu Khai báo Từng người →</button>
-            <button class="btn-dna btn-outline-dna" style="width:100%; margin-top:12px; color: var(--bg-main); border-color: var(--bg-main);" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">Quay lại Menu chọn Phiếu</button>
+            <button class="btn-dna btn-primary-dna" style="width:100%; margin-top:16px;" onclick="initPhieuCMembers()">Bắt đầu Khai báo Từng người →</button>
+            <button class="btn-dna btn-outline-dna" style="width:100%; margin-top:16px;" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại Menu chọn Phiếu</button>
         </div>
     </div>
 
     <!-- PHIẾU C - TABS THÀNH VIÊN -->
-    <div id="screen-nd-phieuc-members" class="screen">
-        <div class="white-container" style="max-width: 900px;">
-            <h3 style="color: var(--bg-main); font-size: 24px; margin-bottom: 24px;">Thông Tin Chi Tiết Thành Viên</h3>
+    <div id="screen-nd-phieuc-members" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h2>Thông Tin Chi Tiết Từng Thành Viên</h2>
             <div id="tabs-container" style="margin-bottom:20px; overflow-x:auto; white-space:nowrap; padding-bottom:8px;"></div>
             <div id="tabs-content-container"></div>
             <br>
-            <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main);" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')">Quay lại sửa tổng số TV</button>
+            <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')">
+                <img src="assets/images/edit.svg" width="16" height="16"> Sửa lại tổng số thành viên
+            </button>
         </div>
     </div>
 
-    <!-- PHIẾU C - CÂU HỎI CHUNG HỘ GIA ĐÌNH -->
-    <div id="screen-nd-phieuc-ho" class="screen">
-        <div class="white-container" style="max-width: 900px;">
-            <h3 style="color: var(--bg-main); font-size: 24px; margin-bottom: 24px;">Thông Tin Chung Của Hộ Gia Đình</h3>
+    <!-- PHIẾU C - CÂU HỎI CHUNG HỘ -->
+    <div id="screen-nd-phieuc-ho" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h2>Thông Tin Chung Của Hộ Gia Đình</h2>
             <div id="phieuc-ho-container"></div>
             <br>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; flex-wrap: wrap; gap: 16px;">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main);" onclick="switchMemberTab(numMembers-1)">← Quay lại Thành viên cuối</button>
+                <button class="btn-dna btn-outline-dna" onclick="switchMemberTab(numMembers-1)">← Quay lại Thành viên cuối</button>
                 <button class="btn-dna btn-primary-dna" onclick="tinhToanLogicB2()">Hoàn tất & Chấm Điểm →</button>
             </div>
         </div>
     </div>
 
     <!-- PHIẾU B2 - REVIEW TOÀN DIỆN -->
-    <div id="screen-nd-phieub2-review" class="screen">
-        <div class="white-container" style="max-width: 900px;">
-            <h2 style="color:var(--bg-main); text-align:center; margin-bottom: 32px; font-size: 28px;">KẾT QUẢ ĐÁNH GIÁ RÀ SOÁT</h2>
+    <div id="screen-nd-phieub2-review" class="screen bg-citizen bg-common form-top-layout">
+        <div class="glass-card glass-card-lg">
+            <h2 style="text-align:center; font-size: 32px; color: var(--coral);">KẾT QUẢ ĐÁNH GIÁ RÀ SOÁT</h2>
             
-            <!-- BẢNG KẾT LUẬN VÀNG TRÊN CÙNG -->
+            <!-- BẢNG KẾT LUẬN -->
             <div id="review-top-result"></div>
             
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:24px; margin-bottom:24px;">
-                <h3 style="margin-top:0; color:var(--teal-sec); font-size:20px;">I. TÓM TẮT PHIẾU C</h3>
+            <div style="background:rgba(86,119,129,0.1); border:1px solid var(--teal-sec); border-radius:16px; padding:32px; margin-bottom:24px;">
+                <h3 style="color:var(--ivory);">I. TÓM TẮT PHIẾU C</h3>
                 <div id="review-content-phieuc"></div>
                 <div class="grid-2" style="margin-top:24px; margin-bottom:0;">
-                    <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main); gap:8px;" onclick="xemTruocDocxPhieuC()">
+                    <button class="btn-dna btn-outline-dna" onclick="xemTruocDocxPhieuC()">
                         <img src="assets/images/preview.svg" width="18" height="18"> Xem Phiếu C
                     </button>
-                    <button class="btn-dna" style="background-color: var(--teal-sec); color:white; gap:8px;" onclick="$('#dl-pc-options').slideToggle();">
+                    <button class="btn-dna btn-teal-dna" onclick="$('#dl-pc-options').slideToggle();">
                         <img src="assets/images/download.svg" width="18" height="18" style="filter: brightness(2);"> Tải Phiếu C ▼
                     </button>
                 </div>
-                <div id="dl-pc-options" style="display:none; margin-top: 12px; padding: 20px; border: 1px dashed var(--teal-sec); background: #f1f5f9; border-radius:12px;">
+                <div id="dl-pc-options" style="display:none; margin-top: 12px; padding: 20px; border: 1px dashed var(--teal-sec); background: rgba(0,0,0,0.3); border-radius:12px;">
                     <div class="grid-2" style="margin-bottom:0;">
-                        <button class="btn-dna" style="background-color: var(--teal-sec); color:white; width:100%; gap:8px;" onclick="taiFileWordPhieuC(); $('#dl-pc-options').slideUp();"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> Word (.docx)</button>
-                        <button class="btn-dna" style="background-color: #dc2626; color:white; width:100%; gap:8px;" onclick="taiFilePDFPhieuC(this);"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> PDF (.pdf)</button>
+                        <button class="btn-dna btn-teal-dna" style="width:100%;" onclick="taiFileWordPhieuC(); $('#dl-pc-options').slideUp();"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> Word (.docx)</button>
+                        <button class="btn-dna" style="background-color: #dc2626; color:white; width:100%;" onclick="taiFilePDFPhieuC(this);"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> PDF (.pdf)</button>
                     </div>
                 </div>
             </div>
 
-            <div style="background:#fff5f5; border:1px solid #fed7d7; border-radius:16px; padding:24px;">
-                <h3 style="margin-top:0; color:var(--coral); font-size:20px;">II. CHI TIẾT THIẾU HỤT B2</h3>
+            <div style="background:rgba(223,92,80,0.1); border:1px solid var(--coral); border-radius:16px; padding:32px;">
+                <h3 style="color:var(--coral);">II. CHI TIẾT THIẾU HỤT B2</h3>
                 <div id="review-content-b2"></div>
                 <div class="grid-2" style="margin-top:24px; margin-bottom:0;">
-                    <button class="btn-dna btn-outline-dna" style="color: var(--coral); border-color: var(--coral); gap:8px;" onclick="xemTruocDocxB2()">
-                        <img src="assets/images/preview.svg" width="18" height="18" style="filter: invert(47%) sepia(50%) saturate(830%) hue-rotate(320deg) brightness(96%) contrast(92%);"> Xem Phiếu B2
+                    <button class="btn-dna btn-outline-dna" onclick="xemTruocDocxB2()">
+                        <img src="assets/images/preview.svg" width="18" height="18"> Xem Phiếu B2
                     </button>
-                    <button class="btn-dna" style="background-color: var(--coral); color:white; gap:8px;" onclick="$('#dl-b2-options').slideToggle();">
+                    <button class="btn-dna btn-primary-dna" onclick="$('#dl-b2-options').slideToggle();">
                         <img src="assets/images/download.svg" width="18" height="18" style="filter: brightness(2);"> Tải Phiếu B2 ▼
                     </button>
                 </div>
-                <div id="dl-b2-options" style="display:none; margin-top: 12px; padding: 20px; border: 1px dashed var(--coral); background: #fff1f2; border-radius:12px;">
+                <div id="dl-b2-options" style="display:none; margin-top: 12px; padding: 20px; border: 1px dashed var(--coral); background: rgba(0,0,0,0.3); border-radius:12px;">
                     <div class="grid-2" style="margin-bottom:0;">
-                        <button class="btn-dna" style="background-color: var(--coral); color:white; width:100%; gap:8px;" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> Word (.docx)</button>
-                        <button class="btn-dna" style="background-color: #dc2626; color:white; width:100%; gap:8px;" onclick="taiFilePDFB2(this);"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> PDF (.pdf)</button>
+                        <button class="btn-dna btn-primary-dna" style="width:100%;" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> Word (.docx)</button>
+                        <button class="btn-dna" style="background-color: #dc2626; color:white; width:100%;" onclick="taiFilePDFB2(this);"><img src="assets/images/note.svg" width="16" height="16" style="filter: brightness(2);"> PDF (.pdf)</button>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 16px;">
-                <button class="btn-dna btn-outline-dna" style="color: var(--bg-main); border-color: var(--bg-main); width: 100%;" onclick="switchScreenUI('screen-nd-phieuc-ho', 'nav-citizen')">Quay lại Sửa Thông Tin Hộ</button>
-                <button class="btn-dna" style="width: 100%; background-color:#10b981; color:white; gap:12px; height: 56px; font-size: 16px;" onclick="location.reload()">
+            <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px;">
+                <button class="btn-dna btn-outline-dna" style="width: 100%;" onclick="switchScreenUI('screen-nd-phieuc-ho', 'nav-citizen')">
+                    <img src="assets/images/edit.svg" width="18" height="18"> Quay lại Sửa Thông Tin Hộ
+                </button>
+                <button class="btn-dna" style="width: 100%; background-color:#10b981; color:white; height: 56px; font-size: 16px;" onclick="location.reload()">
                     <img src="assets/images/complete.svg" width="24" height="24" style="filter: brightness(2);"> Hoàn Thành & Khai Báo Mới
                 </button>
             </div>
@@ -568,14 +568,20 @@
     </div>
 
     <!-- MODAL -->
-    <div id="myModal" class="modal"><div class="modal-content"><h3 id="modal-title" style="color:var(--bg-main); border-bottom: 2px solid var(--teal-sec); padding-bottom:10px;">Xem Trước</h3><div id="modal-body"></div><br><button class="btn-dna btn-outline-dna" style="width:100%; color:var(--bg-main); border-color:var(--bg-main);" onclick="document.getElementById('myModal').style.display='none'">ĐÓNG XEM TRƯỚC</button></div></div>
+    <div id="myModal" class="modal"><div class="modal-content"><h3 id="modal-title" style="border-bottom: 1px solid var(--glass-border); padding-bottom:16px;">Xem Trước</h3><div id="modal-body"></div><br><button class="btn-dna btn-outline-dna" style="width:100%;" onclick="document.getElementById('myModal').style.display='none'">ĐÓNG XEM TRƯỚC</button></div></div>
 
     <script>
-        // Hàm chuyển đổi màn hình và cập nhật Navbar duy nhất
+        // Hàm chuyển đổi màn hình và cập nhật Navbar (ẩn Navbar nếu ở trang Welcome)
         function switchScreenUI(screenId, navId) {
             $('.screen').removeClass('active'); 
             $('#' + screenId).addClass('active');
             
+            if(screenId === 'screen-welcome') {
+                $('.navbar').hide();
+            } else {
+                $('.navbar').show();
+            }
+
             if(navId) {
                 $('.nav-item').removeClass('active');
                 $('#' + navId).addClass('active');
@@ -591,6 +597,9 @@
         function initSelect2() { $('.searchable-select').select2(); }
 
         window.onload = async () => {
+            // Mặc định ẩn navbar khi vừa load trang (ở màn hình welcome)
+            $('.navbar').hide();
+
             try {
                 const resConfig = await fetch(`${WORKER_URL}/api/config`);
                 if (resConfig.ok) {
@@ -647,7 +656,7 @@
             if ($('.cb-b1:checked').length > 0) {
                 finalData["0"]=0; finalData["E"]=0;
                 let html = "<div class='review-checklist'><strong>Lý do rớt (Nhận dạng 1):</strong><br>"; $('.cb-b1:checked').each(function(){ html+=`<div>✅ ${this.parentElement.innerText}</div>`; }); html+="</div>";
-                $('#review-content').html(`<p><strong>Kết luận:</strong> <span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span></p>${html}`);
+                $('#review-content').html(`<p><strong>Kết luận:</strong> <span style="color:var(--coral); font-weight:bold;">Không thuộc diện rà soát tiếp</span></p>${html}`);
                 $('#btn-submit-review').text("Kết thúc"); switchScreenUI('screen-nd-review', 'nav-citizen');
             } else { finalData["0"]=1; switchScreenUI('screen-nd-step3', 'nav-citizen'); }
         }
@@ -656,7 +665,7 @@
             let tongD=0; let html="<div class='review-checklist'><strong>Các tiêu chí nhận dạng 2:</strong><br>";
             $('.cb-b2').each((i,cb) => { let v = cb.checked?1:0; finalData[i+1]=v; tongD+=v; html+=`<div>${v?'✅':'⬜'} ${cb.parentElement.innerText}</div>`; });
             html+="</div>"; finalData["D"]=tongD; finalData["E"] = tongD<4 ? 1 : 0;
-            let res = finalData["E"] ? '<span style="color:green; font-weight:bold;">Đủ điều kiện rà soát tiếp (Tới Phiếu B1)</span>' : '<span style="color:red; font-weight:bold;">Không thuộc diện rà soát tiếp</span>';
+            let res = finalData["E"] ? '<span style="color:#10b981; font-weight:bold;">Đủ điều kiện rà soát tiếp (Tới Phiếu B1)</span>' : '<span style="color:var(--coral); font-weight:bold;">Không thuộc diện rà soát tiếp</span>';
             $('#review-content').html(`<p><strong>Điểm Nhận dạng 2:</strong> ${tongD}/4</p><p><strong>Kết luận:</strong> ${res}</p>${html}`);
             $('#btn-submit-review').text(finalData["E"] ? "Xác nhận & Tới Phiếu B1" : "Kết thúc"); switchScreenUI('screen-nd-review', 'nav-citizen');
         }
@@ -737,17 +746,17 @@
         }
 
         function showReviewB1() {
-            const vi = getVungInfo(); let totalScore=0, html="<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;'>";
+            const vi = getVungInfo(); let totalScore=0, html="<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px;'>";
             appConfig.phieu_b1.forEach(q => {
                 let ans = b1Answers[q.ma]; html+=`<div style="padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
-                let processOpt = (idx) => { let obj=q.options[idx], sc=obj[vi.colLookup]||0; if(!obj.text.toLowerCase().startsWith("không có")) totalScore+=sc; html+=`✅ ${obj.text} <span style="color:#0056b3; font-weight:bold; float:right;">(+${sc})</span><br>`; };
+                let processOpt = (idx) => { let obj=q.options[idx], sc=obj[vi.colLookup]||0; if(!obj.text.toLowerCase().startsWith("không có")) totalScore+=sc; html+=`✅ ${obj.text} <span style="color:var(--coral); font-weight:bold; float:right;">(+${sc})</span><br>`; };
                 if(q.isMulti && Array.isArray(ans)) ans.forEach(processOpt); else if(ans!==undefined) processOpt(ans);
                 html+="</div>";
             });
-            if(vi.diemCongDoThi>0) { totalScore+=vi.diemCongDoThi; html+=`<div style="background:#eef5ff; padding:8px; border-radius:8px;"><strong>Cộng Đô thị vùng (${vi.tenVung}):</strong> <span style="color:#0056b3; font-weight:bold; float:right;">+${vi.diemCongDoThi}</span></div>`; }
+            if(vi.diemCongDoThi>0) { totalScore+=vi.diemCongDoThi; html+=`<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;"><strong>Cộng Đô thị vùng (${vi.tenVung}):</strong> <span style="color:var(--coral); font-weight:bold; float:right;">+${vi.diemCongDoThi}</span></div>`; }
             html+="</div>";
             let isPass = totalScore <= vi.diemChuan; finalData.TongDiemB1 = totalScore; finalData.KetQuaB1 = isPass?"Đậu":"Rớt";
-            $('#review-content-b1').html(`<p><strong>Phân loại:</strong> ${vi.txt} - ${vi.tenVung||"KXĐ"}</p><p><strong>Điểm chuẩn tối đa:</strong> ${vi.diemChuan}</p><p><strong>Tổng điểm B1:</strong> <span style="color:#dc2626;font-weight:bold;font-size:20px">${totalScore}</span></p><p><strong>Kết luận:</strong> ${isPass?'<span style="color:#10b981;font-weight:bold;">Đạt (Đủ điều kiện tới B2)</span>':'<span style="color:#dc2626;font-weight:bold;">Không thuộc diện rà soát tiếp</span>'}</p>${html}`);
+            $('#review-content-b1').html(`<p><strong>Phân loại:</strong> ${vi.txt} - ${vi.tenVung||"KXĐ"}</p><p><strong>Điểm chuẩn tối đa:</strong> ${vi.diemChuan}</p><p><strong>Tổng điểm B1:</strong> <span style="color:${isPass?'#10b981':'#dc2626'};font-weight:bold;font-size:24px">${totalScore}</span></p><p><strong>Kết luận:</strong> ${isPass?'<span style="color:#10b981;font-weight:bold;">Đạt (Đủ điều kiện tới B2)</span>':'<span style="color:#dc2626;font-weight:bold;">Không thuộc diện rà soát tiếp</span>'}</p>${html}`);
             $('#btn-submit-review-b1').text(isPass?"Xác nhận (Đi tới Phiếu B2 & C) →":"Kết thúc"); switchScreenUI('screen-nd-review-b1', 'nav-citizen');
         }
 
@@ -770,7 +779,7 @@
         function getB1TemplateUrl() { return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${getVungInfo().isDoThi?"Dothi":getVungInfo().maVung}.docx`; }
 
         async function handleDocxPreview(data, url, modalId, containerId) {
-            $(`#${modalId}`).show(); $(`#${containerId}`).html("<p style='padding:20px;'>Đang xử lý dữ liệu và tải bản xem trước...</p>");
+            $(`#${modalId}`).show(); $(`#${containerId}`).html("<p style='padding:20px; color:black;'>Đang xử lý dữ liệu và tải bản xem trước...</p>");
             try {
                 const zip = new PizZip(await (await fetch(url)).arrayBuffer());
                 const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
@@ -828,38 +837,38 @@
                 tabsHtml += `<div class="tab-member ${i===0?'active':''}" id="tab-btn-${i}" onclick="switchMemberTab(${i})">${tabName}</div>`;
                 
                 contentHtml += `<div id="member-content-${i}" class="tab-content ${i===0?'active':''}">
-                    <h3 style="color:var(--bg-main); margin-top:0;">${tabName}</h3>`;
+                    <h3 style="color:var(--ivory); margin-top:0;">${tabName}</h3>`;
                 
                 pCQuestions.forEach(q => {
                     let m = q.ma, display = "block";
                     contentHtml += `<div class="phieuc-question" id="q_${i}_${m}" style="display:${display};">
-                        <strong style="color:var(--bg-main); font-size:18px; margin-bottom:12px; display:block;">${m}. ${q.noidung}</strong> ${q.k_bat_buoc?'<span style="color:#888; font-size:14px;">(Không bắt buộc)</span>':''}`;
+                        <strong style="color:var(--beige); font-size:18px; margin-bottom:12px; display:block;">${m}. ${q.noidung}</strong> ${q.k_bat_buoc?'<span style="color:var(--blue-gray); font-size:14px;">(Không bắt buộc)</span>':''}`;
                     
                     if(q.options && q.options.length > 0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
                         q.options.forEach((opt) => {
                             let isFillKhac = opt.text.includes('(fill)'); let textL = opt.text.replace('(fill)', '').trim();
                             let type = q.isMulti ? 'checkbox' : 'radio';
                             contentHtml += `<label class="b1-option-label"><input type="${type}" name="pC_${i}_${m}" value="${opt.ma_lc}" onchange="evalLogicPhiencC(${i})"> ${textL}</label>`;
-                            if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" placeholder="Ghi rõ..." style="display:none; padding:12px; border-radius:8px; border:1px solid #cbd5e1; width:90%; margin: 8px 0 16px 36px; box-sizing:border-box;">`;
+                            if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
                         });
                     } else if (q.options.length > 0 && q.options[0].text.includes('(date)')) {
-                        contentHtml += `<input type="date" id="pC_${i}_${m}" onchange="evalLogicPhiencC(${i})" style="margin-top:5px; padding:12px; border-radius:8px; border:1px solid #cbd5e1; width:100%; box-sizing:border-box;">`;
+                        contentHtml += `<input type="date" id="pC_${i}_${m}" class="glass-input" onchange="evalLogicPhiencC(${i})" style="margin-top:5px;">`;
                     } else if (q.options.length > 0 && q.options[0].text.includes('(dropdown)')) {
-                        contentHtml += `<select id="pC_${i}_${m}" class="searchable-select" style="width:100%; margin-top:5px;"><option value="">-- Chọn Dân tộc --</option>`;
+                        contentHtml += `<select id="pC_${i}_${m}" class="searchable-select"><option value="">-- Chọn Dân tộc --</option>`;
                         if(appConfig.madantoc) appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
                         contentHtml += `</select>`;
                     } else {
                         let isNum = m==='C8'||m==='C9', suffix = m==='C8'?" cm":m==='C9'?" kg":"";
-                        contentHtml += `<div style="display:flex; align-items:center; margin-top:5px;"><input type="text" id="pC_${i}_${m}" placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); evalLogicPhiencC(${i})" style="padding:12px; border-radius:8px; border:1px solid #cbd5e1; flex:1;"> <span style="margin-left:12px; white-space:nowrap; font-weight:bold; color:var(--teal-sec);">${suffix}</span></div>`;
+                        contentHtml += `<div style="display:flex; align-items:center; margin-top:5px;"><input type="text" id="pC_${i}_${m}" class="glass-input" placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); evalLogicPhiencC(${i})" style="flex:1;"> <span style="margin-left:12px; white-space:nowrap; font-weight:bold; color:var(--coral);">${suffix}</span></div>`;
                     }
                     contentHtml += `</div>`;
                 });
 
                 let navHtml = `<div style="margin-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">`;
-                if(i > 0) navHtml += `<button class="btn-dna btn-outline-dna" style="color:var(--bg-main); border-color:var(--bg-main);" onclick="prevMember(${i})">← Quay lại</button> `;
+                if(i > 0) navHtml += `<button class="btn-dna btn-outline-dna" onclick="prevMember(${i})">← Quay lại</button> `;
                 else navHtml += `<div></div>`;
 
-                if(i < n - 1) navHtml += `<button class="btn-dna btn-dark-teal" onclick="nextMember(${i})">Thành viên tiếp theo →</button>`;
+                if(i < n - 1) navHtml += `<button class="btn-dna btn-teal-dna" onclick="nextMember(${i})">Thành viên tiếp theo →</button>`;
                 else navHtml += `<button class="btn-dna btn-primary-dna" style="background-color:#10b981;" onclick="nextMember(${i})">Xong Thành viên - Tới Câu hỏi Hộ →</button>`;
                 navHtml += `</div>`;
 
@@ -973,17 +982,17 @@
             
             hoQ.forEach(q => {
                 if(q.ma==='CS_DH' || q.ma==='CS_MM') return; 
-                html += `<div style="margin-bottom:20px; border-bottom:1px dashed #e2e8f0; padding-bottom:20px;"><strong style="color:var(--bg-main); font-size:18px; display:block; margin-bottom:12px;">${q.ma}. ${q.noidung}</strong>`;
+                html += `<div style="margin-bottom:20px; border-bottom:1px dashed var(--glass-border); padding-bottom:20px;"><strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">${q.ma}. ${q.noidung}</strong>`;
                 if(q.options && q.options.length>0) {
                     if(q.options[0].text.includes('(fill)') && q.options.length===1) {
-                        html += `<input type="text" id="ho_${q.ma}" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">`;
+                        html += `<input type="text" id="ho_${q.ma}" class="glass-input">`;
                     } else {
                         q.options.forEach(opt => {
                             let textL = opt.text.replace('(fill)', '').trim();
                             let isFillKhac = opt.text.includes('(fill)');
                             let type = q.isMulti ? 'checkbox' : 'radio';
                             html += `<label class="b1-option-label"><input type="${type}" name="ho_${q.ma}" value="${opt.ma_lc}"> ${textL}</label>`;
-                            if(isFillKhac) html += `<input type="text" id="txt_ho_${q.ma}_${opt.ma_lc}" placeholder="Ghi rõ..." style="display:none; padding:12px; border-radius:8px; border:1px solid #cbd5e1; width:90%; margin: 8px 0 16px 36px; box-sizing:border-box;">`;
+                            if(isFillKhac) html += `<input type="text" id="txt_ho_${q.ma}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
                         });
                     }
                 }
@@ -991,13 +1000,13 @@
             });
             
             if(matrixDH && matrixMM) {
-                html += `<div style="margin-bottom:15px; overflow-x:auto;"><strong style="color:var(--bg-main); font-size:18px; display:block; margin-bottom:12px;">Ma trận Chính sách Hỗ trợ:</strong>
+                html += `<div style="margin-bottom:15px; overflow-x:auto;"><strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">Ma trận Chính sách Hỗ trợ:</strong>
                 <table class="matrix-table"><tr><th>Danh sách các Chính sách</th><th>Đang Hưởng</th><th>Mong Muốn</th></tr>`;
                 matrixDH.options.forEach(opt => {
                     let textL = opt.text.replace('(fill)', '').trim();
                     html += `<tr><td>${textL}</td>
-                    <td><input type="checkbox" name="ho_CS_DH" value="${opt.ma_lc}" style="width:20px; height:20px; accent-color:var(--teal-sec);"></td>
-                    <td><input type="checkbox" name="ho_CS_MM" value="${opt.ma_lc}" style="width:20px; height:20px; accent-color:var(--teal-sec);"></td></tr>`;
+                    <td><input type="checkbox" name="ho_CS_DH" value="${opt.ma_lc}"></td>
+                    <td><input type="checkbox" name="ho_CS_MM" value="${opt.ma_lc}"></td></tr>`;
                 });
                 html += `</table></div>`;
             }
@@ -1036,6 +1045,7 @@
             let errs = []; let N = numMembers;
             let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
             
+            // Cập nhật biến hoGiaDinh_Data tạm thời để tính toán
             hoQ.forEach(q => {
                 if(q.options && q.options.length>1) {
                     let sel = $(`input[name="ho_${q.ma}"]:checked`);
@@ -1050,13 +1060,13 @@
             let b2_10_ans = hoGiaDinh_Data['B2.10'] || [];
             if (b1_10 === 1 && b2_10_ans.length === 1 && b2_10_ans.includes('1')) errs.push("Chưa có sự nhất quán: Ở Phiếu B1 (Câu B1.10) anh/chị xác nhận Không dùng nước máy, nhưng tại Phiếu C lại chỉ đánh dấu 'Nước máy'.");
 
-            let b1_3 = b1Answers['B1.3'];
+            let b1_3 = b1Answers['B1.3']; // 0: Không người, 1: 1 người, 2: Không đúng (>=2)
             let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 16) || (p.C16 && p.C16.length > 0); }).length;
             if (b1_3 === 0 && phuThuocCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai 0 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
             if (b1_3 === 1 && phuThuocCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
             if (b1_3 === 2 && phuThuocCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người phụ thuộc, nhưng danh sách chi tiết chỉ có ${phuThuocCount} người.`);
 
-            let b1_5 = b1Answers['B1.5']; 
+            let b1_5 = b1Answers['B1.5']; // 0: CC, 1: HĐLĐ, 2: Thuê, 3: Không
             let hasCC = phieuC_Data.some(p => p.C18 === '1');
             let hasHDLD = phieuC_Data.some(p => p.C19 === '1');
             let hasThue = phieuC_Data.some(p => p.C18 === '3');
@@ -1065,13 +1075,13 @@
             if (b1_5 === 2 && !hasThue) errs.push("Mâu thuẫn: Phiếu B1 khai Làm thuê cho hộ gia đình nhưng không thành viên nào ghi nhận Loại việc làm này.");
             if (b1_5 === 3 && (hasCC || hasHDLD || hasThue)) errs.push("Mâu thuẫn: Phiếu B1 khai Không có ai làm phi nông nghiệp nhưng chi tiết lại có thành viên đi làm.");
 
-            let b1_6 = b1Answers['B1.6']; 
+            let b1_6 = b1Answers['B1.6']; // 0: 1 người, 1: >=2, 2: Không ai
             let tcCount = phieuC_Data.filter(p => p.C20 && p.C20.length > 0).length;
             if (b1_6 === 2 && tcCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai không ai hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
             if (b1_6 === 0 && tcCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
             if (b1_6 === 1 && tcCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
 
-            let b1_4 = b1Answers['B1.4']; 
+            let b1_4 = b1Answers['B1.4']; // 0: ĐH, 1: TC, 2: SC, 3: Không
             let maxC13 = Math.max(...phieuC_Data.map(p => parseInt(p.C13) || 1));
             let matchBangCap = false;
             if (b1_4 === 0 && maxC13 >= 4) matchBangCap = true;
@@ -1216,23 +1226,23 @@
             let tickCount = 0;
             let htmlB2 = "<div class='review-checklist' style='margin-top:10px;'>";
             Object.keys(groupedB2).forEach(sec => {
-                htmlB2 += `<h4 style="margin:15px 0 5px 0; color:#0056b3; border-bottom:1px solid #ccc; padding-bottom:5px;">[${sec}]</h4>`;
+                htmlB2 += `<h4 style="margin:15px 0 5px 0; color:var(--coral); border-bottom:1px solid rgba(223, 92, 80, 0.3); padding-bottom:5px;">[${sec}]</h4>`;
                 groupedB2[sec].forEach(q => {
                     let m = q.ma.replace('.','_'); 
                     let isDinh = diemB2[m]; if(isDinh) tickCount++;
-                    htmlB2 += `<div style="padding-left:10px;">${isDinh?'<strong style="color:red;">✅</strong>':'<span style="color:#aaa;">⬜</span>'} ${q.noidung}</div>`;
+                    htmlB2 += `<div style="padding-left:10px;">${isDinh?'<strong style="color:var(--coral);">✅</strong>':'<span style="color:var(--blue-gray);">⬜</span>'} <span style="color:var(--ivory);">${q.noidung}</span></div>`;
                 });
             });
             htmlB2 += "</div>";
             
             finalData.TongDiemB2 = tickCount;
-            let ketLuan = tickCount >= 3 ? `<span style="color:#dc3545; font-size:24px; font-weight:bold;">HỘ NGHÈO</span>` : `<span style="color:#fd7e14; font-size:24px; font-weight:bold;">HỘ CẬN NGHÈO</span>`;
-            let borderColor = tickCount >= 3 ? '#dc3545' : '#fd7e14';
+            let ketLuan = tickCount >= 3 ? `<span style="color:#dc2626; font-size:24px; font-weight:bold;">HỘ NGHÈO</span>` : `<span style="color:#f59e0b; font-size:24px; font-weight:bold;">HỘ CẬN NGHÈO</span>`;
+            let borderColor = tickCount >= 3 ? '#dc2626' : '#f59e0b';
             
             $('#review-top-result').html(`
-                <div style="background:#fff; border:3px solid ${borderColor}; border-radius:8px; padding:20px; margin-bottom:20px; text-align:center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    <p style="font-size:18px; margin-bottom:5px;">Tổng số chỉ số thiếu hụt: <span style="font-size:24px; font-weight:bold; color:#0056b3;">${tickCount}</span> / 12</p>
-                    <p style="font-size:18px; margin-bottom:0;">Kết luận rà soát:</p>
+                <div style="background:rgba(255,255,255,0.05); border:2px solid ${borderColor}; border-radius:16px; padding:32px; margin-bottom:32px; text-align:center;">
+                    <p style="font-size:18px; margin-bottom:5px; color:var(--beige);">Tổng số chỉ số thiếu hụt: <span style="font-size:24px; font-weight:bold; color:var(--ivory);">${tickCount}</span> / 12</p>
+                    <p style="font-size:18px; margin-bottom:0; color:var(--beige);">Kết luận rà soát:</p>
                     <div style="margin-top:5px;">${ketLuan}</div>
                 </div>
             `);
@@ -1240,14 +1250,14 @@
 
             let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !(q.ghichu||"").includes('Matrix_CS'));
             let tableC_Html = `<div style="overflow-x:auto; margin-bottom:15px;"><table class="matrix-table" style="font-size:13px; min-width:800px;"><tr><th>Nội dung câu hỏi</th>`;
-            for(let i=0; i<N; i++) tableC_Html += `<th style="width:120px; color:#0056b3;">${i===0?"Chủ hộ":`Thành viên ${i+1}`}</th>`;
+            for(let i=0; i<N; i++) tableC_Html += `<th style="width:120px; color:var(--ivory);">${i===0?"Chủ hộ":`Thành viên ${i+1}`}</th>`;
             tableC_Html += `</tr>`;
 
             pCQuestions.forEach(q => {
                 tableC_Html += `<tr><td><strong>${q.ma}.</strong> ${q.noidung}</td>`;
                 for(let i=0; i<N; i++) {
                     let textVal = getAnswerText(q, phieuC_Data[i][q.ma]);
-                    tableC_Html += `<td>${textVal}</td>`;
+                    tableC_Html += `<td style="color:var(--ivory);">${textVal}</td>`;
                 }
                 tableC_Html += `</tr>`;
             });
@@ -1257,10 +1267,10 @@
             if(qNN) {
                 (hoGiaDinh_Data['NNKK']||[]).forEach(v => {
                     let opt = qNN.options.find(o=>o.ma_lc===v);
-                    if(opt) nnkkList += `<li>${opt.text.replace('(fill)','').trim()} ${v==='8'?`<strong style="color:#e83e8c;">(${hoGiaDinh_Data.txt_NNKK_7})</strong>`:''}</li>`;
+                    if(opt) nnkkList += `<li style="color:var(--ivory); margin-bottom:6px;">${opt.text.replace('(fill)','').trim()} ${v==='8'?`<strong style="color:var(--coral);">(${hoGiaDinh_Data.txt_NNKK_7})</strong>`:''}</li>`;
                 });
             }
-            if(!nnkkList) nnkkList = "<li>Không có</li>";
+            if(!nnkkList) nnkkList = "<li style='color:var(--ivory);'>Không có</li>";
 
             let csHtml = `<div style="overflow-x:auto;"><table class="matrix-table" style="font-size:14px; margin-top:10px;"><tr><th>Chính sách hỗ trợ</th><th>Đang Hưởng</th><th>Mong Muốn</th></tr>`;
             let qDH = hoQ.find(q=>q.ma==='CS_DH');
@@ -1269,17 +1279,17 @@
                     let isDH = (hoGiaDinh_Data['CS_DH']||[]).includes(opt.ma_lc);
                     let isMM = (hoGiaDinh_Data['CS_MM']||[]).includes(opt.ma_lc);
                     if(isDH || isMM) {
-                        csHtml += `<tr><td>${opt.text.replace('(fill)','').trim()}</td><td>${isDH?'<strong style="color:red;">✅</strong>':''}</td><td>${isMM?'<strong style="color:red;">✅</strong>':''}</td></tr>`;
+                        csHtml += `<tr><td>${opt.text.replace('(fill)','').trim()}</td><td>${isDH?'<strong style="color:var(--coral);">✅</strong>':''}</td><td>${isMM?'<strong style="color:var(--coral);">✅</strong>':''}</td></tr>`;
                     }
                 });
             }
             csHtml += `</table></div>`;
 
             $('#review-content-phieuc').html(`
-                <p><strong>Tổng số thành viên trong hộ:</strong> <span style="font-weight:bold; color:#17a2b8; font-size:16px;">${N} người</span></p>
+                <p style="color:var(--beige);"><strong>Tổng số thành viên trong hộ:</strong> <span style="font-weight:bold; color:var(--ivory); font-size:16px;">${N} người</span></p>
                 ${tableC_Html}
-                <p style="margin-bottom:5px; color:#17a2b8; font-size:16px;"><strong>Nguyên nhân hộ còn khó khăn:</strong></p><ul style="margin-top:0;">${nnkkList}</ul>
-                <p style="margin-bottom:5px; color:#17a2b8; font-size:16px;"><strong>Các chính sách hỗ trợ Hộ mong muốn / đang hưởng:</strong></p>${csHtml}
+                <p style="margin-bottom:5px; color:var(--beige); font-size:16px; margin-top:24px;"><strong>Nguyên nhân hộ còn khó khăn:</strong></p><ul style="margin-top:0;">${nnkkList}</ul>
+                <p style="margin-bottom:5px; color:var(--beige); font-size:16px; margin-top:24px;"><strong>Các chính sách hỗ trợ Hộ mong muốn / đang hưởng:</strong></p>${csHtml}
             `);
 
             switchScreenUI('screen-nd-phieub2-review', 'nav-citizen');
@@ -1344,37 +1354,37 @@
         }
 
         async function loadDanhSachDotCanBo() {
-            $('#canbo-dot-list').html("<p>Đang tải...</p>");
+            $('#canbo-dot-list').html("<p style='color:var(--beige);'>Đang tải...</p>");
             try {
                 const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
                 if(data.status==="success"){
-                    if(data.dots.length===0) return $('#canbo-dot-list').html("<p>Chưa có đợt rà soát nào.</p>");
+                    if(data.dots.length===0) return $('#canbo-dot-list').html("<p style='color:var(--beige);'>Chưa có đợt rà soát nào.</p>");
                     let html="";
                     data.dots.forEach(d => {
                         const statusText = d.trang_thai === 'Open' ? 'Đang mở' : 'Đã đóng';
-                        const statusColor = d.trang_thai === 'Open' ? '#28a745' : '#dc3545';
+                        const statusColor = d.trang_thai === 'Open' ? '#10b981' : '#dc2626';
                         html+=`<div class="dot-item" onclick="this.classList.toggle('open')">
-                            <h4 style="margin:0; cursor:pointer; display: flex; align-items: center; gap: 8px;">
-                                <img src="assets/images/calendar.svg" width="20" height="20"> 
+                            <h4 style="margin:0; cursor:pointer; display: flex; align-items: center; gap: 8px; color:var(--ivory);">
+                                <img src="assets/images/calendar.svg" width="20" height="20" style="filter: brightness(2);"> 
                                 Đợt: ${d.ten_dot} 
-                                <br><small style="color:#555; font-weight:normal; margin-left: 28px;">Hạn kết thúc: ${d.ngay_ket_thuc} | <span style="color:${statusColor}; font-weight:600;">${statusText}</span></small>
+                                <br><small style="color:var(--beige); font-weight:normal; margin-left: 28px;">Hạn kết thúc: ${d.ngay_ket_thuc} | <span style="color:${statusColor}; font-weight:600;">${statusText}</span></small>
                             </h4>
                             <div class="dot-actions" style="margin-left: 28px;">
                                 <button class="btn-sm" style="display:inline-flex; align-items:center; gap:4px;" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">
                                     <img src="assets/images/preview.svg" width="14" height="14"> Xem Phiếu A
                                 </button>
-                                <button class="btn-sm" style="background-color: #28a745; display:inline-flex; align-items:center; gap:4px; color:white; border-color:#28a745;" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">
+                                <button class="btn-sm" style="background-color: var(--teal-sec); display:inline-flex; align-items:center; gap:4px; color:white; border-color:var(--teal-sec);" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">
                                     <img src="assets/images/download.svg" width="14" height="14" style="filter: brightness(2);"> Tải Phiếu A ▼
                                 </button>
                                 <button class="btn-sm" style="display:inline-flex; align-items:center; gap:4px;" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">
                                     <img src="assets/images/edit.svg" width="14" height="14"> Đổi Hạn
                                 </button>
-                                <button class="btn-sm btn-danger" style="display:inline-flex; align-items:center; gap:4px;" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">
-                                    <img src="assets/images/lock.svg" width="14" height="14"> Kết thúc đợt
+                                <button class="btn-sm btn-danger" style="display:inline-flex; align-items:center; gap:4px; background:rgba(220, 38, 38, 0.1); border-color:#dc2626; color:#fca5a5;" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">
+                                    <img src="assets/images/lock.svg" width="14" height="14" style="filter: invert(72%) sepia(41%) saturate(1455%) hue-rotate(313deg) brightness(101%) contrast(98%);"> Kết thúc đợt
                                 </button>
-                                <div id="dl-${d.id_dot}" style="display:none; margin-top: 10px; padding: 10px; border: 1px dashed #28a745; border-radius: 5px; background: #f8fff9;" onclick="event.stopPropagation();">
-                                    <span style="font-size: 14px; margin-right: 10px; color: #155724; font-weight: bold;">Định dạng:</span>
-                                    <button class="btn-sm" style="background:#28a745; color:white; border-color:#28a745; display:inline-flex; align-items:center; gap:4px;" onclick="taiFileWord('${d.id_dot}')">
+                                <div id="dl-${d.id_dot}" style="display:none; margin-top: 16px; padding: 16px; border: 1px dashed var(--teal-sec); border-radius: 12px; background: rgba(0,0,0,0.2);" onclick="event.stopPropagation();">
+                                    <span style="font-size: 14px; margin-right: 12px; color: var(--beige); font-weight: bold;">Định dạng tải về:</span>
+                                    <button class="btn-sm" style="background:var(--teal-sec); color:white; border-color:var(--teal-sec); display:inline-flex; align-items:center; gap:4px;" onclick="taiFileWord('${d.id_dot}')">
                                         <img src="assets/images/note.svg" width="14" height="14" style="filter: brightness(2);"> Word (.docx)
                                     </button>
                                     <button class="btn-sm btn-pdf" style="background:#dc2626; color:white; border-color:#dc2626; display:inline-flex; align-items:center; gap:4px;" onclick="taiFilePDF('${d.id_dot}', this)">
@@ -1412,13 +1422,13 @@
 
         async function xemTruocDocx(idDot) {
             document.getElementById('modal-title').innerText = "Xem Trước Phiếu A (Docx)";
-            document.getElementById('modal-body').innerHTML = "<p style='padding:20px;'>Đang tải dữ liệu và tạo file xem trước...</p>";
+            document.getElementById('modal-body').innerHTML = "<p style='padding:20px; color:black;'>Đang tải dữ liệu và tạo file xem trước...</p>";
             document.getElementById('myModal').style.display = 'block';
             try {
                 const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "preview_dot", ID_Dot: idDot }) });
                 const data = await resData.json();
                 if (!data.Hogiadinh || data.Hogiadinh.length === 0) {
-                    document.getElementById('modal-body').innerHTML = "<p style='padding:20px;'>Chưa có hồ sơ nào được nộp trong đợt này!</p>";
+                    document.getElementById('modal-body').innerHTML = "<p style='padding:20px; color:black;'>Chưa có hồ sơ nào được nộp trong đợt này!</p>";
                     return;
                 }
                 const templateBuffer = await (await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx")).arrayBuffer();
@@ -1438,7 +1448,7 @@
             document.getElementById('modal-body').innerHTML = `
                 <div style="padding:20px;">
                     <input type="date" id="new_end_date" value="${currentEnd}" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; font-family:'Be Vietnam Pro';">
-                    <button class="btn-dna btn-dark-teal" style="margin-top:15px; width:100%;" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
+                    <button class="btn-dna btn-primary-dna" style="margin-top:16px; width:100%;" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
                 </div>
             `;
             document.getElementById('myModal').style.display = 'block';
