@@ -262,12 +262,28 @@
         
 
         <!-- MÀN HÌNH ĐIỀU HƯỚNG -->
-        <div id="screen-nd-routing" class="screen">
-            <h2 style="text-align: center; color: #0056b3;">Anh/Chị muốn thực hiện quy trình nào?</h2>
-            <button class="btn-big" style="background-color: #17a2b8;" onclick="switchScreenUI('screen-nd-step2')">1. NHẬN DIỆN NHANH (Phiếu A)</button>
-            <button class="btn-big" style="background-color: #28a745;" onclick="startPhieuB1()">2. LÀM PHIẾU B1 (Tính Điểm Vùng)</button>
-            <button class="btn-big" style="background-color: #e83e8c;" onclick="switchScreenUI('screen-nd-phieuc-init')">3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)</button>
-            <button class="btn btn-secondary" style="width:100%" onclick="switchScreenUI('screen-nd-step1')">Quay lại sửa thông tin cá nhân</button>
+        <div id="screen-nd-routing" class="screen hero-layout">
+            <div class="hero-content">
+                <div class="glass-card" style="max-width: 600px;">
+                    <h2 style="text-align: center;">Anh/Chị muốn thực hiện quy trình nào?</h2>
+                    
+                    <button class="btn-dna btn-primary-dna" style="width:100%; margin-bottom: 16px; height: 56px; justify-content: flex-start; gap: 12px;" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">
+                        <img src="assets/images/form-check.svg" width="24" height="24"> 1. NHẬN DIỆN NHANH (Phiếu A)
+                    </button>
+                    
+                    <button class="btn-dna" style="width:100%; margin-bottom: 16px; background-color: var(--teal-sec); color: var(--ivory); height: 56px; justify-content: flex-start; gap: 12px;" onclick="startPhieuB1()">
+                        <img src="assets/images/form-check.svg" width="24" height="24"> 2. LÀM PHIẾU B1 (Tính Điểm Vùng)
+                    </button>
+                    
+                    <button class="btn-dna" style="width:100%; margin-bottom: 24px; background-color: var(--blue-gray); color: var(--bg-main); height: 56px; justify-content: flex-start; gap: 12px;" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')">
+                        <img src="assets/images/family.svg" width="24" height="24"> 3. LÀM PHIẾU B2 & C (Chi Tiết Nhóm Hộ)
+                    </button>
+                    
+                    <button class="btn-dna btn-outline-dna" style="width:100%; justify-content: center; gap: 8px;" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
+                        <img src="assets/images/edit.svg" width="18" height="18"> Quay lại sửa thông tin cá nhân
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- NHẬN DẠNG NHANH -->
@@ -301,8 +317,8 @@
                 <button class="btn btn-secondary" style="margin-top:0;" onclick="prevB1()">Quay lại câu trước</button>
                 <button class="btn" style="margin-top:0;" onclick="nextB1()">Tiếp tục →</button>
             </div>
-            <button class="btn" style="width: 100%; margin-top: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba;" onclick="switchScreenUI('screen-nd-step2')">
-                ⚠️ Quay lại sửa Phiếu A (Nhận diện nhanh)
+            <button class="btn" style="width: 100%; margin-top: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; display: inline-flex; align-items: center; justify-content: center; gap: 8px;" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">
+                <img src="assets/images/warning.svg" width="20" height="20"> Quay lại sửa Phiếu A (Nhận diện nhanh)
             </button>
         </div>
 
@@ -310,14 +326,22 @@
             <h3>Kết Quả Phiếu B1</h3><div class="review-box" id="review-content-b1"></div>
             <p class="text-blink" style="text-align: center; margin-top: 20px;">⚠️ Lưu ý: Vui lòng Xem và Tải phiếu B1 tại đây trước khi đi tiếp!</p>
             <div class="grid-2">
-                <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB1()">👀 Xem trước B1</button>
-                <button class="btn" style="background-color: #28a745; margin-top:0;" onclick="$('#dl-b1-options').slideToggle();">📥 Tải Phiếu B1 ▼</button>
+                <button class="btn btn-secondary" style="margin-top:0; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="xemTruocDocxB1()">
+                    <img src="assets/images/preview.svg" width="16" height="16"> Xem trước B1
+                </button>
+                <button class="btn" style="background-color: #28a745; margin-top:0; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="$('#dl-b1-options').slideToggle();">
+                    <img src="assets/images/download.svg" width="16" height="16"> Tải Phiếu B1 ▼
+                </button>
             </div>
             <div id="dl-b1-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #28a745; background: #f8fff9; border-radius:5px;">
                 <p style="margin-top:0; font-size:14px; text-align:center;">Chọn định dạng tải về:</p>
                 <div class="grid-2">
-                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">📄 Word (.docx)</button>
-                    <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB1(this);">📕 PDF (.pdf)</button>
+                    <button class="btn" style="background-color: #28a745; margin-top:0; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">
+                        <img src="assets/images/note.svg" width="16" height="16"> Word (.docx)
+                    </button>
+                    <button class="btn btn-pdf" style="margin-top:0; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="taiFilePDFB1(this);">
+                        <img src="assets/images/note.svg" width="16" height="16"> PDF (.pdf)
+                    </button>
                 </div>
             </div><br>
             <button class="btn btn-secondary" style="width: 100%;" onclick="editB1()">Quay lại để Sửa</button>
@@ -365,13 +389,13 @@
                 <h3 style="margin-top:0; color:#17a2b8;">I. TÓM TẮT PHIẾU C</h3>
                 <div id="review-content-phieuc"></div>
                 <div class="grid-2" style="margin-top:15px;">
-                    <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxPhieuC()">👀 Xem Phiếu C</button>
-                    <button class="btn" style="background-color: #17a2b8; margin-top:0;" onclick="$('#dl-pc-options').slideToggle();">📥 Tải Phiếu C ▼</button>
+                    <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxPhieuC()"><img src="assets/images/preview.svg" width="16" height="16"> Xem Phiếu C</button>
+                    <button class="btn" style="background-color: #17a2b8; margin-top:0;" onclick="$('#dl-pc-options').slideToggle();"><img src="assets/images/download.svg" width="16" height="16"> Tải Phiếu C ▼</button>
                 </div>
                 <div id="dl-pc-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #17a2b8; background: #f4faff;">
                     <div class="grid-2">
-                        <button class="btn" style="background-color: #17a2b8; margin-top:0; width:100%;" onclick="taiFileWordPhieuC(); $('#dl-pc-options').slideUp();">📄 Word (.docx)</button>
-                        <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFPhieuC(this);">📕 PDF (.pdf)</button>
+                        <button class="btn" style="background-color: #17a2b8; margin-top:0; width:100%;" onclick="taiFileWordPhieuC(); $('#dl-pc-options').slideUp();"><img src="assets/images/note.svg" width="16" height="16"> Word (.docx)</button>
+                        <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFPhieuC(this);"><img src="assets/images/note.svg" width="16" height="16"> PDF (.pdf)</button>
                     </div>
                 </div>
             </div>
@@ -380,13 +404,13 @@
                 <h3 style="margin-top:0; color:#e83e8c;">II. CHI TIẾT THIẾU HỤT B2</h3>
                 <div id="review-content-b2"></div>
                 <div class="grid-2" style="margin-top:15px;">
-                    <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB2()">👀 Xem Phiếu B2</button>
-                    <button class="btn" style="background-color: #e83e8c; margin-top:0;" onclick="$('#dl-b2-options').slideToggle();">📥 Tải Phiếu B2 ▼</button>
+                    <button class="btn btn-secondary" style="margin-top:0;" onclick="xemTruocDocxB2()"><img src="assets/images/preview.svg" width="16" height="16"> Xem Phiếu B2</button>
+                    <button class="btn" style="background-color: #e83e8c; margin-top:0;" onclick="$('#dl-b2-options').slideToggle();"><img src="assets/images/download.svg" width="16" height="16"> Tải Phiếu B2 ▼</button>
                 </div>
                 <div id="dl-b2-options" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed #e83e8c; background: #fff5f8;">
                     <div class="grid-2">
-                        <button class="btn" style="background-color: #e83e8c; margin-top:0; width:100%;" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();">📄 Word (.docx)</button>
-                        <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB2(this);">📕 PDF (.pdf)</button>
+                        <button class="btn" style="background-color: #e83e8c; margin-top:0; width:100%;" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();"><img src="assets/images/note.svg" width="16" height="16"> Word (.docx)</button>
+                        <button class="btn btn-pdf" style="margin-top:0; width:100%;" onclick="taiFilePDFB2(this);"><img src="assets/images/note.svg" width="16" height="16"> PDF (.pdf)</button>
                     </div>
                 </div>
             </div>
