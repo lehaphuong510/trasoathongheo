@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hệ Thống Rà Soát Hộ Nghèo</title>
+<!-- Font Be Vietnam Pro -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Các thư viện JS -->
+<script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.11/build/docxtemplater.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+<script src="https://unpkg.com/docx-preview/dist/docx-preview.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+        /* =============== UX/UI REDESIGN OVERRIDES — LOGIC UNCHANGED =============== */
+        :root {
+            --bg-main: #1B3940;
+            --teal-sec: #567781;
+            --blue-gray: #A3AAAE;
+            --coral: #DF5C50;
+            --ivory: #F6F1E9;
+            --beige: #DBC7BC;
+            --glass-bg: rgba(246, 241, 233, 0.06);
+            --glass-border: rgba(246, 241, 233, 0.15);
+            --glass-hover: rgba(246, 241, 233, 0.1);
+            --nav-h: 82px;
+            --page-x: clamp(20px, 6vw, 96px);
+            --content-w: 1120px;
+            --focus: 0 0 0 4px rgba(223, 92, 80, .2);
+        }
+
+        html { scroll-behavior: smooth; background: var(--bg-main); }
+        body { min-height: 100svh; font-family: 'Be Vietnam Pro', 'Noto Sans', Arial, sans-serif; letter-spacing: -.01em; color: var(--ivory); margin: 0; padding: 0; overflow-x: hidden; }
+        .screen:not(.active) { display: none !important; }
+        button, input, select, textarea, .btn-dna, .glass-input, .select2-container { font-family: inherit !important; }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; box-shadow: var(--focus); }
+        
+        .screen { width: 100%; isolation: isolate; }
+        .screen.active.welcome-layout, .screen.active.form-center-layout { display: flex !important; }
+        .screen.active.form-top-layout { display: block !important; }
+        
+        .bg-common { background-attachment: scroll !important; background-size: cover; background-position: center center; position: relative; }
+        .bg-common:before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(90deg, rgba(27, 57, 64, .2), rgba(27, 57, 64, .04) 62%, rgba(27, 57, 64, 0)); }
+
+        .bg-welcome { background-image: url('assets/images/welcome-desktop-16x9.webp'); }
+        .bg-staff { background-image: url('assets/images/staff-desktop-16x9.webp'); }
+        .bg-citizen { background-image: url('assets/images/citizen-desktop-16x9.webp'); }
+
+        /* Navbar */
+        .navbar, .navbar[style*="display: block"] { height: var(--nav-h); padding: 0 var(--page-x); display: none; flex-direction: row; gap: 24px; background: rgba(246, 241, 233, .97); border-bottom: 1px solid rgba(27, 57, 64, .09); box-shadow: none; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+        .navbar[style*="display: block"] { display: flex !important; }
+        .nav-logo { font-size: clamp(15px, 1.3vw, 21px); font-weight: 800; text-transform: uppercase; letter-spacing: -.025em; white-space: nowrap; display: flex; align-items: center; gap: 12px; color: var(--bg-main); }
+        .nav-logo img { width: 40px !important; height: 40px !important; padding: 0 !important; background: transparent !important; filter: none !important; border-radius: 10px !important; }
+        .nav-links { gap: clamp(20px, 3vw, 46px); align-items: center; font-size: clamp(14px, 1.15vw, 18px); font-weight: 650; display: flex; }
+        .nav-item { position: relative; color: #98a1a2; white-space: nowrap; cursor: pointer; transition: 0.2s; }
+        .nav-item:after { content: ""; position: absolute; left: 0; right: 100%; bottom: -10px; height: 2px; background: var(--coral); transition: right .2s ease; }
+        .nav-item:hover:after, .nav-item.active:after { right: 0; }
+        .nav-item.active { color: var(--bg-main); }
+
+        /* Welcome */
+        .welcome-layout { min-height: 100svh; height: auto; padding: 0 var(--page-x); align-items: center; overflow: hidden; }
+        .welcome-layout .hero-content { width: min(620px, 47vw); max-width: none; margin-left: 9.5vw; transform: translateY(-1vh); }
+        .tagline { margin: 0 0 26px; font-size: clamp(12px, 1.25vw, 18px); font-weight: 700; letter-spacing: .24em; color: rgba(246, 241, 233, .66); text-transform: uppercase; }
+        .hero-title { margin: 0 0 38px; font-size: clamp(36px, 3.35vw, 56px); line-height: 1.08; letter-spacing: -.045em; color: var(--ivory); font-weight: 800; }
+        .hero-title span { margin-top: 8px; font-size: clamp(28px, 2.65vw, 44px); line-height: 1.14; letter-spacing: -.035em; display: block; font-weight: 700; }
+        .hero-desc { max-width: 690px; margin: 0 0 40px; font-size: clamp(15px, 1.35vw, 21px); line-height: 1.48; color: rgba(246, 241, 233, .62); font-weight: 400; }
+        .btn-group { display: flex; gap: 14px; flex-wrap: wrap; }
+        .btn-dna { min-height: 48px; height: auto; padding: 13px 24px; border-radius: 10px; font-weight: 700; line-height: 1.2; box-shadow: none; cursor: pointer; transition: all 0.2s ease-out; display: inline-flex; align-items: center; justify-content: center; border: none; gap: 8px; font-size: 15px; }
+        .btn-dna img { flex: 0 0 auto; }
+        .btn-primary-dna { background: var(--coral); color: #fff; }
+        .btn-primary-dna:hover { background: #d65348; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(223, 92, 80, .2); }
+        .btn-outline-dna { background: rgba(246, 241, 233, .045); border: 1px solid rgba(246, 241, 233, .35); color: var(--ivory); }
+        .btn-outline-dna:hover { background: rgba(246, 241, 233, .1); border-color: rgba(246, 241, 233, .55); }
+        .btn-teal-dna { background-color: var(--teal-sec); color: var(--ivory); }
+        .btn-teal-dna:hover { background-color: #45626a; transform: translateY(-2px); }
+
+        /* Shared layouts */
+        .form-center-layout { min-height: 100svh; padding: calc(var(--nav-h) + 48px) var(--page-x) 56px; justify-content: flex-start; align-items: center; box-sizing: border-box; }
+        .form-top-layout { min-height: 100svh; padding: calc(var(--nav-h) + 44px) var(--page-x) 64px; box-sizing: border-box; }
+        .glass-card { background: rgba(27, 57, 64, .82); border: 1px solid rgba(246, 241, 233, .16); border-radius: 18px; box-shadow: 0 22px 64px rgba(8, 24, 29, .16); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); padding: 32px; width: 100%; box-sizing: border-box; }
+        .glass-card-sm { max-width: 580px; }
+        .glass-card-lg { max-width: 980px; margin: 0 auto; }
+        .glass-card h2 { font-size: clamp(23px, 2vw, 30px); letter-spacing: -.035em; margin-top: 0; margin-bottom: 24px; color: var(--ivory); font-weight: 700; }
+        .glass-card h3 { letter-spacing: -.025em; margin-top: 0; margin-bottom: 20px; font-weight: 600; color: var(--ivory); font-size: 20px; }
+        .form-group-dna { margin-bottom: 18px; }
+        .glass-label { font-size: 13px; font-weight: 650; letter-spacing: .01em; display: block; margin-bottom: 8px; color: var(--beige); }
+        .glass-input, .select2-container--default .select2-selection--single { width: 100% !important; height: 50px !important; border-radius: 10px !important; background: rgba(246, 241, 233, .075) !important; border: 1px solid rgba(246, 241, 233, .22) !important; padding: 0 16px; color: var(--ivory) !important; box-sizing: border-box; transition: 0.2s; }
+        .glass-input:hover, .select2-container--default .select2-selection--single:hover { border-color: rgba(246, 241, 233, .4) !important; }
+        .glass-input:focus { box-shadow: var(--focus); border-color: var(--coral) !important; outline: none; background: rgba(255, 255, 255, 0.1) !important; }
+        .glass-input::placeholder { color: var(--blue-gray); }
+
+        .select2-container { width: 100% !important; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--ivory) !important; line-height: 48px !important; padding-left: 0 !important; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 48px !important; }
+        .select2-dropdown { background-color: var(--bg-main); border: 1px solid var(--teal-sec); color: var(--ivory); border-radius: 12px; overflow: hidden; }
+        .select2-results__option--selected { background-color: var(--teal-sec) !important; }
+        .select2-results__option--highlighted { background-color: var(--coral) !important; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 16px; }
+
+        /* Staff login */
+        #screen-canbo-auth { padding-left: 18vw; padding-right: 52vw; background-position: center; }
+        #screen-canbo-auth .glass-card { max-width: 640px; padding: 0; background: transparent; border: 0; box-shadow: none; backdrop-filter: none; }
+        #screen-canbo-auth .glass-card h2 { margin-bottom: 30px; color: rgba(246, 241, 233, .7); font-size: 24px; text-transform: uppercase; letter-spacing: .12em; }
+        #screen-canbo-auth .glass-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+        #screen-canbo-auth .glass-input { height: 58px !important; background: rgba(246, 241, 233, .97) !important; color: var(--bg-main) !important; border: 2px solid rgba(246, 241, 233, .45) !important; font-size: 18px; padding: 0 18px; }
+        #screen-canbo-auth .glass-input::placeholder { color: #9aa6a8; }
+        #screen-canbo-auth .btn-group { justify-content: flex-end; margin-top: 26px !important; }
+        #screen-canbo-auth .btn-dna { min-width: 190px; height: 56px; font-size: 16px; }
+
+        /* Citizen entry */
+        #screen-nd-step1 { padding-left: 7vw; padding-right: 48vw; background-position: center; }
+        #screen-nd-step1 .glass-card { max-width: 640px; background: rgba(246, 241, 233, .96); border-color: rgba(246, 241, 233, .9); color: var(--bg-main); box-shadow: 0 24px 70px rgba(8, 24, 29, .2); }
+        #screen-nd-step1 .glass-card h2 { color: var(--bg-main); font-size: 26px; line-height: 1.3; }
+        #screen-nd-step1 .glass-label { color: var(--teal-sec); }
+        #screen-nd-step1 .glass-input, #screen-nd-step1 .select2-container--default .select2-selection--single { background: #fff !important; color: var(--bg-main) !important; border-color: rgba(27, 57, 64, .17) !important; }
+        #screen-nd-step1 .glass-input::placeholder { color: #8b989b; }
+        #screen-nd-step1 .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--bg-main) !important; }
+        .searchable-select { width: 100%; height: 50px; padding: 0 14px; border: 1px solid rgba(246, 241, 233, .22); border-radius: 10px; background: rgba(246, 241, 233, .075); color: var(--ivory); }
+        #screen-nd-step1 .searchable-select { background: #fff; color: var(--bg-main); border-color: rgba(27, 57, 64, .17); }
+
+        /* Long flows */
+        .form-top-layout > .glass-card { margin-inline: auto; }
+        #screen-canbo-dash > .glass-card { max-width: 1060px; }
+        #screen-nd-routing { padding-left: 9vw; padding-right: 58vw; }
+        #screen-nd-routing .glass-card { max-width: 620px; }
+        
+        .b1-option-label { display: flex; align-items: center; padding: 15px 18px; border: 1px solid var(--glass-border); border-radius: 11px; cursor: pointer; background: rgba(246, 241, 233, .045); font-size: 16px; color: var(--ivory); transition: all 0.2s ease; font-weight: 500; min-height: 56px; margin-bottom: 12px; }
+        .b1-option-label:hover { border-color: rgba(246, 241, 233, .35); background: rgba(246, 241, 233, .07); }
+        .b1-option-label:has(input:checked) { border: 2px solid var(--coral); background-color: rgba(223, 92, 80, 0.1); }
+        input[type="radio"], input[type="checkbox"] { accent-color: var(--coral); width: 22px; height: 22px; margin-right: 16px; cursor: pointer; }
+
+        .review-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border-left: 4px solid var(--coral); margin-bottom: 20px; line-height: 1.65; }
+        .review-checklist div { padding: 12px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); }
+        .review-checklist div:last-child { border-bottom: none; }
+        .text-blink { animation: blink 1.2s infinite; color: var(--coral); font-weight: bold; margin-bottom: 15px; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Dashboard Items */
+        .dot-item { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 22px; margin-bottom: 16px; border-radius: 12px; transition: 0.2s; }
+        .dot-item:hover { border-color: var(--teal-sec); background: rgba(255, 255, 255, 0.08); }
+        .dot-actions { margin-top: 16px; display: none; padding-top: 16px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
+        .dot-item.open .dot-actions { display: block; }
+        
+        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255, 255, 255, 0.03); font-size: 14px; }
+        .matrix-table th, .matrix-table td { border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px; text-align: center; }
+        .matrix-table th { background: rgba(255, 255, 255, 0.1); font-weight: 600; color: var(--ivory); }
+        .matrix-table td:first-child { text-align: left; font-weight: bold; color: var(--beige); }
+
+        /* Tabs */
+        .tab-member { display: inline-block; padding: 12px 20px; background: rgba(255, 255, 255, 0.05); margin-right: 8px; margin-bottom: 8px; border-radius: 8px; font-weight: 600; transition: 0.2s; color: var(--blue-gray); cursor: pointer; border: 1px solid var(--glass-border); }
+        .tab-member.active { background: var(--teal-sec); color: var(--ivory); border-color: var(--teal-sec); }
+        .tab-member.error { background: rgba(223, 92, 80, 0.2); color: var(--coral); border: 1px solid var(--coral); } 
+        .tab-content { display: none; padding: 24px; border: 1px solid var(--teal-sec); background: rgba(0, 0, 0, 0.2); border-radius: 12px; margin-top: 8px; }
+        .tab-content.active { display: block; }
+        .phieuc-question { margin-bottom: 16px; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 16px; transition: 0.3s; }
+        .phieuc-question.error { border-left: 4px solid var(--coral); padding-left: 12px; background: rgba(223, 92, 80, 0.05); }
+
+        /* Modal */
+        .modal { display: none !important; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); }
+        .modal[style*="display: block"] { display: block !important; }
+        .modal-content { background-color: var(--bg-main); margin: 5% auto; padding: 24px; border: 1px solid var(--teal-sec); width: 95%; max-width: 1000px; border-radius: 18px; max-height: 90vh; overflow-y: auto; color: var(--ivory); box-shadow: 0 30px 90px rgba(0, 0, 0, .35); }
+        #modal-body { width: 100%; background: white; color: black; min-height: 50vh; border-radius: 8px; overflow-x: hidden; position: relative; padding: 10px; }
+
+        /* Responsive */
+        @media(max-width: 1000px) {
+            :root { --nav-h: 76px; }
+            .welcome-layout .hero-content { margin-left: 2vw; width: min(570px, 58vw); }
+            #screen-canbo-auth { padding-left: 8vw; padding-right: 47vw; }
+            #screen-nd-step1, #screen-nd-routing { padding-left: 5vw; padding-right: 45vw; }
+        }
+        @media(max-width: 768px) {
+            :root { --nav-h: 116px; --page-x: 20px; }
+            .navbar, .navbar[style*="display: block"] { height: var(--nav-h); padding: 12px 20px; flex-direction: column !important; justify-content: center; gap: 9px; }
+            .nav-logo { font-size: 14px; } .nav-logo img { width: 30px !important; height: 30px !important; }
+            .nav-links { width: 100%; justify-content: center; gap: 18px; font-size: 12px; } .nav-item:after { bottom: -5px; }
+            .bg-common { background-position: bottom center; }
+            .bg-common:before { background: linear-gradient(180deg, rgba(27, 57, 64, .08), rgba(27, 57, 64, .02) 55%, rgba(27, 57, 64, .08)); }
+            .welcome-layout { align-items: flex-start; padding: 10vh 22px 42vh; overflow: visible; background-position: bottom center; }
+            .welcome-layout .hero-content { width: 100%; margin: 0; transform: none; }
+            .tagline { margin-bottom: 18px; font-size: 11px; } .hero-title { font-size: 34px; margin-bottom: 22px; } .hero-title span { font-size: 25px; } .hero-desc { font-size: 15px; margin-bottom: 24px; } .desktop-break { display: none; }
+            .welcome-layout .btn-group { display: grid; grid-template-columns: 1fr 1fr; } .welcome-layout .btn-dna { padding: 12px 13px; font-size: 13px; }
+            .form-center-layout, .form-top-layout { padding: calc(var(--nav-h) + 24px) 18px 44vh; align-items: flex-start; }
+            #screen-canbo-auth, #screen-nd-step1, #screen-nd-routing { padding-left: 18px; padding-right: 18px; }
+            #screen-canbo-auth .glass-card { max-width: none; padding: 24px 0; }
+            #screen-canbo-auth .glass-input { height: 52px !important; font-size: 16px; }
+            #screen-canbo-auth .btn-group { display: grid; grid-template-columns: 1fr 1fr; } .btn-dna { min-height: 46px; padding: 12px 16px; font-size: 14px; }
+            #screen-nd-step1 .glass-card { padding: 24px 18px; background: rgba(246, 241, 233, .95); }
+            #screen-nd-routing .glass-card { background: rgba(27, 57, 64, .9); }
+            .glass-card { padding: 24px 18px; border-radius: 15px; } .glass-card h2 { font-size: 23px; } .grid-2 { grid-template-columns: 1fr; gap: 0; } .form-top-layout { padding-bottom: 40px; } .form-top-layout > .glass-card { margin: 0; }
+            .matrix-table { min-width: 720px; } .btn-group { gap: 10px; }
+        }
+        @media(max-width: 420px) {
+            .welcome-layout { padding-top: 8vh; } .hero-title { font-size: 30px; } .hero-title span { font-size: 23px; }
+            .welcome-layout .btn-group, #screen-canbo-auth .btn-group { grid-template-columns: 1fr; }
+            .nav-links { gap: 12px; font-size: 11px; }
+        }
+        @media(prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+    
+/* ===== FINAL CONSOLIDATED UI — business logic preserved ===== */
+:root{--control-size:22px}.glass-panel{border:1px solid var(--glass-border);background:rgba(86,119,129,.14);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:16px}.kicker{font-size:11px;letter-spacing:.18em;font-weight:800;color:var(--blue-gray)}.full{width:100%}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:16px}.panel-title h1,.panel-title h2{margin:0}
+/* normalized native controls */
+input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;appearance:none!important;width:var(--control-size)!important;height:var(--control-size)!important;min-width:var(--control-size)!important;min-height:var(--control-size)!important;flex:0 0 var(--control-size)!important;margin:0 14px 0 0!important;border:2px solid rgba(246,241,233,.58)!important;background:rgba(246,241,233,.025)!important;display:inline-grid!important;place-content:center!important;vertical-align:middle!important;cursor:pointer!important;transition:.18s ease!important}input[type="checkbox"]{border-radius:6px!important}input[type="radio"]{border-radius:50%!important}input[type="checkbox"]:checked{background-color:var(--coral)!important;border-color:var(--coral)!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='m4 10 4 4 8-9'/%3E%3C/svg%3E")!important;background-size:16px!important;background-position:center!important;background-repeat:no-repeat!important}input[type="radio"]:checked{border-color:var(--coral)!important;background:radial-gradient(circle,var(--coral) 0 5px,transparent 6px)!important}input[type="radio"]:focus-visible,input[type="checkbox"]:focus-visible{box-shadow:0 0 0 4px rgba(223,92,80,.22)!important}
+/* dashboard */
+#screen-canbo-dash{padding:calc(var(--nav-h) + 28px) 4vw 36px;background-color:var(--bg-main)}.dash-shell{max-width:1330px;margin:auto}.dash-head{display:flex;justify-content:space-between;align-items:end}.dash-head h1{font-size:30px;margin:6px 0 0}.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.stat,.dash-create,.dash-list{border:1px solid var(--glass-border);background:rgba(86,119,129,.14);backdrop-filter:blur(18px);border-radius:15px}.stat{padding:20px}.stat span{display:block;color:var(--blue-gray);font-size:13px}.stat b{font-size:27px;display:block;margin-top:7px}.dash-grid{display:grid;grid-template-columns:390px 1fr;gap:16px}.dash-create,.dash-list{padding:22px}.dash-create h2,.dash-list h2{margin:0 0 18px}.dash-create .form-group-dna{margin:0 0 14px}.dash-create textarea{height:74px!important;resize:vertical}.filter-pills{display:flex;gap:6px}.filter-pills span{font-size:11px;padding:7px 10px;border-radius:7px;background:rgba(246,241,233,.06)}.filter-pills .active{background:var(--ivory);color:var(--bg-main)}.dash-logout{margin-top:14px}
+/* route */
+#screen-nd-routing{padding:calc(var(--nav-h) + 50px) 4vw 55px;align-items:flex-start}.route-shell{width:min(1320px,100%);margin:auto}.route-intro{text-align:center;margin-bottom:30px}.route-intro h1{font-size:33px;margin:8px 0}.route-intro p{color:var(--blue-gray)}.route-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.route-card{min-height:380px;text-align:left;padding:25px;border:1px solid var(--glass-border);border-radius:17px;background:rgba(86,119,129,.14);color:var(--ivory);display:flex;flex-direction:column;cursor:pointer}.route-card.active{border-color:var(--coral);background:linear-gradient(145deg,rgba(223,92,80,.18),rgba(86,119,129,.15))}.route-icon{height:142px;border:1px solid var(--glass-border);border-radius:14px;background:rgba(246,241,233,.06);display:grid;place-items:center;margin-bottom:23px}.route-icon img{width:92px;height:92px}.route-card small{font-weight:800;letter-spacing:.1em;color:var(--beige)}.route-card h2{font-size:23px;margin:9px 0}.route-card p{color:var(--blue-gray);line-height:1.5}.route-card span{margin-top:auto;border:1px solid var(--glass-border);border-radius:9px;padding:14px;font-weight:800}.route-card.active span{background:var(--coral);border-color:var(--coral)}.route-back{display:block;margin:28px auto 0;border:0;background:none;color:var(--beige);font-weight:700}
+/* question system shared by A, B1, B2/C */
+#screen-nd-step2,#screen-nd-step3,#screen-nd-b1,#screen-nd-phieuc-members,#screen-nd-phieuc-ho{padding:calc(var(--nav-h) + 30px) 4vw 42px}.question-shell,.c-form-shell{width:min(1325px,100%);margin:auto}.question-progress{min-height:116px;padding:25px;display:grid;grid-template-columns:54px 170px 1fr 150px;align-items:center;gap:16px;margin-bottom:16px}.form-badge{width:54px;height:54px;border-radius:13px;border:1px solid rgba(223,92,80,.5);display:grid;place-items:center;color:var(--coral);font-weight:900;font-size:17px}.question-progress small{color:var(--blue-gray);font-size:10px;letter-spacing:.08em}.question-progress h2{margin:2px 0 0}.seg-wrap{padding:0 25px}.seg-bars{display:flex;gap:6px;margin-top:9px}.seg-bars i{height:7px;flex:1;border-radius:6px;background:rgba(246,241,233,.13)}.seg-bars i.on{background:var(--coral)}.question-count{text-align:right}.question-count b{display:block;font-size:27px}.question-count span{font-size:10px;color:var(--blue-gray)}.question-body,.c-question-panel{padding:28px 36px}.question-body h1,.c-question-panel h1{font-size:30px;margin:8px 0}.question-help{color:var(--blue-gray);margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid rgba(246,241,233,.1)}.numbered-options{counter-reset:choice}.numbered-options .b1-option-label{counter-increment:choice;position:relative;display:grid!important;grid-template-columns:60px var(--control-size) 1fr;align-items:center;min-height:56px;padding:0 18px 0 0!important;margin:0 0 8px!important;border:1px solid var(--glass-border)!important;border-radius:11px!important;background:rgba(246,241,233,.04)!important;font-weight:700}.numbered-options .b1-option-label:before{content:counter(choice,decimal-leading-zero);height:100%;display:grid;place-items:center;background:rgba(246,241,233,.035);color:var(--blue-gray);margin-right:14px}.numbered-options .b1-option-label:has(input:checked){border-color:var(--coral)!important;background:rgba(223,92,80,.08)!important}.numbered-options .b1-option-label:has(input:checked):before{background:var(--coral);color:white}.question-actions{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:18px}.question-warning{border:0;background:none;color:#E39A76;font-size:12px}.question-body details{border:1px solid var(--glass-border);border-radius:10px;padding:13px;margin-bottom:15px}.question-body summary{color:var(--coral);font-weight:700}.many i{min-width:15px}.c-question-panel .phieuc-question{padding:24px 0;border-bottom:1px solid rgba(246,241,233,.1)}.c-question-panel .phieuc-question>strong{font-size:22px!important;color:var(--ivory)!important}.c-question-panel .b1-option-label,#phieuc-ho-container .b1-option-label{min-height:54px!important;display:flex!important;align-items:center!important;border:1px solid var(--glass-border)!important;border-radius:10px!important;background:rgba(246,241,233,.035)!important;padding:14px!important;margin:8px 0!important}.member-tabs{display:flex;gap:7px;overflow-x:auto;margin-top:8px}.tab-member{padding:10px 13px!important;border-radius:9px!important;border:1px solid var(--glass-border)!important;background:rgba(246,241,233,.035)!important}.tab-member.active{border-color:var(--coral)!important;color:var(--coral)!important;background:rgba(223,92,80,.1)!important}
+/* result A */
+#screen-nd-review,#screen-nd-review-b1,#screen-nd-phieub2-review{padding:calc(var(--nav-h) + 27px) 4vw 38px}.result-page,.b1-result-layout,.final-result{width:min(1330px,100%);margin:auto}.result-heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}.result-heading h1{font-size:29px;margin:6px 0}.result-heading p,.result-heading span{color:var(--blue-gray);font-size:11px}.a-result-top{display:grid;grid-template-columns:240px 1fr 280px;gap:15px}.a-score,.a-verdict,.a-next,.a-criteria{padding:22px}.a-score-number{font-size:42px;font-weight:900;margin:12px 0}.mini-segments{display:flex;gap:5px}.mini-segments i{height:7px;flex:1;background:rgba(246,241,233,.14);border-radius:5px}.mini-segments i.on{background:var(--coral)}.a-verdict{display:flex;gap:18px;align-items:center}.verdict-check{width:74px;height:74px;border-radius:18px;background:rgba(82,193,150,.14);color:#72d2ab;display:grid;place-items:center;font-size:44px}.a-verdict h2{color:var(--coral);font-size:24px}.a-next .btn-dna{width:100%}.a-criteria{margin-top:15px}.criteria-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px}.criteria-group{border:1px solid var(--glass-border);border-radius:11px;padding:13px}.criterion{min-height:47px;border-radius:8px;background:rgba(246,241,233,.04);padding:10px;display:flex;gap:9px;align-items:center;margin-top:7px;font-size:11px}.criterion .state{width:21px;height:21px;border-radius:6px;border:1px solid var(--glass-border);display:grid;place-items:center}.criterion.yes{border:1px solid rgba(223,92,80,.45)}.criterion.yes .state{background:var(--coral);color:white}.result-bottom{display:flex;justify-content:space-between;margin-top:14px}.hidden-submit{position:absolute;right:5.5vw;top:250px}
+/* B1 result */
+.b1-result-layout{display:grid;grid-template-columns:350px 1fr;gap:16px}.b1-score-panel,.b1-detail-panel{padding:22px;min-height:710px}.b1-score-panel .score-summary .big-score{font-size:70px;line-height:1;margin:13px 0}.b1-score-panel .score-summary .big-score span{font-size:24px;color:var(--blue-gray)}.score-track{height:8px;border-radius:8px;background:rgba(246,241,233,.12);overflow:hidden}.score-track i{display:block;height:100%;background:var(--coral)}.score-decision{padding:15px;border:1px solid rgba(82,193,150,.35);background:rgba(82,193,150,.1);border-radius:12px;margin:18px 0}.score-decision h2{color:var(--coral);font-size:20px}.file-zone{margin-top:20px}.warning-line{color:#F0A37D;font-size:13px;font-weight:800;line-height:1.4}.file-action{display:flex!important;margin:9px auto!important;width:max-content!important;min-width:165px;justify-content:center}.file-action img,.file-row img{width:27px;height:27px}.next-zone{margin-top:auto;border-top:1px solid rgba(246,241,233,.12);padding-top:17px}.b1-score-panel{display:flex;flex-direction:column}.next-zone .btn-dna{width:100%}.b1-detail-panel .panel-title h1{font-size:19px}.b1-groups{display:grid;gap:12px;margin-top:16px}.b1-group{border:1px solid var(--glass-border);border-radius:11px;padding:12px}.b1-group-items{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.b1-answer{background:rgba(246,241,233,.04);border-radius:8px;padding:10px;display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:start}.b1-answer .tick{width:20px;height:20px;border-radius:6px;background:rgba(82,193,150,.15);color:#72d2ab;display:grid;place-items:center}.b1-answer b{font-size:12px}.b1-answer p{font-size:11px;color:#C0C9C9;margin:4px 0 0}.b1-answer em{font-size:11px;color:#72d2ab;font-weight:800}.group-score{display:flex;align-items:end;gap:9px;margin-top:9px}.group-score .line{height:6px;background:rgba(246,241,233,.1);border-radius:5px;flex:1;overflow:hidden}.group-score .line i{display:block;height:100%;background:var(--coral)}.group-score b{color:var(--coral);font-size:11px}.download-options{padding:10px;border:1px dashed var(--glass-border);border-radius:9px;margin-top:8px;display:flex;gap:7px}.download-options .btn-dna{flex:1}
+/* final B2/C */
+.final-result .result-heading{margin-bottom:14px}.final-summary{display:grid;grid-template-columns:220px 1fr 260px;gap:14px;margin-bottom:14px}.final-summary>div{padding:18px}.final-summary .big{font-size:42px;font-weight:900}.final-summary .conclusion{display:flex;align-items:center;gap:17px}.final-summary .conclusion h2{color:var(--coral)}.final-columns{display:grid;grid-template-columns:43% 57%;gap:14px}.final-c,.final-b2{padding:17px;min-height:545px}.member-selector{display:flex;gap:6px;overflow-x:auto;margin:10px 0}.member-chip{border:1px solid var(--glass-border);border-radius:8px;padding:8px 10px;background:rgba(246,241,233,.035);color:var(--ivory);font-size:10px}.member-chip.active{border-color:var(--coral);color:var(--coral)}.member-profile{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.member-cell{padding:9px;background:rgba(246,241,233,.04);border-radius:8px}.member-cell b{display:block;font-size:10px}.member-cell span{font-size:10px;color:var(--blue-gray)}.support-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.support-tags span{padding:6px 8px;border-radius:7px;background:rgba(82,193,150,.12);color:#91dbbd;font-size:10px}.b2-groups{display:grid;grid-template-columns:1fr 1fr;gap:8px}.b2-group{border:1px solid var(--glass-border);border-radius:10px;padding:10px}.b2-group h3{font-size:12px;margin:0 0 8px}.b2-line{display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:11px}.b2-state{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex:none}.b2-state.yes{background:rgba(82,193,150,.16);color:#72d2ab}.b2-state.no{background:rgba(163,170,174,.12);color:var(--blue-gray)}.file-row{display:flex;align-items:center;gap:8px;margin-top:12px}.file-row .warning-line{margin-right:auto;max-width:210px}.final-actions{display:flex;justify-content:space-between;margin-top:14px}
+@media(max-width:900px){.dash-stats{grid-template-columns:1fr 1fr}.dash-grid,.route-cards,.a-result-top,.b1-result-layout,.final-columns,.final-summary{grid-template-columns:1fr}.question-progress{grid-template-columns:52px 1fr}.seg-wrap,.question-count{grid-column:1/-1;text-align:left;padding:0}.criteria-grid,.b1-group-items,.b2-groups,.member-profile{grid-template-columns:1fr}.question-actions,.result-bottom,.final-actions,.file-row{flex-direction:column;align-items:stretch}.route-card{min-height:320px}.hidden-submit{position:static;margin-top:12px}.b1-score-panel,.b1-detail-panel{min-height:auto}.final-c,.final-b2{min-height:auto}}
+</style>
+
+<style>
+#screen-canbo-dash,#screen-nd-routing,#screen-nd-step2,#screen-nd-step3,#screen-nd-review,#screen-nd-b1,#screen-nd-review-b1,#screen-nd-phieuc-init,#screen-nd-phieuc-members,#screen-nd-phieuc-ho,#screen-nd-phieub2-review{background-image:none!important;background-color:var(--bg-main)!important}
+</style>
+
+<style>
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-Light.ttf') format('truetype');font-style:normal;font-weight:300;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-Medium.ttf') format('truetype');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-SemiBold.ttf') format('truetype');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-ExtraBold.ttf') format('truetype');font-style:normal;font-weight:800;font-display:swap}
+:root{--nav-h:66px;--field-font-size:15px;--field-text:#A3AAAE}
+body{font-family:'Be Vietnam Pro Local','Be Vietnam Pro','Noto Sans',Arial,sans-serif;font-weight:300}
+.navbar,.navbar[style*="display: block"]{height:var(--nav-h)!important;padding:0 clamp(32px,5vw,80px)!important;justify-content:space-between!important;background:#F6F1E9!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.nav-logo{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-size:18px!important;font-weight:800!important}.nav-logo img{width:32px!important;height:32px!important;border-radius:8px!important}.nav-links{margin-left:auto!important;font-size:14px!important;font-weight:600!important;gap:36px!important}
+h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:800!important}h2,h3,.panel-title h1,.panel-title h2{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:600!important}.question-body h1,.c-question-panel h1,.b1-option-label,.criterion,.b1-answer b,.b2-line{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:500!important}.btn-dna,button,.glass-label,.kicker{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:600!important}p,span,small,label,input,select,textarea{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif}
+.hero-title span{white-space:nowrap!important;font-size:clamp(15px,3vw,38px)!important}
+.glass-input,select,.select2-selection,.select2-selection__rendered,.dash-search,input::placeholder,textarea::placeholder{font-size:var(--field-font-size)!important;color:var(--field-text)!important;font-weight:300!important}.glass-input,select,textarea{line-height:1.45!important}
+.numbered-options .b1-option-label{grid-template-columns:60px var(--control-size) minmax(0,1fr)!important;column-gap:14px!important;overflow:hidden!important}.numbered-options .b1-option-label:before{margin-right:0!important;border-radius:10px 0 0 10px}.numbered-options .b1-option-label>input{margin:0!important}.numbered-options .b1-option-label>span{display:block;line-height:1.42}.numbered-options .b1-option-label:has(input:checked){border-radius:11px!important;overflow:hidden!important}.numbered-options .b1-option-label:has(input:checked):before{border-radius:10px 0 0 10px!important}
+.a-next{display:flex;flex-direction:column}.a-next .btn-dna{margin-top:auto!important}.hidden-submit{position:static!important}
+.dash-tools{display:flex;align-items:center;gap:12px}.filter-pills{display:flex;gap:6px}.filter-pills button{border:0;color:var(--ivory);font-size:11px;padding:7px 10px;border-radius:7px;background:rgba(246,241,233,.06)}.filter-pills button.active{background:var(--ivory);color:var(--bg-main)}.dash-search{height:38px;width:230px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(27,57,64,.22);padding:0 12px}.dot-table{border:1px solid var(--glass-border);border-radius:11px;overflow:hidden;margin-top:14px}.dot-table-head,.dot-row{display:grid;grid-template-columns:minmax(280px,1.8fr) 160px 130px 190px;align-items:center;gap:12px}.dot-table-head{min-height:42px;padding:0 14px;background:rgba(246,241,233,.06);color:var(--blue-gray);font-size:10px;font-weight:600}.dot-row{position:relative;min-height:68px;padding:10px 14px;border-top:1px solid rgba(246,241,233,.1)}.dot-place b{display:block;font-size:13px;font-weight:600}.dot-place small{display:block;color:var(--blue-gray);font-size:10px;margin-top:4px}.dot-date{font-size:12px}.status-pill{justify-self:start;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:600}.status-pill.open{background:rgba(35,162,125,.16);color:#72d2ab}.status-pill.closed{background:rgba(223,92,80,.13);color:#ef847a}.dot-icon-actions{display:flex;justify-content:flex-end;gap:7px}.dot-icon-actions button{width:34px;height:34px;padding:0;border-radius:8px;border:1px solid var(--glass-border);background:rgba(246,241,233,.03);display:grid;place-items:center}.dot-icon-actions button:hover{background:rgba(86,119,129,.5)}.dot-icon-actions button.danger{border-color:rgba(223,92,80,.45)}.dot-icon-actions img{width:18px;height:18px}.dot-download-options{grid-column:1/-1;padding:10px;border-top:1px dashed var(--glass-border)}.dot-download-options button{margin-right:7px;padding:8px 12px;border-radius:7px;border:1px solid var(--glass-border);background:transparent;color:var(--ivory)}
+@media(max-width:900px){:root{--nav-h:96px}.navbar,.navbar[style*="display: block"]{height:var(--nav-h)!important;padding:10px 18px!important;justify-content:center!important}.nav-links{margin-left:0!important;gap:18px!important}.hero-title span{font-size:clamp(12px,4.2vw,22px)!important}.dot-table{overflow-x:auto}.dot-table-head,.dot-row{min-width:800px}.dash-tools{align-items:flex-end;flex-direction:column}.dash-search{width:100%}}
+</style>
+<style>.form-badge,.a-score-number,.final-summary .big{font-weight:800!important}.glass-label{font-weight:600!important}</style></head>
+<body>
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar" id="main-navbar">
+<div class="nav-logo">
+<img alt="Tick" height="24" src="assets/images/icon-tick.svg" style="background: var(--teal-sec); border-radius: 6px; padding: 2px; filter: brightness(2);" width="24"/>
+            Hệ thống rà soát hộ nghèo
+        </div>
+<div class="nav-links">
+<span class="nav-item" id="nav-home" onclick="switchScreenUI('screen-welcome', 'nav-home')">Trang chủ</span>
+<span class="nav-item" id="nav-staff" onclick="switchScreenUI('screen-canbo-auth', 'nav-staff')">Dành cho cán bộ</span>
+<span class="nav-item" id="nav-citizen" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">Dành cho người dân</span>
+</div>
+</nav>
+<!-- ================= 1. MÀN HÌNH WELCOME ================= -->
+<div class="screen bg-welcome bg-common welcome-layout active" id="screen-welcome">
+<div class="hero-content">
+<div class="tagline">NỀN TẢNG AN SINH SỐ</div>
+<h1 class="hero-title">
+                HỆ THỐNG RÀ SOÁT
+                <span>Nhận diện và phân loại hộ nghèo</span>
+</h1>
+<p class="hero-desc">
+                Hỗ trợ người dân khai báo và cán bộ thực hiện quy trình<br class="desktop-break"/>
+                đánh giá hộ gia đình nhanh chóng, tiện lợi và chính xác
+            </p>
+<div class="btn-group">
+<button class="btn-dna btn-primary-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">
+<img height="18" src="assets/images/citizen.svg" style="filter: brightness(2);" width="18"/> Bắt đầu khai báo →
+                </button>
+<button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-canbo-auth', 'nav-staff')">
+<img height="18" src="assets/images/staff.svg" width="18"/> Dành cho cán bộ
+                </button>
+</div>
+</div>
+</div>
+<!-- ================= 2. MÀN HÌNH CÁN BỘ (AUTH) ================= -->
+<div class="screen bg-staff bg-common form-center-layout" id="screen-canbo-auth">
+<div class="glass-card glass-card-sm">
+<h2>Dành cho cán bộ</h2>
+<div class="form-group-dna">
+<label class="glass-label">Tên đăng nhập / Đăng ký</label>
+<input class="glass-input" id="cb_username" placeholder="User đăng nhập/ đăng ký" type="text"/>
+</div>
+<div class="form-group-dna">
+<label class="glass-label">Mật khẩu</label>
+<input class="glass-input" id="cb_password" placeholder="Password" type="password"/>
+</div>
+<div class="btn-group" style="margin-top: 32px;">
+<button class="btn-dna btn-primary-dna" onclick="authCanBo('login', this)">ĐĂNG NHẬP</button>
+<button class="btn-dna btn-outline-dna" onclick="authCanBo('register', this)">ĐĂNG KÝ MỚI</button>
+</div>
+</div>
+</div>
+<!-- CÁN BỘ DASHBOARD -->
+<div class="screen bg-staff bg-common form-top-layout" id="screen-canbo-dash">
+<div class="dash-shell">
+<div class="dash-head"><div><div class="kicker">TRUNG TÂM ĐIỀU HÀNH</div><h1>Dashboard cán bộ</h1></div><button class="btn-dna btn-primary-dna" onclick="$('#form-tao-dot').slideToggle();">＋ Tạo đợt rà soát mới</button></div>
+<div class="dash-stats"><div class="stat"><span>Tổng đợt rà soát</span><b id="stat-total">—</b></div><div class="stat"><span>Đang mở</span><b id="stat-open">—</b></div><div class="stat"><span>Sắp hết hạn</span><b id="stat-soon">—</b></div><div class="stat"><span>Đã đóng</span><b id="stat-closed">—</b></div></div>
+<div class="dash-grid">
+<section class="dash-create glass-panel"><h2>Tạo đợt rà soát</h2>
+<div id="form-tao-dot">
+<div class="grid-2"><div class="form-group-dna"><label class="glass-label">Tỉnh/Thành</label><select class="searchable-select" id="cb_tinh"><option value="">-- Chọn --</option></select></div><div class="form-group-dna"><label class="glass-label">Phường/Xã</label><select class="searchable-select" id="cb_phuong"><option value="">-- Chọn --</option></select></div></div>
+<div class="form-group-dna"><label class="glass-label">Thôn/Tổ</label><input class="glass-input" id="cb_thon" placeholder="Nhập thôn hoặc tổ dân phố" type="text"/></div>
+<div class="grid-2"><div class="form-group-dna"><label class="glass-label">Ngày bắt đầu</label><input class="glass-input date-dmy" id="cb_start" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy"/></div><div class="form-group-dna"><label class="glass-label">Ngày kết thúc</label><input class="glass-input date-dmy" id="cb_end" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy"/></div></div>
+<div class="form-group-dna"><label class="glass-label">Điều kiện bổ sung của địa phương</label><textarea class="glass-input" id="cb_dieukien_bosung" placeholder="Ghi rõ điều kiện cụ thể..."></textarea></div>
+<button class="btn-dna btn-primary-dna full" onclick="taoDot()">Lưu và mở đợt rà soát</button>
+</div>
+</section>
+<section class="dash-list glass-panel"><div class="panel-title"><h2>Các đợt của bạn</h2><div class="dash-tools"><div class="filter-pills"><button class="active" onclick="filterDashboardDots('all',this)">Tất cả</button><button onclick="filterDashboardDots('open',this)">Đang mở</button><button onclick="filterDashboardDots('closed',this)">Đã đóng</button></div><input id="dash-search" class="dash-search" placeholder="⌕ Tìm theo địa bàn..." oninput="applyDashboardFilters()"></div></div><div id="canbo-dot-list"><p>Đang tải...</p></div></section>
+</div>
+<button class="btn-dna btn-outline-dna dash-logout" onclick="switchScreenUI('screen-welcome', 'nav-home')">Đăng xuất</button>
+</div></div>
+<!-- ================= 3. MÀN HÌNH NGƯỜI DÂN (STEP 1) ================= -->
+<div class="screen bg-citizen bg-common form-center-layout" id="screen-nd-step1">
+<div class="glass-card glass-card-sm">
+<h2>Thông Tin Chủ Hộ / Người Khai Báo</h2>
+<div class="form-group-dna">
+<label class="glass-label">Họ và tên</label>
+<input class="glass-input name-uppercase" id="nd_hoten" placeholder="NHẬP HỌ VÀ TÊN..." style="text-transform: uppercase;" type="text" oninput="this.value=this.value.toUpperCase()"/>
+</div>
+<div class="form-group-dna">
+<label class="glass-label">CCCD (12 số)</label>
+<input class="glass-input" id="nd_cccd" maxlength="12" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Nhập CCCD..." type="text"/>
+</div>
+<div class="grid-2">
+<div class="form-group-dna" style="margin:0;">
+<label class="glass-label">Dân tộc</label>
+<select class="searchable-select" id="nd_dantoc"><option value="">-- Chọn --</option></select>
+</div>
+<div class="form-group-dna" style="margin:0;">
+<label class="glass-label">Tỉnh/Thành</label>
+<select class="searchable-select" id="nd_tinh"><option value="">-- Chọn --</option></select>
+</div>
+</div>
+<div class="grid-2" style="margin-top: 16px;">
+<div class="form-group-dna" style="margin:0;">
+<label class="glass-label">Phường/Xã</label>
+<select class="searchable-select" id="nd_phuong"><option value="">-- Chọn --</option></select>
+</div>
+<div class="form-group-dna" style="margin:0;">
+<label class="glass-label">Thôn/Tổ</label>
+<select class="searchable-select" id="nd_thon"><option value="">-- Chọn --</option></select>
+<input class="glass-input" id="nd_thon_khac" placeholder="Nhập tên Thôn/Tổ..." style="display:none; margin-top:12px;" type="text"/>
+</div>
+</div>
+<button class="btn-dna btn-primary-dna" onclick="toiBuocRouting()" style="width:100%; margin-top: 24px;">Tiếp tục chọn phiếu →</button>
+</div>
+</div>
+<!-- MÀN HÌNH ĐIỀU HƯỚNG -->
+<div class="screen bg-citizen bg-common form-center-layout" id="screen-nd-routing">
+<div class="route-shell"><div class="route-intro"><div class="kicker">LỰA CHỌN QUY TRÌNH</div><h1>Anh/Chị muốn thực hiện nội dung nào?</h1><p>Mỗi quy trình có thể được thực hiện độc lập theo nhu cầu khai báo.</p></div>
+<div class="route-cards">
+<button class="route-card active" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')"><div class="route-icon"><img src="assets/images/form-check.svg"/></div><small>PHIẾU A · NHẬN DIỆN</small><h2>Nhận diện nhanh</h2><p>Kiểm tra nhanh các điều kiện ban đầu của hộ gia đình.</p><span>Bắt đầu Phiếu A →</span></button>
+<button class="route-card" onclick="startPhieuB1()"><div class="route-icon"><img src="assets/images/location.svg"/></div><small>PHIẾU B1 · ĐIỂM VÙNG</small><h2>Đánh giá theo địa bàn</h2><p>Xác định điểm vùng và nhóm điều kiện theo nơi cư trú.</p><span>Thực hiện Phiếu B1 →</span></button>
+<button class="route-card" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')"><div class="route-icon"><img src="assets/images/family.svg"/></div><small>PHIẾU B2 &amp; C · NHÓM HỘ</small><h2>Thông tin chi tiết hộ</h2><p>Khai báo thành viên, điều kiện sống và mức độ thiếu hụt.</p><span>Thực hiện Phiếu B2 &amp; C →</span></button>
+</div><button class="route-back" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">✎ Quay lại sửa thông tin cá nhân</button></div></div>
+<!-- NHẬN DẠNG NHANH -->
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-step2"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">A</div><div><small>BIỂU MẪU</small><h2>Phiếu A</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars"><i class="on"></i><i></i></div></div><div class="question-count"><small>PHẦN</small><b>01 / 02</b></div></section><section class="question-body glass-panel"><div class="kicker">PHẦN 01 · NHẬN DIỆN BAN ĐẦU</div><h1 id="title-b1"></h1><p class="question-help">Chọn tất cả nội dung đúng với tình trạng hiện tại của hộ gia đình.</p><div class="numbered-options" id="list-b1"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại</button><button class="btn-dna btn-teal-dna" onclick="checkB1()">Tiếp tục →</button></div></section></div></div>
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-step3"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">A</div><div><small>BIỂU MẪU</small><h2>Phiếu A</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars"><i class="on"></i><i class="on"></i></div></div><div class="question-count"><small>PHẦN</small><b>02 / 02</b></div></section><section class="question-body glass-panel"><div class="kicker">PHẦN 02 · TIÊU CHÍ NHẬN DẠNG</div><h1 id="title-b2"></h1><p class="question-help">Có thể chọn nhiều đáp án phù hợp với tình trạng của hộ.</p><div class="numbered-options" id="list-b2"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">← Quay lại</button><button class="btn-dna btn-teal-dna" onclick="checkB2()">Hoàn tất →</button></div></section></div></div>
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-review"><div class="result-page result-a"><div class="result-heading"><div><div class="kicker">KẾT QUẢ NHẬN DIỆN NHANH</div><h1>Phiếu A · Xác nhận kết quả</h1></div><span id="a-complete-note"></span></div><div id="review-content"></div><div class="result-bottom"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">✎ Sửa khai báo</button><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại màn hình chọn phiếu</button></div></div></div>
+<!-- PHIẾU B1 -->
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-b1"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">B1</div><div><small>BIỂU MẪU</small><h2>Phiếu B1</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars many" id="b1-progress-bars"></div></div><div class="question-count"><small>CÂU HỎI</small><b id="b1-progress-count">01 / 14</b><span hidden="" id="b1-progress"></span></div></section><section class="question-body glass-panel"><div class="kicker" id="b1-question-meta">CÂU HỎI</div><h1 id="b1-question-text"></h1><p class="question-help">Chọn một phương án phù hợp nhất với tình trạng hiện tại của hộ gia đình.</p><div id="b1-ghichu-container" style="display:none"><details><summary>? Bấm xem chi tiết/danh sách</summary><div id="b1-ghichu-content"></div></details></div><div class="numbered-options" id="b1-options"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="prevB1()">← Quay lại câu trước</button><button class="question-warning" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">⚠ Phát hiện sai sót? Quay lại sửa Phiếu A</button><button class="btn-dna btn-teal-dna" onclick="nextB1()">Tiếp tục →</button></div></section></div></div>
+<!-- KẾT QUẢ B1 -->
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-review-b1"><div class="b1-result-layout"><aside class="glass-panel b1-score-panel"><div id="review-content-b1"></div><section class="file-zone"><h3>Hồ sơ Phiếu B1</h3><p class="warning-line">⚠ Vui lòng xem trước và tải Phiếu B1 trước khi đi tiếp.</p><button class="btn-dna btn-outline-dna file-action" onclick="xemTruocDocxB1()"><img src="assets/images/preview.svg"/>Xem trước</button><button class="btn-dna btn-outline-dna file-action" onclick="$('#dl-b1-options').slideToggle();"><img src="assets/images/download.svg"/>Tải Phiếu B1</button><div class="download-options" id="dl-b1-options" style="display:none"><button class="btn-dna btn-outline-dna" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">Word (.docx)</button><button class="btn-dna btn-outline-dna" onclick="taiFilePDFB1(this);">PDF (.pdf)</button></div></section><div class="next-zone"><small>BƯỚC TIẾP THEO</small><h2>Phiếu B2 &amp; C</h2><button class="btn-dna btn-primary-dna" id="btn-submit-review-b1" onclick="submitB1XacNhan()">Xác nhận và tiếp tục →</button></div></aside><section class="glass-panel b1-detail-panel"><div class="panel-title"><h1>Chi tiết câu trả lời &amp; điểm số</h1><button class="btn-dna btn-outline-dna" onclick="editB1()">✎ Quay lại để sửa</button></div><div id="b1-detail-groups"></div></section></div></div>
+<!-- PHIẾU C - INIT -->
+<div class="screen bg-citizen bg-common form-center-layout" id="screen-nd-phieuc-init"><div class="glass-card glass-card-sm b2c-init"><div class="kicker">PHIẾU B2 &amp; C · NHÓM HỘ</div><h2>Thông tin chi tiết hộ</h2><p>Nhập tổng số thành viên để bắt đầu khai báo lần lượt từng người.</p><div class="form-group-dna"><label class="glass-label">Tổng số thành viên trong hộ</label><input class="glass-input" id="num_members" max="20" min="1" placeholder="Nhập số lượng..." type="number"/></div><button class="btn-dna btn-primary-dna full" onclick="initPhieuCMembers()">Bắt đầu khai báo từng người →</button><button class="btn-dna btn-outline-dna full" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại màn hình chọn phiếu</button></div></div>
+<!-- PHIẾU C - TABS THÀNH VIÊN -->
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-phieuc-members"><div class="c-form-shell"><section class="question-progress glass-panel"><div class="form-badge">C</div><div><small>BIỂU MẪU</small><h2>Phiếu C</h2></div><div class="seg-wrap"><small>Thành viên trong hộ</small><div class="member-tabs" id="tabs-container"></div></div><div class="question-count"><small>THÀNH VIÊN</small><b id="member-count-display">—</b></div></section><section class="glass-panel c-question-panel"><div id="tabs-content-container"></div><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')">✎ Sửa lại tổng số thành viên</button></section></div></div>
+<!-- PHIẾU C - CÂU HỎI CHUNG HỘ -->
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-phieuc-ho"><div class="c-form-shell"><section class="question-progress glass-panel"><div class="form-badge">B2</div><div><small>BIỂU MẪU</small><h2>Phiếu B2 &amp; C</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars"><i class="on"></i><i class="on"></i></div></div><div class="question-count"><small>NỘI DUNG</small><b>HỘ GIA ĐÌNH</b></div></section><section class="glass-panel c-question-panel"><div class="kicker">THÔNG TIN CHUNG CỦA HỘ</div><h1>Điều kiện sống và nhu cầu hỗ trợ</h1><div id="phieuc-ho-container"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-phieuc-members', 'nav-citizen'); switchMemberTab(numMembers-1);">← Quay lại thành viên cuối</button><button class="btn-dna btn-primary-dna" onclick="tinhToanLogicB2()">Hoàn tất &amp; chấm điểm →</button></div></section></div></div>
+<!-- PHIẾU B2 - REVIEW TOÀN DIỆN -->
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-phieub2-review"><div class="final-result"><div class="result-heading"><div><div class="kicker">KẾT QUẢ ĐÁNH GIÁ RÀ SOÁT</div><h1>Phiếu B2 &amp; C · Xác nhận kết quả</h1><p>Kiểm tra thông tin thành viên và các chỉ số thiếu hụt trước khi hoàn tất.</p></div><span>Đã hoàn thành toàn bộ nội dung rà soát</span></div><div id="review-top-result"></div><div class="final-columns"><section class="glass-panel final-c"><div class="panel-title"><h2>Phiếu C · Thành viên hộ</h2><span id="member-total-pill"></span></div><div id="review-content-phieuc"></div><div class="file-row"><p class="warning-line">⚠ Vui lòng xem và tải Phiếu C trước khi đi tiếp.</p><button class="btn-dna btn-outline-dna" onclick="xemTruocDocxPhieuC()"><img src="assets/images/preview.svg"/>Xem Phiếu C</button><button class="btn-dna btn-outline-dna" onclick="$('#dl-pc-options').slideToggle();"><img src="assets/images/download.svg"/>Tải Phiếu C</button></div><div class="download-options" id="dl-pc-options" style="display:none"><button class="btn-dna btn-outline-dna" onclick="taiFileWordPhieuC(); $('#dl-pc-options').slideUp();">Word</button><button class="btn-dna btn-outline-dna" onclick="taiFilePDFPhieuC(this);">PDF</button></div></section><section class="glass-panel final-b2"><div class="panel-title"><h2>Phiếu B2 · Chi tiết thiếu hụt</h2><span id="b2-total-pill"></span></div><div id="review-content-b2"></div><div class="file-row"><p class="warning-line">⚠ Vui lòng xem và tải Phiếu B2 trước khi hoàn tất.</p><button class="btn-dna btn-outline-dna" onclick="xemTruocDocxB2()"><img src="assets/images/preview.svg"/>Xem Phiếu B2</button><button class="btn-dna btn-outline-dna" onclick="$('#dl-b2-options').slideToggle();"><img src="assets/images/download.svg"/>Tải Phiếu B2</button></div><div class="download-options" id="dl-b2-options" style="display:none"><button class="btn-dna btn-outline-dna" onclick="taiFileWordB2(); $('#dl-b2-options').slideUp();">Word</button><button class="btn-dna btn-outline-dna" onclick="taiFilePDFB2(this);">PDF</button></div></section></div><div class="final-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-phieuc-ho', 'nav-citizen')">← Quay lại sửa thông tin hộ</button></div></div></div>
+<!-- MODAL -->
+<div class="modal" id="myModal"><div class="modal-content"><h3 id="modal-title" style="border-bottom: 1px solid var(--glass-border); padding-bottom:16px;">Xem Trước</h3><div id="modal-body"></div><br/><button class="btn-dna btn-outline-dna" onclick="document.getElementById('myModal').style.display='none'" style="width:100%;">ĐÓNG XEM TRƯỚC</button></div></div>
+<script>
+        function switchScreenUI(screenId, navId) {
+            $('.screen').removeClass('active'); 
+            $('#' + screenId).addClass('active');
+            
+            if(screenId === 'screen-welcome') {
+                $('.navbar').hide();
+            } else {
+                $('.navbar').show();
+            }
+
+            if(navId) {
+                $('.nav-item').removeClass('active');
+                $('#' + navId).addClass('active');
+            }
+            window.scrollTo(0,0);
+        }
+        
+        const WORKER_URL = "https://api-khao-sat.lehaphuong510.workers.dev";
+        let appConfig = {}; let activeCampaigns = []; let currentUser = ""; let finalData = {};
+        let currentB1Index = 0; let b1Answers = {}; 
+        let numMembers = 0; let phieuC_Data = []; let hoGiaDinh_Data = {}; 
+
+        function initSelect2() { $('.searchable-select').select2(); }
+
+        function formatDateDMYInput(value) {
+            const digits=String(value||'').replace(/\D/g,'').slice(0,8);
+            if(digits.length<=2) return digits;
+            if(digits.length<=4) return digits.slice(0,2)+'/'+digits.slice(2);
+            return digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+        }
+        function parseFlexibleDate(value) {
+            const v=String(value||'').trim();
+            const m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if(m) return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+            return new Date(v);
+        }
+        function toDisplayDMY(value) {
+            if(!value) return '';
+            if(/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return value;
+            const d=new Date(value); if(isNaN(d)) return value;
+            return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+        }
+        $(document).on('input','.date-dmy',function(){this.value=formatDateDMYInput(this.value);});
+        $(document).on('blur','.date-dmy',function(){if(this.value && !/^\d{2}\/\d{2}\/\d{4}$/.test(this.value)) this.setCustomValidity('Vui lòng nhập ngày theo định dạng dd/mm/yyyy'); else this.setCustomValidity('');});
+
+        window.onload = async () => {
+            $('.navbar').hide();
+
+            try {
+                const resConfig = await fetch(`${WORKER_URL}/api/config`);
+                if (resConfig.ok) {
+                    appConfig = await resConfig.json();
+                    Object.keys(appConfig.diachinh || {}).forEach(t => { $('#cb_tinh').append(new Option(t,t)); $('#nd_tinh').append(new Option(t,t)); });
+                    if (appConfig.madantoc) appConfig.madantoc.forEach(dt => $('#nd_dantoc').append(new Option(dt.ten, dt.ma)));
+                    if (appConfig.cauhoi) {
+                        if (appConfig.cauhoi.A1) $('#title-a1').text(appConfig.cauhoi.A1.noi_dung);
+                        if (appConfig.cauhoi.A2) $('#title-a2').text(appConfig.cauhoi.A2.noi_dung);
+                        if (appConfig.cauhoi.B1) $('#title-b1').text(appConfig.cauhoi.B1.noi_dung);
+                        if (appConfig.cauhoi.B2) {
+                            $('#title-b2').text(appConfig.cauhoi.B2.noi_dung);
+                            appConfig.cauhoi.B2.lua_chon.forEach(lc => $('#list-b2').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b2"><span>${lc}</span></label>`));
+                        }
+                    }
+                }
+            } catch (e) {}
+            try {
+                const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
+                const dotData = await resDots.json();
+                if(dotData.status === "success") activeCampaigns = dotData.dots;
+            } catch (e) {}
+            initSelect2();
+            $('#cb_tinh').on('change', loadCbPhuong); $('#nd_tinh').on('change', loadNdPhuong); $('#nd_phuong').on('change', loadNdThon);
+            $('#nd_thon').on('change', function() { $(this).val() === 'Khác' ? $('#nd_thon_khac').slideDown() : $('#nd_thon_khac').slideUp(); });
+        };
+
+        function startNguoiDan() { switchScreenUI('screen-nd-step1', 'nav-citizen'); loadNdThon(); }
+        function loadCbPhuong() { let t = $('#cb_tinh').val(); $('#cb_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#cb_phuong').append(new Option(p,p))); }
+        function loadNdPhuong() { let t = $('#nd_tinh').val(); $('#nd_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#nd_phuong').append(new Option(p,p))); loadNdThon(); }
+        function loadNdThon() { let t = $('#nd_tinh').val(), p = $('#nd_phuong').val(); $('#nd_thon').empty().append('<option value="">-- Chọn Thôn/Tổ --</option>'); activeCampaigns.filter(d => d.tinh===t && d.phuong===p).forEach(d => $('#nd_thon').append(new Option(d.thon, d.id_dot))); $('#nd_thon').append(new Option("Khác", "Khác")); }
+
+        function toiBuocRouting() {
+            if ($('#nd_cccd').val().length !== 12) return alert("❌ Vui lòng nhập ĐỦ 12 số CCCD!");
+            if (!$('#nd_dantoc').val() || !$('#nd_hoten').val() || !$('#nd_thon').val() || !$('#nd_phuong').val() || !$('#nd_tinh').val()) return alert("❌ Vui lòng nhập đủ thông tin cá nhân/địa chỉ!");
+            if ($('#nd_thon').val() === "Khác" && !$('#nd_thon_khac').val().trim()) return alert("❌ Vui lòng nhập tên Thôn/Tổ!");
+            
+            // ============ LOGIC IN ĐÁP ÁN PHIẾU A (CÂU B1) THEO ĐỢT ============
+            let selectedIdDot = $('#nd_thon').val() !== "Khác" ? $('#nd_thon').val() : "";
+            let currentCampaign = activeCampaigns.find(d => d.id_dot === selectedIdDot);
+            let dkBosung = currentCampaign ? currentCampaign.dieukien_bosung : "";
+            
+            $('#list-b1').empty(); 
+            
+            if (appConfig.cauhoi && appConfig.cauhoi.B1) {
+                appConfig.cauhoi.B1.lua_chon.forEach(lc => {
+                    if (lc.includes('<fill>')) {
+                        if (dkBosung && dkBosung.trim() !== "") {
+                            let filledText = lc.replace('<fill>', dkBosung);
+                            $('#list-b1').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b1"><span>${filledText}</span></label>`);
+                        }
+                    } else {
+                        $('#list-b1').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b1"><span>${lc}</span></label>`);
+                    }
+                });
+            }
+            // ===================================================================
+
+            ghiNhanDataNgamSync(); switchScreenUI('screen-nd-routing', 'nav-citizen');
+        }
+
+        function ghiNhanDataNgamSync() {
+            finalData.B = $('#nd_hoten').val().toUpperCase(); finalData.CCCD = "'" + $('#nd_cccd').val();
+            finalData.ID_Dot = $('#nd_thon').val() !== "Khác" ? $('#nd_thon').val() : "";
+            const t = $('#nd_tinh').val(), p = $('#nd_phuong').val(), isDoThi = (p||"").includes('Phường')?1:2;
+            const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[t] : null;
+            finalData.Tinh_thanh = t; finalData.Phuong_xa = p; finalData.Khuvuc = isDoThi;
+            finalData.Barem = isDoThi===1 ? "Đô thị" : "Nông thôn - " + (kvInfo?.nt_rieng || kvInfo?.chung || "");
+        }
+        async function ghiNhanDataNgam() { ghiNhanDataNgamSync(); if (finalData.ID_Dot) { finalData.action = "submit_phieuA"; await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(finalData) }); } }
+
+        function renderAResult(tongD, totalCriteria, eligible, items, stageLabel) {
+            const segs = Array.from({length: totalCriteria}, (_,i)=>`<i class="${i<tongD?'on':''}"></i>`).join('');
+            const groups = [
+                {name:'Tài sản & thiết bị', indexes:[0,1,2,3,4]},
+                {name:'Điều kiện nhà ở', indexes:[5,6]},
+                {name:'Việc làm & an sinh', indexes:[7,8]}
+            ];
+            let groupHtml = groups.map(g=>{
+                const rows=g.indexes.filter(i=>items[i]).map(i=>`<div class="criterion ${items[i].checked?'yes':''}"><span class="state">${items[i].checked?'✓':'−'}</span><span>${items[i].text}</span></div>`).join('');
+                const yes=g.indexes.filter(i=>items[i]&&items[i].checked).length;
+                return `<section class="criteria-group"><div class="panel-title"><b>${g.name}</b><small>${yes}/${g.indexes.filter(i=>items[i]).length}</small></div>${rows}</section>`;
+            }).join('');
+            $('#a-complete-note').text(`Đã hoàn thành ${totalCriteria}/${totalCriteria} tiêu chí đánh giá`);
+            $('#review-content').html(`<div class="a-result-top"><section class="glass-panel a-score"><div class="kicker">ĐIỂM NHẬN DẠNG 2</div><div class="a-score-number">${tongD} / ${totalCriteria}</div><div class="mini-segments">${segs}</div><p class="small-note">${tongD} tiêu chí được ghi nhận</p></section><section class="glass-panel a-verdict"><div class="verdict-check">✓</div><div><div class="kicker">KẾT LUẬN</div><h2>${eligible?'ĐỦ ĐIỀU KIỆN RÀ SOÁT TIẾP':'KHÔNG THUỘC DIỆN RÀ SOÁT TIẾP'}</h2><p>${eligible?'Hộ gia đình có thể tiếp tục thực hiện Phiếu B1 để đánh giá điểm vùng.':'Quy trình sẽ kết thúc sau khi xác nhận kết quả.'}</p></div></section><section class="glass-panel a-next"><div class="kicker">BƯỚC TIẾP THEO</div><h2>${eligible?'Phiếu B1 · Tính điểm vùng':'Kết thúc khai báo'}</h2><p>${eligible?'Tiếp tục đánh giá điều kiện theo địa bàn cư trú.':'Dữ liệu Phiếu A sẽ được ghi nhận.'}</p><button class="btn-dna btn-primary-dna full" id="btn-submit-review" onclick="submitDataXacNhan()">${eligible?'Xác nhận và tới Phiếu B1 →':'Kết thúc'}</button></section></div><section class="glass-panel a-criteria"><div class="panel-title"><h2>Phân tích theo nhóm tiêu chí</h2><span>${tongD} đã ghi nhận · ${totalCriteria-tongD} chưa ghi nhận</span></div><div class="criteria-grid">${groupHtml}</div></section>`);
+            $('#btn-submit-review').toggleClass('btn-primary-dna', true).text(eligible?'Xác nhận và tới Phiếu B1 →':'Kết thúc');
+        }
+
+        function checkB1() {
+            if ($('.cb-b1:checked').length > 0) {
+                finalData["0"]=0; finalData["E"]=0;
+                const selected=$('.cb-b1').map(function(){return {text:this.parentElement.innerText.trim(),checked:this.checked};}).get();
+                const count=selected.filter(x=>x.checked).length;
+                renderAResult(count, selected.length||1, false, selected, 'Nhận dạng 1');
+                $('#btn-submit-review').text("Kết thúc"); switchScreenUI('screen-nd-review', 'nav-citizen');
+            } else { finalData["0"]=1; switchScreenUI('screen-nd-step3', 'nav-citizen'); }
+        }
+
+        function checkB2() {
+            let tongD=0; const items=[];
+            $('.cb-b2').each((i,cb) => { let v=cb.checked?1:0; finalData[i+1]=v; tongD+=v; items.push({text:cb.parentElement.innerText.trim(),checked:!!cb.checked}); });
+            finalData["D"]=tongD; finalData["E"] = tongD<4 ? 1 : 0;
+            const totalCriteria = items.length || 9;
+            renderAResult(tongD, totalCriteria, finalData["E"]===1, items, 'Nhận dạng 2');
+            switchScreenUI('screen-nd-review', 'nav-citizen');
+        }
+
+        async function submitDataXacNhan() { await ghiNhanDataNgam(); finalData["E"]===1 ? startPhieuB1() : location.reload(); }
+
+        function startPhieuB1() { currentB1Index=0; switchScreenUI('screen-nd-b1', 'nav-citizen'); renderB1(); }
+        function renderB1() {
+            let q = appConfig.phieu_b1[currentB1Index], total=appConfig.phieu_b1.length;
+            $('#b1-progress').text(`- CÂU ${currentB1Index+1}/${total}`);
+            $('#b1-progress-count').text(`${String(currentB1Index+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}`);
+            $('#b1-question-meta').text(`CÂU HỎI ${String(currentB1Index+1).padStart(2,'0')} · ${q.ma}`);
+            $('#b1-progress-bars').html(Array.from({length:total},(_,i)=>`<i class="${i<=currentB1Index?'on':''}"></i>`).join(''));
+            $('#b1-question-text').text(q.noidung);
+            $('.question-help', '#screen-nd-b1').text(q.isMulti?'Có thể chọn nhiều phương án phù hợp.':'Chọn một phương án phù hợp nhất với tình trạng hiện tại của hộ gia đình.');
+            q.ghichu ? $('#b1-ghichu-container').show() && $('#b1-ghichu-content').text(q.ghichu) : $('#b1-ghichu-container').hide();
+            let optsHTML=""; let saved = b1Answers[q.ma];
+            q.options.forEach((opt, idx) => {
+                let type = q.isMulti?"checkbox":"radio", chk = (q.isMulti && Array.isArray(saved) && saved.includes(idx)) || (!q.isMulti && saved===idx) ? "checked" : "";
+                optsHTML+=`<label class="b1-option-label"><input type="${type}" name="b1_opt" class="b1-input" value="${idx}" ${chk}><span>${opt.text}</span></label>`;
+            });
+            $('#b1-options').html(optsHTML);
+        }
+        function saveCurrentB1Answer() {
+            let q=appConfig.phieu_b1[currentB1Index], sel=$('.b1-input:checked');
+            if(sel.length>0){ b1Answers[q.ma] = q.isMulti ? Array.from(sel).map(e=>Number(e.value)) : Number(sel.val()); return true; }
+            return false;
+        }
+        function prevB1() { if(currentB1Index>0) { saveCurrentB1Answer(); currentB1Index--; renderB1(); } else alert("Đây là câu đầu tiên!"); }
+        
+        function nextB1() { 
+            if(!saveCurrentB1Answer()) return alert("Vui lòng chọn đáp án trước khi đi tiếp!"); 
+            
+            let q = appConfig.phieu_b1[currentB1Index];
+            let ma = q.ma;
+            let ans = b1Answers[ma];
+            let err = "";
+
+            let isADone = ("1" in finalData); 
+
+            if (isADone) {
+                if (ma === 'B1.5') {
+                    if (finalData["9"] && ans !== 1) err = "Phiếu A khai hộ có 'Người làm việc theo Hợp đồng lao động', nhưng ở câu này anh/chị lại không chọn mức tương ứng.";
+                }
+                else if (ma === 'B1.8') {
+                    if ((ans === 1 || ans === 2) && !finalData["7"]) err = "Anh/chị đang chọn diện tích >= 30m2, nhưng ở Phiếu A (Nhận diện nhanh) lại không xác nhận nhà có diện tích >= 25m2.";
+                }
+                else if (ma === 'B1.9') {
+                    if (finalData["6"] && ans !== 2) err = "Phiếu A khai hộ 'Tiêu thụ điện >= 150kWh/tháng', nhưng ở câu này anh/chị không chọn mức 'Từ 150 kWh trở lên'.";
+                }
+                else if (ma === 'B1.12') {
+                    let b1_12 = Array.isArray(ans) ? ans : [ans];
+                    let hasXeTau = b1_12.some(x => [1,2,3,4].includes(x));
+                    if (finalData["1"] && !hasXeTau) err = "Phiếu A khai có 'Xe máy/Tàu thuyền > 20 triệu', nhưng ở câu này anh/chị không đánh dấu loại hình tương ứng.";
+                    if (finalData["2"] && !b1_12.some(x => [9,10,11].includes(x))) err = "Phiếu A khai có 'Điều hòa/Tủ lạnh', nhưng ở câu này không được đánh dấu.";
+                    if (finalData["3"] && !b1_12.includes(13)) err = "Phiếu A khai có 'Bình tắm nóng', nhưng ở câu này không được đánh dấu.";
+                    if (finalData["4"] && !b1_12.includes(12)) err = "Phiếu A khai có 'Máy giặt', nhưng ở câu này không được đánh dấu.";
+                }
+                else if (ma === 'B1.13') {
+                    let b1_13_khong = Array.isArray(ans) ? ans.includes(9) : ans === 9;
+                    if (!b1_13_khong && !finalData["5"]) err = "Anh/chị đang đánh dấu CÓ đất đai/nuôi trồng, nhưng ở Phiếu A lại chưa xác nhận mục 'Có đất đai/nhà xưởng...'.";
+                }
+            }
+
+            if (err !== "") {
+                alert("⚠️ CHƯA CÓ SỰ NHẤT QUÁN DỮ LIỆU:\n\n" + err + "\n\n👉 Vui lòng CHỌN LẠI ĐÁP ÁN cho khớp, hoặc dùng nút 'Quay lại sửa Phiếu A' bên dưới để cập nhật lại Phiếu A.");
+                return; 
+            }
+
+            if(currentB1Index < appConfig.phieu_b1.length - 1) { 
+                currentB1Index++; renderB1(); 
+            } else { 
+                showReviewB1(); 
+            } 
+        }
+
+        function getVungInfo() {
+            const t=$('#nd_tinh').val(), p=$('#nd_phuong').val(), isDoThi=(p||"").includes('Phường');
+            const kvInfo = appConfig.diachinh_kv ? appConfig.diachinh_kv[t] : null; let tenVung="", maVung="";
+            if(isDoThi){ tenVung = kvInfo?.chung||""; maVung = appConfig.diemcong_dothi?.[tenVung]?.ma || "TPTW"; }
+            else { tenVung = kvInfo?.nt_rieng || kvInfo?.chung || ""; maVung = appConfig.diemcong_dothi?.[tenVung]?.ma || "DBSH"; }
+            const diemCongDoThi = (isDoThi && appConfig.diemcong_dothi?.[tenVung]?.diem) || 0;
+            return { isDoThi, tenVung, maVung, diemCongDoThi, colLookup: isDoThi?"DoThi_Chung":"NT_"+maVung, diemChuan: isDoThi?220:190, txt: isDoThi?"Đô thị":"Nông thôn" };
+        }
+
+        function showReviewB1() {
+            const vi = getVungInfo(); let totalScore=0, html="<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px;'>";
+            appConfig.phieu_b1.forEach(q => {
+                let ans = b1Answers[q.ma]; html+=`<div style="padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
+                let processOpt = (idx) => { let obj=q.options[idx], sc=obj[vi.colLookup]||0; if(!obj.text.toLowerCase().startsWith("không có")) totalScore+=sc; html+=`✅ ${obj.text} <span style="color:var(--coral); font-weight:bold; float:right;">(+${sc})</span><br>`; };
+                if(q.isMulti && Array.isArray(ans)) ans.forEach(processOpt); else if(ans!==undefined) processOpt(ans);
+                html+="</div>";
+            });
+            if(vi.diemCongDoThi>0) { totalScore+=vi.diemCongDoThi; html+=`<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;"><strong>Cộng Đô thị vùng (${vi.tenVung}):</strong> <span style="color:var(--coral); font-weight:bold; float:right;">+${vi.diemCongDoThi}</span></div>`; }
+            html+="</div>";
+            let isPass = totalScore <= vi.diemChuan; finalData.TongDiemB1 = totalScore; finalData.KetQuaB1 = isPass?"Đậu":"Rớt";
+            renderB1ResultUI(totalScore, isPass, vi);
+            $('#btn-submit-review-b1').text(isPass?"Xác nhận và tiếp tục →":"Kết thúc"); switchScreenUI('screen-nd-review-b1', 'nav-citizen');
+        }
+
+        function renderB1ResultUI(totalScore, isPass, vi) {
+            const pct=Math.min(100,Math.round(totalScore/vi.diemChuan*100));
+            $('#review-content-b1').html(`<div class="score-summary"><div class="kicker">TỔNG ĐIỂM B1</div><div class="big-score">${totalScore} <span>/ ${vi.diemChuan}</span></div><div class="score-track"><i style="width:${pct}%"></i></div><p class="small-note">${pct}% mức điểm chuẩn tối đa</p></div><div class="score-decision"><div class="kicker">KẾT LUẬN HỆ THỐNG</div><h2>${isPass?'Đạt · Đủ điều kiện tới B2':'Không đủ điều kiện rà soát tiếp'}</h2><p>${isPass?'Hộ gia đình đủ điều kiện tiếp tục đánh giá chi tiết nhóm hộ.':'Quy trình sẽ kết thúc sau khi xác nhận.'}</p></div><p class="small-note">Phân loại: <b>${vi.txt} · ${vi.tenVung||'KXĐ'}</b></p>`);
+            const defs=[['Nhân khẩu',0,3],['Giáo dục & việc làm',3,6],['Nhà ở & tiện ích',6,11],['Tài sản & sản xuất',11,appConfig.phieu_b1.length]];
+            let groups='<div class="b1-groups">';
+            defs.forEach(([name,a,b])=>{
+                let sum=0, cards='';
+                appConfig.phieu_b1.slice(a,b).forEach(q=>{
+                    const ans=b1Answers[q.ma]; let ids=Array.isArray(ans)?ans:(ans===undefined?[]:[ans]); let texts=[],score=0;
+                    ids.forEach(idx=>{const o=q.options[idx]; if(!o)return; texts.push(o.text); if(!o.text.toLowerCase().startsWith('không có'))score+=Number(o[vi.colLookup]||0);});
+                    sum+=score; cards+=`<div class="b1-answer"><span class="tick">✓</span><div><b>${q.noidung}</b><p>${texts.join(', ')||'Chưa có câu trả lời'}</p></div><em>+${score}</em></div>`;
+                });
+                const w=Math.min(100,sum/150*100); groups+=`<section class="b1-group"><div class="panel-title"><b>${name}</b></div><div class="b1-group-items">${cards}</div><div class="group-score"><span class="line"><i style="width:${w}%"></i></span><b>+${sum}</b></div></section>`;
+            });
+            $('#b1-detail-groups').html(groups+'</div>');
+        }
+
+        function prepareWordDataB1() {
+            const vi = getVungInfo();
+            let d = { Khuvuc:vi.isDoThi?1:2, Tinh_thanh:$('#nd_tinh').val(), Phuong_xa:$('#nd_phuong').val(), Thon_to:$('#nd_thon').val()==="Khác"?$('#nd_thon_khac').val():$('#nd_thon option:selected').text(), B:$('#nd_hoten').val().toUpperCase(), Ma_Dantoc:$('#nd_dantoc').val(), TongDiem_B1:finalData.TongDiemB1 };
+            let cccd = $('#nd_cccd').val(); for(let i=0;i<12;i++) d[`C${i+1}`] = cccd[i]||"";
+            appConfig.phieu_b1.forEach(q => {
+                let m = q.ma.replace('.','_'), ans = b1Answers[q.ma], diem=0, hasV=false;
+                q.options.forEach((o,i) => d[`x_${m}_${i}`]=""); d[`Diem_${m}`]="";
+                let checkObj = (i) => { let o=q.options[i]; if(!o.text.toLowerCase().startsWith("không có")){ d[`x_${m}_${i}`]="x"; diem+=o[vi.colLookup]||0; hasV=true; }};
+                if(q.isMulti && Array.isArray(ans)) ans.forEach(checkObj); else if(ans!==undefined) checkObj(ans);
+                if(hasV) d[`Diem_${m}`]=diem;
+            });
+            ["DBSH","MNPB","BTB","DHTN","DNB","DBSCL","TW"].forEach(v => { d[`x_B1_15_${v}`]=""; d[`Diem_B1_15_${v}`]=""; });
+            if(vi.isDoThi && vi.diemCongDoThi>0) { let vMap=vi.maVung==="TPTW"?"TW":vi.maVung; d[`x_B1_15_${vMap}`]="x"; d[`Diem_B1_15_${vMap}`]=vi.diemCongDoThi; }
+            return d;
+        }
+
+        function getB1TemplateUrl() { return `https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB1_${getVungInfo().isDoThi?"Dothi":getVungInfo().maVung}.docx`; }
+
+        async function handleDocxPreview(data, url, modalId, containerId) {
+            $(`#${modalId}`).show(); $(`#${containerId}`).html("<p style='padding:20px; color:black;'>Đang xử lý dữ liệu và tải bản xem trước...</p>");
+            try {
+                const zip = new PizZip(await (await fetch(url)).arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                $(`#${containerId}`).html(""); await docx.renderAsync(out, document.getElementById(containerId), null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
+            } catch(e) { $(`#${containerId}`).html(`<p style='color:red; padding:20px;'>Lỗi hiển thị: ${e.message}</p>`); }
+        }
+        async function handleDocxDownload(data, url, filename) {
+            try {
+                const zip = new PizZip(await (await fetch(url)).arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
+                saveAs(doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }), filename);
+            } catch(e) { alert("Lỗi tải file Word!"); }
+        }
+        async function handlePdfDownload(data, url, filename, btn) {
+            let ogText = btn.innerHTML; btn.innerText="⏳ Đang tạo PDF..."; btn.disabled=true;
+            try {
+                const zip = new PizZip(await (await fetch(url)).arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true }); doc.render(data);
+                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: doc.getZip().generate({ type: "base64" }) }) });
+                const pdfData = await pdfRes.json();
+                if(pdfData.status==="success"){
+                    const chars = atob(pdfData.pdfBase64), nums = new Array(chars.length);
+                    for(let i=0; i<chars.length; i++) nums[i] = chars.charCodeAt(i);
+                    saveAs(new Blob([new Uint8Array(nums)], { type: "application/pdf" }), filename);
+                } else alert("Lỗi convert PDF: " + pdfData.message);
+            } catch(e) { alert("Lỗi kết nối máy chủ PDF!"); }
+            btn.innerHTML=ogText; btn.disabled=false;
+        }
+
+        function xemTruocDocxB1() { $('#modal-title').text("Xem Trước Phiếu B1"); handleDocxPreview(prepareWordDataB1(), getB1TemplateUrl(), 'myModal', 'modal-body'); }
+        function taiFileWordB1() { taiFileWord(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.docx`); }
+        function taiFilePDFB1(btn) { handlePdfDownload(prepareWordDataB1(), getB1TemplateUrl(), `PhieuB1_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b1-options').slideUp(); }
+        function editB1() { switchScreenUI('screen-nd-b1', 'nav-citizen'); }
+        function submitB1XacNhan() { 
+            if(b1Answers['B1.1'] !== undefined) {
+                let mapN = [1,2,3,4,5,6,7];
+                $('#num_members').val(mapN[b1Answers['B1.1']]);
+            }
+            if(finalData.KetQuaB1==="Đậu") { switchScreenUI('screen-nd-phieuc-init', 'nav-citizen'); } else location.reload(); 
+        }
+
+        function initPhieuCMembers() {
+            let n = parseInt($('#num_members').val());
+            if(isNaN(n) || n<1 || n>20) return alert("❌ Vui lòng nhập số thành viên hợp lệ (từ 1 đến 20)!");
+            numMembers = n; phieuC_Data = Array.from({length: n}, () => ({})); hoGiaDinh_Data = {};
+            
+            let tabsHtml = "", contentHtml = "";
+            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !(q.ghichu||"").includes('Matrix_CS')); 
+
+            for(let i=0; i<n; i++) {
+                let tabName = i===0 ? "👤 1. Chủ hộ" : `👤 ${i+1}. Thành viên ${i+1}`;
+                tabsHtml += `<div class="tab-member ${i===0?'active':''}" id="tab-btn-${i}" onclick="switchMemberTab(${i})">${tabName}</div>`;
+                
+                contentHtml += `<div id="member-content-${i}" class="tab-content ${i===0?'active':''}">
+                    <h3 style="color:var(--ivory); margin-top:0;">${tabName}</h3>`;
+                
+                pCQuestions.forEach(q => {
+                    let m = q.ma, display = "block";
+                    contentHtml += `<div class="phieuc-question" id="q_${i}_${m}" style="display:${display};">
+                        <strong style="color:var(--beige); font-size:18px; margin-bottom:12px; display:block;">${m}. ${q.noidung}</strong> ${q.k_bat_buoc?'<span style="color:var(--blue-gray); font-size:14px;">(Không bắt buộc)</span>':''}`;
+                    
+                    if(q.options && q.options.length > 0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
+                        q.options.forEach((opt) => {
+                            let isFillKhac = opt.text.includes('(fill)'); let textL = opt.text.replace('(fill)', '').trim();
+                            let type = q.isMulti ? 'checkbox' : 'radio';
+                            contentHtml += `<label class="b1-option-label"><input type="${type}" name="pC_${i}_${m}" value="${opt.ma_lc}" onchange="evalLogicPhiencC(${i})"> ${textL}</label>`;
+                            if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
+                        });
+                    } else if (q.options.length > 0 && q.options[0].text.includes('(date)')) {
+                        contentHtml += `<input type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" id="pC_${i}_${m}" class="glass-input date-dmy" onchange="evalLogicPhiencC(${i})" style="margin-top:5px;">`;
+                    } else if (q.options.length > 0 && q.options[0].text.includes('(dropdown)')) {
+                        contentHtml += `<select id="pC_${i}_${m}" class="searchable-select"><option value="">-- Chọn Dân tộc --</option>`;
+                        if(appConfig.madantoc) appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
+                        contentHtml += `</select>`;
+                    } else {
+                        let isNum = m==='C8'||m==='C9', suffix = m==='C8'?" cm":m==='C9'?" kg":"";
+                        let extraClass = m==='C2' ? ' name-uppercase' : (m==='C5' ? ' cccd-input' : '');
+                        let extraAttr = m==='C5' ? ' inputmode="numeric" maxlength="12"' : '';
+                        contentHtml += `<div style="display:flex; align-items:center; margin-top:5px;"><input type="text" id="pC_${i}_${m}" class="glass-input${extraClass}"${extraAttr} placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); if('${m}'==='C2') this.value=this.value.toUpperCase(); if('${m}'==='C5') this.value=this.value.replace(/[^0-9]/g,'').slice(0,12); evalLogicPhiencC(${i})" style="flex:1;"> <span style="margin-left:12px; white-space:nowrap; font-weight:bold; color:var(--coral);">${suffix}</span></div>`;
+                    }
+                    contentHtml += `</div>`;
+                });
+
+                let navHtml = `<div style="margin-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">`;
+                if(i > 0) navHtml += `<button class="btn-dna btn-outline-dna" onclick="prevMember(${i})">← Quay lại</button> `;
+                else navHtml += `<div></div>`;
+
+                if(i < n - 1) navHtml += `<button class="btn-dna btn-teal-dna" onclick="nextMember(${i})">Thành viên tiếp theo →</button>`;
+                else navHtml += `<button class="btn-dna btn-primary-dna" style="background-color:#10b981;" onclick="nextMember(${i})">Xong Thành viên - Tới Câu hỏi Hộ →</button>`;
+                navHtml += `</div>`;
+
+                contentHtml += navHtml + `</div>`;
+            }
+            $('#tabs-container').html(tabsHtml); $('#tabs-content-container').html(contentHtml); $('#member-count-display').text(`${n} người`);
+            $('.searchable-select').select2();
+            
+            $('input[type="radio"], input[type="checkbox"]').on('change', function() {
+                let name = $(this).attr('name'), isChk = $(this).is(':checked'), val = $(this).val();
+                let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.slideDown() : txtBox.slideUp();
+            });
+
+            if(n > 0) {
+                $('#pC_0_C2').val($('#nd_hoten').val());
+                $('#pC_0_C5').val($('#nd_cccd').val().replace("'",""));
+                $('#pC_0_C6').val($('#nd_dantoc').val()).trigger('change');
+                $(`input[name="pC_0_C3"][value="1"]`).prop('checked', true).trigger('change');
+            }
+            
+            switchScreenUI('screen-nd-phieuc-members', 'nav-citizen'); 
+            for(let i=0; i<n; i++) evalLogicPhiencC(i); 
+        }
+
+        function prevMember(idx) { switchMemberTab(idx - 1); }
+        function nextMember(idx) {
+            if(!validateSingleMember(idx)) return alert(`⚠️ HỆ THỐNG BÁO LỖI:\nVui lòng hoàn thành các thông tin bắt buộc (được đóng khung đỏ) của Thành viên này trước khi đi tiếp!`);
+            if(idx < numMembers - 1) switchMemberTab(idx + 1);
+            else checkAndGoHoGiaDinh();
+        }
+
+        function switchMemberTab(idx) {
+            $('.tab-member').removeClass('active'); $('.tab-content').removeClass('active');
+            $(`#tab-btn-${idx}`).addClass('active'); $(`#member-content-${idx}`).addClass('active');
+            window.scrollTo(0,0);
+        }
+
+        function tinhTuoi(dateStr) {
+            if(!dateStr) return {nam: -1, thang: -1};
+            let d = parseFlexibleDate(dateStr), now = new Date();
+            let thang = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+            if(now.getDate() < d.getDate()) thang--;
+            return { nam: Math.floor(thang/12), thang: thang };
+        }
+
+        function evalLogicPhiencC(idx) {
+            let ageY = tinhTuoi($(`#pC_${idx}_C4`).val()).nam;
+            let questions = (appConfig.phieu_c || []).filter(q => !q.isHo && !(q.ghichu||"").includes('Matrix_CS'));
+            let skipUntilMa = null;
+
+            questions.forEach(q => {
+                let m = q.ma, $qDiv = $(`#q_${idx}_${m}`);
+                if (skipUntilMa) {
+                    if (m === skipUntilMa) skipUntilMa = null; 
+                    else { $qDiv.hide(); return; }
+                }
+                let showByAge = true;
+                if(q.dieu_kien) {
+                    if(ageY !== -1) { try { showByAge = new Function("tuoi", "return tuoi " + q.dieu_kien)(ageY); } catch(e){} }
+                    else showByAge = false; 
+                }
+                if (showByAge) {
+                    $qDiv.show();
+                    if (q.options && q.options.length > 0) {
+                        let sel = $(`input[name="pC_${idx}_${m}"]:checked`);
+                        if (sel.length > 0) {
+                            let optObj = q.options.find(o => o.ma_lc === sel.val());
+                            if (optObj && optObj.next) skipUntilMa = optObj.next;
+                        }
+                    }
+                } else { $qDiv.hide(); }
+            });
+        }
+
+        function validateSingleMember(idx) {
+            let pCQuestions = (appConfig.phieu_c || []).filter(q => !q.isHo && !(q.ghichu||"").includes('Matrix_CS'));
+            let ok = true;
+            $(`#tab-btn-${idx}`).removeClass('error');
+
+            pCQuestions.forEach(q => {
+                let $qDiv = $(`#q_${idx}_${q.ma}`);
+                let isVisible = $qDiv.is(':visible');
+                $qDiv.removeClass('error');
+
+                if(!isVisible) { phieuC_Data[idx][q.ma] = null; return; } 
+                
+                let val = null;
+                if(q.options && q.options.length>0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
+                    let sel = $(`input[name="pC_${idx}_${q.ma}"]:checked`);
+                    if(q.isMulti) { val = []; sel.each(function(){ val.push($(this).val()); }); } 
+                    else { val = sel.val(); }
+                } else {
+                    val = $(`#pC_${idx}_${q.ma}`).val();
+                    if(q.ma==='C8' || q.ma==='C9') val = parseFloat(val); 
+                }
+                
+                if(!q.k_bat_buoc && (val===null || val==="" || (Array.isArray(val) && val.length===0) || (typeof val === 'number' && isNaN(val)))) { 
+                    ok = false;
+                    $qDiv.addClass('error');
+                }
+                if(q.ma==='C5' && String(val||'').length!==12) {
+                    ok = false;
+                    $qDiv.addClass('error');
+                }
+                phieuC_Data[idx][q.ma] = val;
+            });
+            if(!ok) $(`#tab-btn-${idx}`).addClass('error');
+            return ok;
+        }
+
+        function checkAndGoHoGiaDinh() {
+            let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
+            let html = "";
+            let matrixDH = hoQ.find(q => q.ma==='CS_DH'), matrixMM = hoQ.find(q => q.ma==='CS_MM');
+            
+            hoQ.forEach(q => {
+                if(q.ma==='CS_DH' || q.ma==='CS_MM') return; 
+                
+                if (q.ma === 'B2.82') return; 
+                if (q.ma === 'B2.81') {
+                    html += `<div style="margin-bottom:20px; border-bottom:1px dashed var(--glass-border); padding-bottom:20px;">
+                        <strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">${q.ma}. ${q.noidung}</strong>`;
+                    html += `<input type="number" id="ho_B2.81" class="glass-input" placeholder="Nhập diện tích (m2)..." style="margin-bottom: 12px;">`;
+                    html += `<label class="b1-option-label" style="margin-bottom:0;"><input type="checkbox" name="ho_B2.82" value="1"> ✅ Có, nhà tôi có gác xép</label>`;
+                    html += `</div>`;
+                    return;
+                }
+
+                html += `<div style="margin-bottom:20px; border-bottom:1px dashed var(--glass-border); padding-bottom:20px;"><strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">${q.ma}. ${q.noidung}</strong>`;
+                if(q.options && q.options.length>0) {
+                    if(q.options[0].text.includes('(fill)') && q.options.length===1) {
+                        html += `<input type="text" id="ho_${q.ma}" class="glass-input">`;
+                    } else {
+                        q.options.forEach(opt => {
+                            let textL = opt.text.replace('(fill)', '').replace('(checkbox)', '').trim();
+                            let isFillKhac = opt.text.includes('(fill)');
+                            let isForceCheck = opt.text.includes('(checkbox)') || q.options.length === 1;
+                            let type = (q.isMulti || isForceCheck) ? 'checkbox' : 'radio';
+                            
+                            html += `<label class="b1-option-label"><input type="${type}" name="ho_${q.ma}" value="${opt.ma_lc}"> ${textL}</label>`;
+                            if(isFillKhac) html += `<input type="text" id="txt_ho_${q.ma}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
+                        });
+                    }
+                }
+                html += `</div>`;
+            });
+            
+            if(matrixDH && matrixMM) {
+                html += `<div style="margin-bottom:15px; overflow-x:auto;"><strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">Ma trận Chính sách Hỗ trợ:</strong>
+                <table class="matrix-table"><tr><th>Danh sách các Chính sách</th><th>Đang Hưởng</th><th>Mong Muốn</th></tr>`;
+                matrixDH.options.forEach(opt => {
+                    let textL = opt.text.replace('(fill)', '').trim();
+                    html += `<tr><td>${textL}</td>
+                    <td><input type="checkbox" name="ho_CS_DH" value="${opt.ma_lc}"></td>
+                    <td><input type="checkbox" name="ho_CS_MM" value="${opt.ma_lc}"></td></tr>`;
+                });
+                html += `</table></div>`;
+            }
+            
+            $('#phieuc-ho-container').html(html);
+            
+            if(b1Answers['B1.7']) { let ans = Array.isArray(b1Answers['B1.7']) ? b1Answers['B1.7'] : [b1Answers['B1.7']]; ans.forEach(a => $(`input[name="ho_B2.7"][value="${a}"]`).prop('checked', true)); }
+            if(b1Answers['B1.11']) { let ans = Array.isArray(b1Answers['B1.11']) ? b1Answers['B1.11'] : [b1Answers['B1.11']]; ans.forEach(a => $(`input[name="ho_B2.11"][value="${a}"]`).prop('checked', true)); }
+            if(b1Answers['B1.10'] === 0) { $(`input[name="ho_B2.10"][value="1"]`).prop('checked', true); } 
+            
+            $('input[type="radio"], input[type="checkbox"]').on('change', function() {
+                let name = $(this).attr('name'), isChk = $(this).is(':checked'), val = $(this).val();
+                let txtBox = $(`#txt_${name}_${val}`); if(txtBox.length) isChk ? txtBox.slideDown() : txtBox.slideUp();
+            });
+
+            switchScreenUI('screen-nd-phieuc-ho', 'nav-citizen');
+        }
+
+        function getAnswerText(q, val) {
+            if(val === null || val === "" || val === undefined) return "";
+            if(q.ma === 'C6') { let dt = (appConfig.madantoc||[]).find(d => d.ma == val); return dt ? dt.ten : val; }
+            if(q.options && q.options.length > 0 && !q.options[0].text.includes('(fill)') && !q.options[0].text.includes('(date)') && !q.options[0].text.includes('(dropdown)')) {
+                let getT = (v) => { let o = q.options.find(x => x.ma_lc == v); return o ? o.text.replace('(fill)','').trim() : v; };
+                if(Array.isArray(val)) return val.map(getT).join(", ");
+                return getT(val);
+            }
+            if(q.options && q.options.length > 0 && q.options[0].text.includes('(date)')) {
+                if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val; let d = new Date(val); return isNaN(d) ? val : `${('0'+d.getDate()).slice(-2)}/${('0'+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
+            }
+            return val;
+        }
+
+        function crossCheckSecurity() {
+            let errs = []; let N = numMembers;
+            let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
+            
+            hoQ.forEach(q => {
+                if(q.options && q.options.length>1) {
+                    let sel = $(`input[name="ho_${q.ma}"]:checked`);
+                    if(q.isMulti) { hoGiaDinh_Data[q.ma] = []; sel.each(function(){ hoGiaDinh_Data[q.ma].push($(this).val()); }); }
+                    else hoGiaDinh_Data[q.ma] = sel.val();
+                } else if(q.options && q.options.length===1){
+                    if(q.options[0].text.includes('(fill)')) {
+                        hoGiaDinh_Data[q.ma] = $(`#ho_${q.ma}`).val();
+                    } else {
+                        let sel = $(`input[name="ho_${q.ma}"]:checked`);
+                        hoGiaDinh_Data[q.ma] = sel.length > 0 ? [sel.val()] : [];
+                    }
+                } else if(q.ma === 'B2.81') {
+                    hoGiaDinh_Data['B2.81'] = document.getElementById('ho_B2.81').value;
+                } else if (q.ma === 'B2.82') {
+                    let sel = $(`input[name="ho_B2.82"]:checked`);
+                    hoGiaDinh_Data['B2.82'] = sel.length > 0 ? ["1"] : []; 
+                }
+            });
+
+            let isB1Done = Object.keys(b1Answers).length > 0;
+            let isADone = ("1" in finalData);
+
+            if (isB1Done) {
+                let b1_10 = b1Answers['B1.10'];
+                let b2_10_ans = hoGiaDinh_Data['B2.10'] || [];
+                if (b1_10 === 1 && b2_10_ans.length === 1 && b2_10_ans.includes('1')) errs.push("Chưa có sự nhất quán: Ở Phiếu B1 (Câu B1.10) anh/chị xác nhận Không dùng nước máy, nhưng tại Phiếu C lại chỉ đánh dấu 'Nước máy'.");
+
+                let b1_3 = b1Answers['B1.3'];
+                let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 16) || (p.C16 && p.C16.length > 0); }).length;
+                if (b1_3 === 0 && phuThuocCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai 0 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
+                if (b1_3 === 1 && phuThuocCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
+                if (b1_3 === 2 && phuThuocCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người phụ thuộc, nhưng danh sách chi tiết chỉ có ${phuThuocCount} người.`);
+
+                let b1_5 = b1Answers['B1.5'];
+                let hasCC = phieuC_Data.some(p => p.C18 === '1');
+                let hasHDLD = phieuC_Data.some(p => p.C19 === '1');
+                let hasThue = phieuC_Data.some(p => p.C18 === '3');
+                if (b1_5 === 0 && !hasCC) errs.push("Mâu thuẫn: Phiếu B1 khai có Công chức/Viên chức nhưng không có thành viên nào mang Loại việc làm này.");
+                if (b1_5 === 1 && !hasHDLD) errs.push("Mâu thuẫn: Phiếu B1 khai có Hợp đồng lao động nhưng không có thành viên nào ghi nhận HĐLĐ.");
+                if (b1_5 === 2 && !hasThue) errs.push("Mâu thuẫn: Phiếu B1 khai Làm thuê cho hộ gia đình nhưng không thành viên nào ghi nhận Loại việc làm này.");
+                if (b1_5 === 3 && (hasCC || hasHDLD || hasThue)) errs.push("Mâu thuẫn: Phiếu B1 khai Không có ai làm phi nông nghiệp nhưng chi tiết lại có thành viên đi làm.");
+
+                let b1_6 = b1Answers['B1.6'];
+                let tcCount = phieuC_Data.filter(p => p.C20 && p.C20.length > 0).length;
+                if (b1_6 === 2 && tcCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai không ai hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+                if (b1_6 === 0 && tcCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+                if (b1_6 === 1 && tcCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+
+                let b1_4 = b1Answers['B1.4'];
+                let maxC13 = Math.max(...phieuC_Data.map(p => parseInt(p.C13) || 1));
+                let matchBangCap = false;
+                if (b1_4 === 0 && maxC13 >= 4) matchBangCap = true;
+                else if (b1_4 === 1 && maxC13 === 3) matchBangCap = true;
+                else if (b1_4 === 2 && maxC13 === 2) matchBangCap = true;
+                else if (b1_4 === 3 && maxC13 === 1) matchBangCap = true;
+                if (b1_4 !== undefined && !matchBangCap) errs.push("Mâu thuẫn: Bằng cấp cao nhất khai ở Phiếu B1 không khớp với dữ liệu Trình độ đào tạo ở Phiếu C.");
+            }
+
+            let namHienTai = new Date().getFullYear(); 
+            let nguoiLaoDongCount = 0;
+            phieuC_Data.forEach(p => {
+                let tuoi = tinhTuoi(p.C4);
+                if (tuoi.nam >= 15) {
+                    let isLaoDong = false; let isMale = p.C7 === '1';
+                    let maxThangNam = 60 * 12 + (namHienTai - 2021) * 3; if (maxThangNam > 62*12) maxThangNam = 62*12;
+                    let maxThangNu = 55 * 12 + (namHienTai - 2021) * 4; if (maxThangNu > 60*12) maxThangNu = 60*12;
+                    let currentThang = tuoi.nam * 12 + tuoi.thang;
+                    
+                    if (isMale && currentThang <= maxThangNam) isLaoDong = true;
+                    if (!isMale && currentThang <= maxThangNu) isLaoDong = true;
+
+                    if (p.C17 === '3') isLaoDong = false; 
+                    if (p.C10 === '1') isLaoDong = false; 
+                    if (p.C21 === '1') isLaoDong = false; 
+                    if (p.C16 && p.C16.includes('2')) isLaoDong = false; 
+                    if (isLaoDong) nguoiLaoDongCount++;
+                }
+            });
+
+            let nnkk = hoGiaDinh_Data['NNKK'] || [];
+            if (nnkk.includes('3') && nguoiLaoDongCount > 0) errs.push("Lỗi logic: Hộ khai NNKK là 'Không có lao động' nhưng thực tế có người trong độ tuổi LĐ và có khả năng làm việc.");
+            if (nnkk.includes('7') && !phieuC_Data.some(p => p.C21 === '1')) errs.push("Lỗi logic: Hộ khai NNKK là 'Có người ốm đau' nhưng không có ai bị bệnh hiểm nghèo.");
+
+            let csDH = hoGiaDinh_Data['CS_DH'] || []; let csMM = hoGiaDinh_Data['CS_MM'] || [];
+            let duplicates = csDH.filter(x => csMM.includes(x));
+            if (duplicates.length > 0) errs.push("Lỗi logic: Chính sách hỗ trợ không được đánh dấu trùng lặp ở cả hai mục Đang hưởng và Mong muốn.");
+            
+            if (csDH.includes('2')) {
+                let hasHoc = phieuC_Data.some(p => p.C10 === '1' && ['2','3','4'].includes(p.C11));
+                if (!hasHoc) errs.push("Chính sách Giáo dục (Đang hưởng): Không có thành viên nào đang học Tiểu học/THCS/THPT.");
+            }
+            if (csMM.includes('2')) { 
+                let hasNeed = phieuC_Data.some(p => tinhTuoi(p.C4).nam >= 6 && p.C10 === '2' && p.C12 !== '4');
+                if (!hasNeed) errs.push("Chính sách Giáo dục (Mong muốn): Không có trẻ >=6 tuổi nào thất học và chưa TN THPT.");
+            }
+            if (csDH.includes('1') && !phieuC_Data.some(p => p.C14 === '1')) errs.push("Chính sách Y tế (Đang hưởng): Không có thành viên nào có BHYT.");
+            if (csMM.includes('1') && !phieuC_Data.some(p => p.C14 === '2')) errs.push("Chính sách Y tế (Mong muốn): Tất cả thành viên đều đã có BHYT.");
+            if (csDH.includes('3')) { 
+                let hasNghe = phieuC_Data.some(p => p.C10 === '1' && ['5','6','7'].includes(p.C11));
+                if (!hasNghe) errs.push("Chính sách Học nghề (Đang hưởng): Không có thành viên nào đang học nghề/TC/CĐ.");
+            }
+            if (csMM.includes('3')) {
+                let hasNeedNghe = phieuC_Data.some(p => tinhTuoi(p.C4).nam >= 11 && p.C10 === '2');
+                if (!hasNeedNghe) errs.push("Chính sách Học nghề (Mong muốn): Không có thành viên >=11 tuổi nào đang không đi học.");
+            }
+            if (csDH.includes('4') && !phieuC_Data.some(p => p.C17 === '1' && nguoiLaoDongCount > 0)) errs.push("Chính sách Việc làm (Đang hưởng): Không có thành viên nào trong độ tuổi LĐ đang làm việc.");
+            if (csMM.includes('4') && !phieuC_Data.some(p => p.C17 === '2')) errs.push("Chính sách Việc làm (Mong muốn): Không có thành viên nào thất nghiệp.");
+
+            let dtNha = parseFloat(hoGiaDinh_Data['B2.81'] || 0);
+            let coGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
+            let dtBinhQuan = (dtNha * (coGac ? 1.5 : 1)) / N;
+            
+            if (dtBinhQuan > 0 && dtBinhQuan < 8) {
+                if (isB1Done && b1Answers['B1.8'] !== 3) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng B1.8 lại khai >= 20m2.");
+                if (isADone && finalData["7"]) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng Phiếu A lại đánh dấu diện tích >= 25m2.");
+            }
+
+            if (errs.length > 0) {
+                alert("⚠️ PHÁT HIỆN MÂU THUẪN DỮ LIỆU:\n\n- " + errs.join("\n- ") + "\n\nVui lòng kiểm tra và sửa lại các mục bị sai lệch.");
+                return false;
+            }
+            return true;
+        }
+
+        function tinhToanLogicB2() {
+            if(!crossCheckSecurity()) return; 
+            
+            let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
+            hoGiaDinh_Data.txt_NNKK_7 = $('#txt_ho_NNKK_8').val() || "";
+
+            let diemB2 = { B2_1: false, B2_2: false, B2_3: false, B2_4: false, B2_5: false, B2_6: false, B2_7: false, B2_8: false, B2_9: false, B2_10: false, B2_11: false, B2_12: false };
+            let N = numMembers;
+
+            diemB2.B2_1 = phieuC_Data.some(p => p.C17==='2' || p.C19==='2');
+            let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 18) || (p.C16 && p.C16.length > 0); }).length;
+            diemB2.B2_2 = (phuThuocCount / N) > 0.5;
+
+            diemB2.B2_3 = phieuC_Data.some(p => {
+                let t = tinhTuoi(p.C4), gioi = p.C7;
+                if(t.thang !== -1 && t.thang < 192) {
+                    let chuan = appConfig.chuan_dinh_duong.find(c => c.gioi_tinh == gioi && c.thang_tuoi == t.thang);
+                    if(chuan) {
+                        if(t.thang < 120) { return (p.C9 && p.C9 < chuan.can_nang) || (p.C8 && p.C8 < chuan.chieu_cao); } 
+                        else { return (p.C8 && p.C8 < chuan.chieu_cao); } 
+                    }
+                }
+                return false;
+            });
+
+            diemB2.B2_4 = phieuC_Data.some(p => { let a=tinhTuoi(p.C4).nam; return a>=6 && a<=75 && p.C14==='2'; });
+
+            diemB2.B2_5 = phieuC_Data.some(p => {
+                let a = tinhTuoi(p.C4).nam;
+                if(a>=16 && a<=30 && p.C10==='2') {
+                    if(a<=18) return (parseInt(p.C12||0)<3) && p.C13==='1'; 
+                    else return (parseInt(p.C12||0)<4) && p.C13==='1'; 
+                }
+                return false;
+            });
+
+            diemB2.B2_6 = phieuC_Data.some(p => {
+                let a = tinhTuoi(p.C4).nam, c = parseInt(p.C11||0);
+                if(a>=3 && a<16) {
+                    if(a>=3 && a<=5) return c !== 1;
+                    if(a===6) return c!==1 && c!==2;
+                    if(a>=7 && a<=10) return c!==2;
+                    if(a===11) return c!==2 && c!==3;
+                    if(a>=12 && a<=14) return c!==3;
+                    if(a===15) return c!==3 && c!==4;
+                }
+                return false;
+            });
+
+            let b27Ans = hoGiaDinh_Data['B2.7'] || []; let benChacCount = Array.isArray(b27Ans)?b27Ans.filter(x => x==='1'||x==='2'||x==='3').length:0;
+            diemB2.B2_7 = benChacCount < 2;
+
+            let dt = parseFloat(hoGiaDinh_Data['B2.81'] || 0); let hasGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
+            diemB2.B2_8 = (dt * (hasGac ? 1.5 : 1)) / N < 8;
+
+            diemB2.B2_9 = phieuC_Data.every(p => p.C15==='2');
+            diemB2.B2_10 = (hoGiaDinh_Data['B2.10']||[]).includes('6'); 
+            diemB2.B2_11 = (hoGiaDinh_Data['B2.11']||[]).includes('3'); 
+            diemB2.B2_12 = (hoGiaDinh_Data['B2.12']||[]).includes('2'); 
+
+            finalData.diemB2 = diemB2;
+
+            let groupedB2 = {};
+            (appConfig.phieu_b2_list || []).forEach(q => {
+                if(!groupedB2[q.section]) groupedB2[q.section] = [];
+                groupedB2[q.section].push(q);
+            });
+
+            let tickCount = 0;
+            let htmlB2 = '<div class="b2-groups">';
+            Object.keys(groupedB2).forEach(sec => {
+                let rows='';
+                groupedB2[sec].forEach(q => {
+                    let m=q.ma.replace('.','_'), hit=!!diemB2[m]; if(hit)tickCount++;
+                    rows+=`<div class="b2-line"><span class="b2-state ${hit?'yes':'no'}">${hit?'✓':'−'}</span><span>${q.noidung}</span></div>`;
+                });
+                htmlB2+=`<section class="b2-group"><h3>${sec}</h3>${rows}</section>`;
+            });
+            htmlB2+='</div>';
+            finalData.TongDiemB2=tickCount;
+            const isPoor=tickCount>=3, resultText=isPoor?'HỘ NGHÈO':'HỘ CẬN NGHÈO';
+            const segs=Array.from({length:12},(_,i)=>`<i class="${i<tickCount?'on':''}"></i>`).join('');
+            $('#review-top-result').html(`<section class="final-summary"><div class="glass-panel"><div class="kicker">CHỈ SỐ THIẾU HỤT</div><div class="big">${tickCount} <small>/ 12</small></div><div class="mini-segments">${segs}</div></div><div class="glass-panel conclusion"><div class="verdict-check">✓</div><div><div class="kicker">KẾT LUẬN RÀ SOÁT</div><h2>${resultText}</h2><p>Hộ gia đình thuộc diện cần ưu tiên hỗ trợ đa chiều.</p></div></div><div class="glass-panel"><div class="kicker">HOÀN TẤT HỒ SƠ</div><h2>Sẵn sàng xác nhận</h2><button class="btn-dna btn-primary-dna full" onclick="location.reload()">Hoàn thành & khai báo mới →</button></div></section>`);
+            $('#review-content-b2').html(htmlB2); $('#b2-total-pill').text(`${tickCount}/12 chỉ số`); $('#member-total-pill').text(`${N} thành viên`);
+            const pCQuestions=(appConfig.phieu_c||[]).filter(q=>!q.isHo&&!(q.ghichu||'').includes('Matrix_CS'));
+            window.renderFinalMember=function(idx){
+                $('.member-chip').removeClass('active'); $(`.member-chip[data-member="${idx}"]`).addClass('active');
+                const cells=pCQuestions.slice(0,12).map(q=>`<div class="member-cell"><b>${q.noidung}</b><span>${getAnswerText(q,phieuC_Data[idx][q.ma])||'—'}</span></div>`).join('');
+                $('#final-member-profile').html(cells);
+            };
+            const chips=phieuC_Data.map((p,i)=>`<button class="member-chip ${i===0?'active':''}" data-member="${i}" onclick="renderFinalMember(${i})">${String(i+1).padStart(2,'0')} · ${getAnswerText(pCQuestions.find(q=>q.ma==='C2')||{},p.C2)||('Thành viên '+(i+1))}${i===0?' · Chủ hộ':''}</button>`).join('');
+            let tags=''; const qDH=hoQ.find(q=>q.ma==='CS_DH'); if(qDH)qDH.options.forEach(o=>{if((hoGiaDinh_Data.CS_MM||[]).includes(o.ma_lc))tags+=`<span>✓ ${o.text.replace('(fill)','').trim()}</span>`;});
+            $('#review-content-phieuc').html(`<div class="member-selector">${chips}</div><div id="final-member-profile" class="member-profile"></div><div class="support-tags">${tags}</div>`); renderFinalMember(0);
+
+            switchScreenUI('screen-nd-phieub2-review', 'nav-citizen');
+        }
+
+        function prepareWordDataPhieuC() {
+            let d = { ...prepareWordDataB1() }; 
+            for(let i=0;i<=7;i++) d[`x_NNKK_${i}`] = (hoGiaDinh_Data['NNKK']||[]).includes(String(i+1)) ? "x" : "";
+            d.txt_NNKK_7 = hoGiaDinh_Data.txt_NNKK_7 || "";
+            for(let i=0;i<=12;i++) {
+                d[`x_CSDH_${i}`] = (hoGiaDinh_Data['CS_DH']||[]).includes(String(i+1)) ? "x" : "";
+                d[`x_CSMM_${i}`] = (hoGiaDinh_Data['CS_MM']||[]).includes(String(i+1)) ? "x" : "";
+            }
+            d.ThanhVien = phieuC_Data.map((p, idx) => {
+                let row = { A: idx+1 };
+                for(let i=2; i<=21; i++) { let v = p[`C${i}`]; row[`C${i}`] = Array.isArray(v) ? v.join(", ") : (v||""); }
+                return row;
+            });
+            return d;
+        }
+
+        async function xemTruocDocxPhieuC() { $('#modal-title').text("Xem Trước Phiếu C"); handleDocxPreview(prepareWordDataPhieuC(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuC.docx", 'myModal', 'modal-body'); }
+        async function taiFileWordPhieuC() { handleDocxDownload(prepareWordDataPhieuC(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuC.docx", `PhieuC_${finalData.B.replace(/\s+/g,'_')}.docx`); }
+        async function taiFilePDFPhieuC(btn) { handlePdfDownload(prepareWordDataPhieuC(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuC.docx", `PhieuC_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-pc-options').slideUp(); }
+
+        function prepareWordDataB2() {
+            let d = { ...prepareWordDataB1() }; 
+            d.B2_Tong = finalData.TongDiemB2;
+            Object.keys(finalData.diemB2).forEach(k => { d[`x_${k}`] = finalData.diemB2[k] ? "x" : ""; });
+            return d;
+        }
+
+        async function xemTruocDocxB2() { $('#modal-title').text("Xem Trước Phiếu B2"); handleDocxPreview(prepareWordDataB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", 'myModal', 'modal-body'); }
+        async function taiFileWordB2() { handleDocxDownload(prepareWordDataB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", `PhieuB2_${finalData.B.replace(/\s+/g,'_')}.docx`); }
+        async function taiFilePDFB2(btn) { handlePdfDownload(prepareWordDataB2(), "https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuB2.docx", `PhieuB2_${finalData.B.replace(/\s+/g,'_')}.pdf`, btn); $('#dl-b2-options').slideUp(); }
+
+        async function authCanBo(action, btn) {
+            const u = $('#cb_username').val().trim(), p = $('#cb_password').val().trim(); 
+            if(!u || !p) return alert("❌ Nhập đủ Tên đăng nhập và Mật khẩu!");
+            if(u.includes(" ")) return alert("❌ Tên đăng nhập không được chứa khoảng trắng!");
+            
+            let ogText = btn.innerText; btn.innerText = "⏳..."; btn.disabled = true;
+            try {
+                const res = await fetch(WORKER_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ action: action, username: u, password: p }) 
+                });
+                const data = await res.json();
+                
+                if (data.status === "success") { 
+                    if(action === 'register') alert("✅ Tạo tài khoản thành công! Tự động đăng nhập...");
+                    currentUser = u; 
+                    switchScreenUI('screen-canbo-dash', 'nav-staff'); 
+                    loadDanhSachDotCanBo(); 
+                } else { 
+                    alert("❌ Lỗi: " + (data.message || "Kiểm tra lại thông tin!"));
+                }
+            } catch(e) { 
+                alert("❌ Lỗi kết nối máy chủ!"); 
+            } 
+            btn.innerText = ogText; btn.disabled = false;
+        }
+
+        let dashboardFilter='all';
+        function filterDashboardDots(type,btn){dashboardFilter=type; $('.filter-pills button').removeClass('active'); $(btn).addClass('active'); applyDashboardFilters();}
+        function applyDashboardFilters(){const q=($('#dash-search').val()||'').toLowerCase().trim(); $('.dot-row').each(function(){const status=$(this).data('status'), text=($(this).data('search')||'').toLowerCase(); $(this).toggle((dashboardFilter==='all'||dashboardFilter===status)&&(!q||text.includes(q)));});}
+        async function loadDanhSachDotCanBo() {
+            $('#canbo-dot-list').html("<p style='color:var(--beige);'>Đang tải...</p>");
+            try {
+                const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
+                if(data.status==="success"){
+                    const openDots=data.dots.filter(d=>d.trang_thai==='Open'), closedDots=data.dots.filter(d=>d.trang_thai!=='Open');
+                    const soonDots=openDots.filter(d=>{const x=parseFlexibleDate(toDisplayDMY(d.ngay_ket_thuc)); return !isNaN(x)&&((x-new Date())/86400000)>=0&&((x-new Date())/86400000)<=7;});
+                    $('#stat-total').text(data.dots.length); $('#stat-open').text(openDots.length); $('#stat-soon').text(soonDots.length); $('#stat-closed').text(closedDots.length);
+                    if(data.dots.length===0) return $('#canbo-dot-list').html("<p style='color:var(--beige);'>Chưa có đợt rà soát nào.</p>");
+                    let html='<div class="dot-table"><div class="dot-table-head"><span>ĐỊA BÀN</span><span>HẠN KẾT THÚC</span><span>TRẠNG THÁI</span><span></span></div>';
+                    data.dots.forEach(d=>{
+                        const isOpen=d.trang_thai==='Open', status=isOpen?'open':'closed';
+                        const parts=(d.ten_dot||'').split(' - '), main=parts.slice(0,2).join(' - ')||d.ten_dot, sub=parts.slice(2).join(' - ');
+                        html+=`<div class="dot-row" data-status="${status}" data-search="${d.ten_dot}"><div class="dot-place"><b>${main}</b><small>${sub}</small></div><b class="dot-date">${toDisplayDMY(d.ngay_ket_thuc)}</b><span class="status-pill ${status}">${isOpen?'Đang mở':'Đã đóng'}</span><div class="dot-icon-actions"><button title="Xem Phiếu A" onclick="xemTruocDocx('${d.id_dot}');event.stopPropagation();"><img src="assets/images/preview.svg"></button><button title="Tải Phiếu A" onclick="$('#dl-${d.id_dot}').slideToggle();event.stopPropagation();"><img src="assets/images/download.svg"></button>${isOpen?`<button title="Đổi hạn" onclick="chinhSua('${d.id_dot}','${d.ngay_ket_thuc}');event.stopPropagation();"><img src="assets/images/edit.svg"></button><button class="danger" title="Kết thúc đợt" onclick="ketThuc('${d.id_dot}');event.stopPropagation();"><img src="assets/images/lock.svg"></button>`:''}</div><div id="dl-${d.id_dot}" class="dot-download-options" style="display:none"><button onclick="taiFileWord('${d.id_dot}')">Word (.docx)</button><button onclick="taiFilePDF('${d.id_dot}',this)">PDF (.pdf)</button></div></div>`;
+                    });
+                    $('#canbo-dot-list').html(html+'</div>'); applyDashboardFilters();
+                }
+            } catch(e) { $('#canbo-dot-list').html("<p style='color:var(--beige);'>Không thể tải danh sách đợt.</p>"); }
+        }
+
+        async function taoDot() {
+            const payload = {
+                action: "create_dot", username: currentUser,
+                tinh: document.getElementById('cb_tinh').value,
+                phuong: document.getElementById('cb_phuong').value,
+                thon: document.getElementById('cb_thon').value,
+                ngay_bat_dau: document.getElementById('cb_start').value,
+                ngay_ket_thuc: document.getElementById('cb_end').value,
+                dieukien_bosung: document.getElementById('cb_dieukien_bosung').value
+            };
+            if(!payload.tinh || !payload.thon) return alert("Vui lòng điền đủ địa bàn!");
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
+            alert("✅ Đã tạo đợt rà soát thành công!");
+            
+            $('#cb_tinh').val(null).trigger('change');
+            $('#cb_phuong').val(null).trigger('change');
+            document.getElementById('cb_thon').value = "";
+            document.getElementById('cb_start').value = "";
+            document.getElementById('cb_end').value = "";
+            document.getElementById('cb_dieukien_bosung').value = "";
+            $('#form-tao-dot').slideUp(); 
+            loadDanhSachDotCanBo(); 
+        }
+
+        async function xemTruocDocx(idDot) {
+            document.getElementById('modal-title').innerText = "Xem Trước Phiếu A (Docx)";
+            document.getElementById('modal-body').innerHTML = "<p style='padding:20px; color:black;'>Đang tải dữ liệu và tạo file xem trước...</p>";
+            document.getElementById('myModal').style.display = 'block';
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "preview_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) {
+                    document.getElementById('modal-body').innerHTML = "<p style='padding:20px; color:black;'>Chưa có hồ sơ nào được nộp trong đợt này!</p>";
+                    return;
+                }
+                const templateBuffer = await (await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx")).arrayBuffer();
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                document.getElementById('modal-body').innerHTML = ""; 
+                await docx.renderAsync(out, document.getElementById('modal-body'), null, { className: "docx-preview", inWrapper: true, ignoreWidth: true, ignoreHeight: true });
+            } catch (error) { 
+                document.getElementById('modal-body').innerHTML = `<p style="color:red; padding:20px;">Lỗi hiển thị bản xem trước: ${error.message}</p>`; 
+            }
+        }
+
+        async function chinhSua(idDot, currentEnd) {
+            document.getElementById('modal-title').innerText = "Đổi Ngày Kết Thúc";
+            document.getElementById('modal-body').innerHTML = `
+                <div style="padding:20px;">
+                    <input type="text" inputmode="numeric" maxlength="10" class="date-dmy" id="new_end_date" value="${toDisplayDMY(currentEnd)}" placeholder="dd/mm/yyyy" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; font-family:'Be Vietnam Pro';">
+                    <button class="btn-dna btn-primary-dna" style="margin-top:16px; width:100%;" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
+                </div>
+            `;
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        async function luuChinhSua(idDot) {
+            const newDate = document.getElementById('new_end_date').value;
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "edit_dot", ID_Dot: idDot, new_date: newDate }) });
+            alert("Đã cập nhật ngày kết thúc!");
+            document.getElementById('myModal').style.display = 'none';
+            loadDanhSachDotCanBo();
+        }
+
+        async function ketThuc(idDot) {
+            if(!confirm("Bạn có chắc muốn đóng đợt này? Người dân sẽ không thể nộp thêm.")) return;
+            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "close_dot", ID_Dot: idDot }) });
+            alert("Đã khóa sổ đợt rà soát!");
+            loadDanhSachDotCanBo();
+        }
+
+        async function taiFileWord(idDot) {
+            alert("Đang xử lý dữ liệu và tạo file Word, vui lòng chờ...");
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) return alert("Không có hồ sơ nào trong đợt rà soát này!");
+                const templateBuffer = await (await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx")).arrayBuffer();
+                const zip = new PizZip(templateBuffer);
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                saveAs(out, `PhieuA_${idDot}.docx`);
+            } catch (error) { console.error(error); alert("Lỗi tải file Word."); }
+        }
+
+        async function taiFilePDF(idDot, btnElement) {
+            const orgText = btnElement.innerHTML;
+            btnElement.innerText = "⏳ Đang tạo PDF..."; btnElement.disabled = true;
+            try {
+                const resData = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "download_dot", ID_Dot: idDot }) });
+                const data = await resData.json();
+                if (!data.Hogiadinh || data.Hogiadinh.length === 0) { btnElement.innerHTML = orgText; btnElement.disabled = false; return alert("Không có hồ sơ nào!"); }
+                const templateRes = await fetch("https://raw.githubusercontent.com/lehaphuong510/trasoathongheo/main/PhieuA.docx");
+                const zip = new PizZip(await templateRes.arrayBuffer());
+                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+                doc.render({ Tinh_thanh: data.Tinh_thanh, Phuong_xa: data.Phuong_xa, Thon_to: data.Thon_to, Hogiadinh: data.Hogiadinh });
+                
+                const base64Docx = doc.getZip().generate({ type: "base64" });
+                const pdfRes = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ action: "convert_pdf", docxBase64: base64Docx }) });
+                const pdfData = await pdfRes.json();
+                
+                if (pdfData.status === "success") {
+                    const byteChars = atob(pdfData.pdfBase64);
+                    const byteNums = new Array(byteChars.length);
+                    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+                    const blob = new Blob([new Uint8Array(byteNums)], { type: "application/pdf" });
+                    saveAs(blob, `PhieuA_${idDot}.pdf`);
+                } else alert("Lỗi convert PDF: " + pdfData.message);
+            } catch (e) { alert("Lỗi kết nối tạo PDF!"); console.error(e); }
+            btnElement.innerHTML = orgText; btnElement.disabled = false;
+        }
+    </script>
+</body>
+</html>
