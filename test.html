@@ -226,7 +226,25 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
 <style>
 #screen-canbo-dash,#screen-nd-routing,#screen-nd-step2,#screen-nd-step3,#screen-nd-review,#screen-nd-b1,#screen-nd-review-b1,#screen-nd-phieuc-init,#screen-nd-phieuc-members,#screen-nd-phieuc-ho,#screen-nd-phieub2-review{background-image:none!important;background-color:var(--bg-main)!important}
 </style>
-</head>
+
+<style>
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-Light.ttf') format('truetype');font-style:normal;font-weight:300;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-Medium.ttf') format('truetype');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-SemiBold.ttf') format('truetype');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro Local';src:url('assets/fonts/BeVietnamPro-ExtraBold.ttf') format('truetype');font-style:normal;font-weight:800;font-display:swap}
+:root{--nav-h:66px;--field-font-size:15px;--field-text:#A3AAAE}
+body{font-family:'Be Vietnam Pro Local','Be Vietnam Pro','Noto Sans',Arial,sans-serif;font-weight:300}
+.navbar,.navbar[style*="display: block"]{height:var(--nav-h)!important;padding:0 clamp(32px,5vw,80px)!important;justify-content:space-between!important;background:#F6F1E9!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.nav-logo{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-size:18px!important;font-weight:800!important}.nav-logo img{width:32px!important;height:32px!important;border-radius:8px!important}.nav-links{margin-left:auto!important;font-size:14px!important;font-weight:600!important;gap:36px!important}
+h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:800!important}h2,h3,.panel-title h1,.panel-title h2{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:600!important}.question-body h1,.c-question-panel h1,.b1-option-label,.criterion,.b1-answer b,.b2-line{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:500!important}.btn-dna,button,.glass-label,.kicker{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif;font-weight:600!important}p,span,small,label,input,select,textarea{font-family:'Be Vietnam Pro Local','Be Vietnam Pro',sans-serif}
+.hero-title span{white-space:nowrap!important;font-size:clamp(15px,3vw,38px)!important}
+.glass-input,select,.select2-selection,.select2-selection__rendered,.dash-search,input::placeholder,textarea::placeholder{font-size:var(--field-font-size)!important;color:var(--field-text)!important;font-weight:300!important}.glass-input,select,textarea{line-height:1.45!important}
+.numbered-options .b1-option-label{grid-template-columns:60px var(--control-size) minmax(0,1fr)!important;column-gap:14px!important;overflow:hidden!important}.numbered-options .b1-option-label:before{margin-right:0!important;border-radius:10px 0 0 10px}.numbered-options .b1-option-label>input{margin:0!important}.numbered-options .b1-option-label>span{display:block;line-height:1.42}.numbered-options .b1-option-label:has(input:checked){border-radius:11px!important;overflow:hidden!important}.numbered-options .b1-option-label:has(input:checked):before{border-radius:10px 0 0 10px!important}
+.a-next{display:flex;flex-direction:column}.a-next .btn-dna{margin-top:auto!important}.hidden-submit{position:static!important}
+.dash-tools{display:flex;align-items:center;gap:12px}.filter-pills{display:flex;gap:6px}.filter-pills button{border:0;color:var(--ivory);font-size:11px;padding:7px 10px;border-radius:7px;background:rgba(246,241,233,.06)}.filter-pills button.active{background:var(--ivory);color:var(--bg-main)}.dash-search{height:38px;width:230px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(27,57,64,.22);padding:0 12px}.dot-table{border:1px solid var(--glass-border);border-radius:11px;overflow:hidden;margin-top:14px}.dot-table-head,.dot-row{display:grid;grid-template-columns:minmax(280px,1.8fr) 160px 130px 190px;align-items:center;gap:12px}.dot-table-head{min-height:42px;padding:0 14px;background:rgba(246,241,233,.06);color:var(--blue-gray);font-size:10px;font-weight:600}.dot-row{position:relative;min-height:68px;padding:10px 14px;border-top:1px solid rgba(246,241,233,.1)}.dot-place b{display:block;font-size:13px;font-weight:600}.dot-place small{display:block;color:var(--blue-gray);font-size:10px;margin-top:4px}.dot-date{font-size:12px}.status-pill{justify-self:start;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:600}.status-pill.open{background:rgba(35,162,125,.16);color:#72d2ab}.status-pill.closed{background:rgba(223,92,80,.13);color:#ef847a}.dot-icon-actions{display:flex;justify-content:flex-end;gap:7px}.dot-icon-actions button{width:34px;height:34px;padding:0;border-radius:8px;border:1px solid var(--glass-border);background:rgba(246,241,233,.03);display:grid;place-items:center}.dot-icon-actions button:hover{background:rgba(86,119,129,.5)}.dot-icon-actions button.danger{border-color:rgba(223,92,80,.45)}.dot-icon-actions img{width:18px;height:18px}.dot-download-options{grid-column:1/-1;padding:10px;border-top:1px dashed var(--glass-border)}.dot-download-options button{margin-right:7px;padding:8px 12px;border-radius:7px;border:1px solid var(--glass-border);background:transparent;color:var(--ivory)}
+@media(max-width:900px){:root{--nav-h:96px}.navbar,.navbar[style*="display: block"]{height:var(--nav-h)!important;padding:10px 18px!important;justify-content:center!important}.nav-links{margin-left:0!important;gap:18px!important}.hero-title span{font-size:clamp(12px,4.2vw,22px)!important}.dot-table{overflow-x:auto}.dot-table-head,.dot-row{min-width:800px}.dash-tools{align-items:flex-end;flex-direction:column}.dash-search{width:100%}}
+</style>
+<style>.form-badge,.a-score-number,.final-summary .big{font-weight:800!important}.glass-label{font-weight:600!important}</style></head>
 <body>
 <!-- ================= NAVBAR ================= -->
 <nav class="navbar" id="main-navbar">
@@ -290,12 +308,12 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
 <div id="form-tao-dot">
 <div class="grid-2"><div class="form-group-dna"><label class="glass-label">Tỉnh/Thành</label><select class="searchable-select" id="cb_tinh"><option value="">-- Chọn --</option></select></div><div class="form-group-dna"><label class="glass-label">Phường/Xã</label><select class="searchable-select" id="cb_phuong"><option value="">-- Chọn --</option></select></div></div>
 <div class="form-group-dna"><label class="glass-label">Thôn/Tổ</label><input class="glass-input" id="cb_thon" placeholder="Nhập thôn hoặc tổ dân phố" type="text"/></div>
-<div class="grid-2"><div class="form-group-dna"><label class="glass-label">Ngày bắt đầu</label><input class="glass-input" id="cb_start" type="date"/></div><div class="form-group-dna"><label class="glass-label">Ngày kết thúc</label><input class="glass-input" id="cb_end" type="date"/></div></div>
+<div class="grid-2"><div class="form-group-dna"><label class="glass-label">Ngày bắt đầu</label><input class="glass-input date-dmy" id="cb_start" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy"/></div><div class="form-group-dna"><label class="glass-label">Ngày kết thúc</label><input class="glass-input date-dmy" id="cb_end" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy"/></div></div>
 <div class="form-group-dna"><label class="glass-label">Điều kiện bổ sung của địa phương</label><textarea class="glass-input" id="cb_dieukien_bosung" placeholder="Ghi rõ điều kiện cụ thể..."></textarea></div>
 <button class="btn-dna btn-primary-dna full" onclick="taoDot()">Lưu và mở đợt rà soát</button>
 </div>
 </section>
-<section class="dash-list glass-panel"><div class="panel-title"><h2>Các đợt của bạn</h2><div class="filter-pills"><span class="active">Tất cả</span><span>Đang mở</span><span>Đã đóng</span></div></div><div id="canbo-dot-list"><p>Đang tải...</p></div></section>
+<section class="dash-list glass-panel"><div class="panel-title"><h2>Các đợt của bạn</h2><div class="dash-tools"><div class="filter-pills"><button class="active" onclick="filterDashboardDots('all',this)">Tất cả</button><button onclick="filterDashboardDots('open',this)">Đang mở</button><button onclick="filterDashboardDots('closed',this)">Đã đóng</button></div><input id="dash-search" class="dash-search" placeholder="⌕ Tìm theo địa bàn..." oninput="applyDashboardFilters()"></div></div><div id="canbo-dot-list"><p>Đang tải...</p></div></section>
 </div>
 <button class="btn-dna btn-outline-dna dash-logout" onclick="switchScreenUI('screen-welcome', 'nav-home')">Đăng xuất</button>
 </div></div>
@@ -305,7 +323,7 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
 <h2>Thông Tin Chủ Hộ / Người Khai Báo</h2>
 <div class="form-group-dna">
 <label class="glass-label">Họ và tên</label>
-<input class="glass-input" id="nd_hoten" placeholder="Nhập họ và tên..." style="text-transform: uppercase;" type="text"/>
+<input class="glass-input name-uppercase" id="nd_hoten" placeholder="NHẬP HỌ VÀ TÊN..." style="text-transform: uppercase;" type="text" oninput="this.value=this.value.toUpperCase()"/>
 </div>
 <div class="form-group-dna">
 <label class="glass-label">CCCD (12 số)</label>
@@ -346,7 +364,7 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
 <!-- NHẬN DẠNG NHANH -->
 <div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-step2"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">A</div><div><small>BIỂU MẪU</small><h2>Phiếu A</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars"><i class="on"></i><i></i></div></div><div class="question-count"><small>PHẦN</small><b>01 / 02</b></div></section><section class="question-body glass-panel"><div class="kicker">PHẦN 01 · NHẬN DIỆN BAN ĐẦU</div><h1 id="title-b1"></h1><p class="question-help">Chọn tất cả nội dung đúng với tình trạng hiện tại của hộ gia đình.</p><div class="numbered-options" id="list-b1"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại</button><button class="btn-dna btn-teal-dna" onclick="checkB1()">Tiếp tục →</button></div></section></div></div>
 <div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-step3"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">A</div><div><small>BIỂU MẪU</small><h2>Phiếu A</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars"><i class="on"></i><i class="on"></i></div></div><div class="question-count"><small>PHẦN</small><b>02 / 02</b></div></section><section class="question-body glass-panel"><div class="kicker">PHẦN 02 · TIÊU CHÍ NHẬN DẠNG</div><h1 id="title-b2"></h1><p class="question-help">Có thể chọn nhiều đáp án phù hợp với tình trạng của hộ.</p><div class="numbered-options" id="list-b2"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">← Quay lại</button><button class="btn-dna btn-teal-dna" onclick="checkB2()">Hoàn tất →</button></div></section></div></div>
-<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-review"><div class="result-page result-a"><div class="result-heading"><div><div class="kicker">KẾT QUẢ NHẬN DIỆN NHANH</div><h1>Phiếu A · Xác nhận kết quả</h1></div><span id="a-complete-note"></span></div><div id="review-content"></div><div class="result-bottom"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">✎ Sửa khai báo</button><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại màn hình chọn phiếu</button></div><button class="btn-dna btn-primary-dna hidden-submit" id="btn-submit-review" onclick="submitDataXacNhan()">Xác nhận đúng</button></div></div>
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-review"><div class="result-page result-a"><div class="result-heading"><div><div class="kicker">KẾT QUẢ NHẬN DIỆN NHANH</div><h1>Phiếu A · Xác nhận kết quả</h1></div><span id="a-complete-note"></span></div><div id="review-content"></div><div class="result-bottom"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">✎ Sửa khai báo</button><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại màn hình chọn phiếu</button></div></div></div>
 <!-- PHIẾU B1 -->
 <div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-b1"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">B1</div><div><small>BIỂU MẪU</small><h2>Phiếu B1</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars many" id="b1-progress-bars"></div></div><div class="question-count"><small>CÂU HỎI</small><b id="b1-progress-count">01 / 14</b><span hidden="" id="b1-progress"></span></div></section><section class="question-body glass-panel"><div class="kicker" id="b1-question-meta">CÂU HỎI</div><h1 id="b1-question-text"></h1><p class="question-help">Chọn một phương án phù hợp nhất với tình trạng hiện tại của hộ gia đình.</p><div id="b1-ghichu-container" style="display:none"><details><summary>? Bấm xem chi tiết/danh sách</summary><div id="b1-ghichu-content"></div></details></div><div class="numbered-options" id="b1-options"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="prevB1()">← Quay lại câu trước</button><button class="question-warning" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">⚠ Phát hiện sai sót? Quay lại sửa Phiếu A</button><button class="btn-dna btn-teal-dna" onclick="nextB1()">Tiếp tục →</button></div></section></div></div>
 <!-- KẾT QUẢ B1 -->
@@ -386,6 +404,27 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
 
         function initSelect2() { $('.searchable-select').select2(); }
 
+        function formatDateDMYInput(value) {
+            const digits=String(value||'').replace(/\D/g,'').slice(0,8);
+            if(digits.length<=2) return digits;
+            if(digits.length<=4) return digits.slice(0,2)+'/'+digits.slice(2);
+            return digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+        }
+        function parseFlexibleDate(value) {
+            const v=String(value||'').trim();
+            const m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if(m) return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+            return new Date(v);
+        }
+        function toDisplayDMY(value) {
+            if(!value) return '';
+            if(/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return value;
+            const d=new Date(value); if(isNaN(d)) return value;
+            return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+        }
+        $(document).on('input','.date-dmy',function(){this.value=formatDateDMYInput(this.value);});
+        $(document).on('blur','.date-dmy',function(){if(this.value && !/^\d{2}\/\d{2}\/\d{4}$/.test(this.value)) this.setCustomValidity('Vui lòng nhập ngày theo định dạng dd/mm/yyyy'); else this.setCustomValidity('');});
+
         window.onload = async () => {
             $('.navbar').hide();
 
@@ -398,9 +437,10 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
                     if (appConfig.cauhoi) {
                         if (appConfig.cauhoi.A1) $('#title-a1').text(appConfig.cauhoi.A1.noi_dung);
                         if (appConfig.cauhoi.A2) $('#title-a2').text(appConfig.cauhoi.A2.noi_dung);
+                        if (appConfig.cauhoi.B1) $('#title-b1').text(appConfig.cauhoi.B1.noi_dung);
                         if (appConfig.cauhoi.B2) {
                             $('#title-b2').text(appConfig.cauhoi.B2.noi_dung);
-                            appConfig.cauhoi.B2.lua_chon.forEach(lc => $('#list-b2').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b2"> ${lc}</label>`));
+                            appConfig.cauhoi.B2.lua_chon.forEach(lc => $('#list-b2').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b2"><span>${lc}</span></label>`));
                         }
                     }
                 }
@@ -437,10 +477,10 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
                     if (lc.includes('<fill>')) {
                         if (dkBosung && dkBosung.trim() !== "") {
                             let filledText = lc.replace('<fill>', dkBosung);
-                            $('#list-b1').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b1"> ${filledText}</label>`);
+                            $('#list-b1').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b1"><span>${filledText}</span></label>`);
                         }
                     } else {
-                        $('#list-b1').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b1"> ${lc}</label>`);
+                        $('#list-b1').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b1"><span>${lc}</span></label>`);
                     }
                 });
             }
@@ -472,7 +512,7 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
                 return `<section class="criteria-group"><div class="panel-title"><b>${g.name}</b><small>${yes}/${g.indexes.filter(i=>items[i]).length}</small></div>${rows}</section>`;
             }).join('');
             $('#a-complete-note').text(`Đã hoàn thành ${totalCriteria}/${totalCriteria} tiêu chí đánh giá`);
-            $('#review-content').html(`<div class="a-result-top"><section class="glass-panel a-score"><div class="kicker">ĐIỂM NHẬN DẠNG 2</div><div class="a-score-number">${tongD} / ${totalCriteria}</div><div class="mini-segments">${segs}</div><p class="small-note">${tongD} tiêu chí được ghi nhận</p></section><section class="glass-panel a-verdict"><div class="verdict-check">✓</div><div><div class="kicker">KẾT LUẬN</div><h2>${eligible?'ĐỦ ĐIỀU KIỆN RÀ SOÁT TIẾP':'KHÔNG THUỘC DIỆN RÀ SOÁT TIẾP'}</h2><p>${eligible?'Hộ gia đình có thể tiếp tục thực hiện Phiếu B1 để đánh giá điểm vùng.':'Quy trình sẽ kết thúc sau khi xác nhận kết quả.'}</p></div></section><section class="glass-panel a-next"><div class="kicker">BƯỚC TIẾP THEO</div><h2>${eligible?'Phiếu B1 · Tính điểm vùng':'Kết thúc khai báo'}</h2><p>${eligible?'Tiếp tục đánh giá điều kiện theo địa bàn cư trú.':'Dữ liệu Phiếu A sẽ được ghi nhận.'}</p></section></div><section class="glass-panel a-criteria"><div class="panel-title"><h2>Phân tích theo nhóm tiêu chí</h2><span>${tongD} đã ghi nhận · ${totalCriteria-tongD} chưa ghi nhận</span></div><div class="criteria-grid">${groupHtml}</div></section>`);
+            $('#review-content').html(`<div class="a-result-top"><section class="glass-panel a-score"><div class="kicker">ĐIỂM NHẬN DẠNG 2</div><div class="a-score-number">${tongD} / ${totalCriteria}</div><div class="mini-segments">${segs}</div><p class="small-note">${tongD} tiêu chí được ghi nhận</p></section><section class="glass-panel a-verdict"><div class="verdict-check">✓</div><div><div class="kicker">KẾT LUẬN</div><h2>${eligible?'ĐỦ ĐIỀU KIỆN RÀ SOÁT TIẾP':'KHÔNG THUỘC DIỆN RÀ SOÁT TIẾP'}</h2><p>${eligible?'Hộ gia đình có thể tiếp tục thực hiện Phiếu B1 để đánh giá điểm vùng.':'Quy trình sẽ kết thúc sau khi xác nhận kết quả.'}</p></div></section><section class="glass-panel a-next"><div class="kicker">BƯỚC TIẾP THEO</div><h2>${eligible?'Phiếu B1 · Tính điểm vùng':'Kết thúc khai báo'}</h2><p>${eligible?'Tiếp tục đánh giá điều kiện theo địa bàn cư trú.':'Dữ liệu Phiếu A sẽ được ghi nhận.'}</p><button class="btn-dna btn-primary-dna full" id="btn-submit-review" onclick="submitDataXacNhan()">${eligible?'Xác nhận và tới Phiếu B1 →':'Kết thúc'}</button></section></div><section class="glass-panel a-criteria"><div class="panel-title"><h2>Phân tích theo nhóm tiêu chí</h2><span>${tongD} đã ghi nhận · ${totalCriteria-tongD} chưa ghi nhận</span></div><div class="criteria-grid">${groupHtml}</div></section>`);
             $('#btn-submit-review').toggleClass('btn-primary-dna', true).text(eligible?'Xác nhận và tới Phiếu B1 →':'Kết thúc');
         }
 
@@ -698,14 +738,16 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
                             if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
                         });
                     } else if (q.options.length > 0 && q.options[0].text.includes('(date)')) {
-                        contentHtml += `<input type="date" id="pC_${i}_${m}" class="glass-input" onchange="evalLogicPhiencC(${i})" style="margin-top:5px;">`;
+                        contentHtml += `<input type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" id="pC_${i}_${m}" class="glass-input date-dmy" onchange="evalLogicPhiencC(${i})" style="margin-top:5px;">`;
                     } else if (q.options.length > 0 && q.options[0].text.includes('(dropdown)')) {
                         contentHtml += `<select id="pC_${i}_${m}" class="searchable-select"><option value="">-- Chọn Dân tộc --</option>`;
                         if(appConfig.madantoc) appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
                         contentHtml += `</select>`;
                     } else {
                         let isNum = m==='C8'||m==='C9', suffix = m==='C8'?" cm":m==='C9'?" kg":"";
-                        contentHtml += `<div style="display:flex; align-items:center; margin-top:5px;"><input type="text" id="pC_${i}_${m}" class="glass-input" placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); evalLogicPhiencC(${i})" style="flex:1;"> <span style="margin-left:12px; white-space:nowrap; font-weight:bold; color:var(--coral);">${suffix}</span></div>`;
+                        let extraClass = m==='C2' ? ' name-uppercase' : (m==='C5' ? ' cccd-input' : '');
+                        let extraAttr = m==='C5' ? ' inputmode="numeric" maxlength="12"' : '';
+                        contentHtml += `<div style="display:flex; align-items:center; margin-top:5px;"><input type="text" id="pC_${i}_${m}" class="glass-input${extraClass}"${extraAttr} placeholder="Nhập... ${suffix}" oninput="if(${isNum}) this.value=this.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); if('${m}'==='C2') this.value=this.value.toUpperCase(); if('${m}'==='C5') this.value=this.value.replace(/[^0-9]/g,'').slice(0,12); evalLogicPhiencC(${i})" style="flex:1;"> <span style="margin-left:12px; white-space:nowrap; font-weight:bold; color:var(--coral);">${suffix}</span></div>`;
                     }
                     contentHtml += `</div>`;
                 });
@@ -754,7 +796,7 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
 
         function tinhTuoi(dateStr) {
             if(!dateStr) return {nam: -1, thang: -1};
-            let d = new Date(dateStr), now = new Date();
+            let d = parseFlexibleDate(dateStr), now = new Date();
             let thang = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
             if(now.getDate() < d.getDate()) thang--;
             return { nam: Math.floor(thang/12), thang: thang };
@@ -812,6 +854,10 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
                 }
                 
                 if(!q.k_bat_buoc && (val===null || val==="" || (Array.isArray(val) && val.length===0) || (typeof val === 'number' && isNaN(val)))) { 
+                    ok = false;
+                    $qDiv.addClass('error');
+                }
+                if(q.ma==='C5' && String(val||'').length!==12) {
                     ok = false;
                     $qDiv.addClass('error');
                 }
@@ -893,7 +939,7 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
                 return getT(val);
             }
             if(q.options && q.options.length > 0 && q.options[0].text.includes('(date)')) {
-                let d = new Date(val); return isNaN(d) ? val : `${('0'+d.getDate()).slice(-2)}/${('0'+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
+                if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)) return val; let d = new Date(val); return isNaN(d) ? val : `${('0'+d.getDate()).slice(-2)}/${('0'+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
             }
             return val;
         }
@@ -1182,55 +1228,29 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
             btn.innerText = ogText; btn.disabled = false;
         }
 
+        let dashboardFilter='all';
+        function filterDashboardDots(type,btn){dashboardFilter=type; $('.filter-pills button').removeClass('active'); $(btn).addClass('active'); applyDashboardFilters();}
+        function applyDashboardFilters(){const q=($('#dash-search').val()||'').toLowerCase().trim(); $('.dot-row').each(function(){const status=$(this).data('status'), text=($(this).data('search')||'').toLowerCase(); $(this).toggle((dashboardFilter==='all'||dashboardFilter===status)&&(!q||text.includes(q)));});}
         async function loadDanhSachDotCanBo() {
             $('#canbo-dot-list').html("<p style='color:var(--beige);'>Đang tải...</p>");
             try {
                 const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
                 if(data.status==="success"){
-                    const openDots=data.dots.filter(d=>d.trang_thai==='Open');
-                    const closedDots=data.dots.filter(d=>d.trang_thai!=='Open');
-                    const soonDots=openDots.filter(d=>{const x=new Date(d.ngay_ket_thuc); return !isNaN(x)&&((x-new Date())/86400000)<=7;});
+                    const openDots=data.dots.filter(d=>d.trang_thai==='Open'), closedDots=data.dots.filter(d=>d.trang_thai!=='Open');
+                    const soonDots=openDots.filter(d=>{const x=parseFlexibleDate(toDisplayDMY(d.ngay_ket_thuc)); return !isNaN(x)&&((x-new Date())/86400000)>=0&&((x-new Date())/86400000)<=7;});
                     $('#stat-total').text(data.dots.length); $('#stat-open').text(openDots.length); $('#stat-soon').text(soonDots.length); $('#stat-closed').text(closedDots.length);
                     if(data.dots.length===0) return $('#canbo-dot-list').html("<p style='color:var(--beige);'>Chưa có đợt rà soát nào.</p>");
-                    let html="";
-                    data.dots.forEach(d => {
-                        const statusText = d.trang_thai === 'Open' ? 'Đang mở' : 'Đã đóng';
-                        const statusColor = d.trang_thai === 'Open' ? '#10b981' : '#dc2626';
-                        html+=`<div class="dot-item" onclick="this.classList.toggle('open')">
-                            <h4 style="margin:0; cursor:pointer; display: flex; align-items: center; gap: 8px; color:var(--ivory);">
-                                <img src="assets/images/calendar.svg" width="20" height="20" style="filter: brightness(2);"> 
-                                Đợt: ${d.ten_dot} 
-                                <br><small style="color:var(--beige); font-weight:normal; margin-left: 28px;">Hạn kết thúc: ${d.ngay_ket_thuc} | <span style="color:${statusColor}; font-weight:600;">${statusText}</span></small>
-                            </h4>
-                            <div class="dot-actions" style="margin-left: 28px;">
-                                <button class="btn-sm" style="display:inline-flex; align-items:center; gap:4px;" onclick="xemTruocDocx('${d.id_dot}'); event.stopPropagation();">
-                                    <img src="assets/images/preview.svg" width="14" height="14"> Xem Phiếu A
-                                </button>
-                                <button class="btn-sm" style="background-color: var(--teal-sec); display:inline-flex; align-items:center; gap:4px; color:white; border-color:var(--teal-sec);" onclick="$('#dl-${d.id_dot}').slideToggle(); event.stopPropagation();">
-                                    <img src="assets/images/download.svg" width="14" height="14" style="filter: brightness(2);"> Tải Phiếu A ▼
-                                </button>
-                                <button class="btn-sm" style="display:inline-flex; align-items:center; gap:4px;" onclick="chinhSua('${d.id_dot}', '${d.ngay_ket_thuc}'); event.stopPropagation();">
-                                    <img src="assets/images/edit.svg" width="14" height="14"> Đổi Hạn
-                                </button>
-                                <button class="btn-sm btn-danger" style="display:inline-flex; align-items:center; gap:4px; background:rgba(220, 38, 38, 0.1); border-color:#dc2626; color:#fca5a5;" onclick="ketThuc('${d.id_dot}'); event.stopPropagation();">
-                                    <img src="assets/images/lock.svg" width="14" height="14" style="filter: invert(72%) sepia(41%) saturate(1455%) hue-rotate(313deg) brightness(101%) contrast(98%);"> Kết thúc đợt
-                                </button>
-                                <div id="dl-${d.id_dot}" style="display:none; margin-top: 16px; padding: 16px; border: 1px dashed var(--teal-sec); border-radius: 12px; background: rgba(0,0,0,0.2);" onclick="event.stopPropagation();">
-                                    <span style="font-size: 14px; margin-right: 12px; color: var(--beige); font-weight: bold;">Định dạng tải về:</span>
-                                    <button class="btn-sm" style="background:var(--teal-sec); color:white; border-color:var(--teal-sec); display:inline-flex; align-items:center; gap:4px;" onclick="taiFileWord('${d.id_dot}')">
-                                        <img src="assets/images/note.svg" width="14" height="14" style="filter: brightness(2);"> Word (.docx)
-                                    </button>
-                                    <button class="btn-sm btn-pdf" style="background:#dc2626; color:white; border-color:#dc2626; display:inline-flex; align-items:center; gap:4px;" onclick="taiFilePDF('${d.id_dot}', this)">
-                                        <img src="assets/images/note.svg" width="14" height="14" style="filter: brightness(2);"> PDF (.pdf)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>`;
-                    }); $('#canbo-dot-list').html(html);
+                    let html='<div class="dot-table"><div class="dot-table-head"><span>ĐỊA BÀN</span><span>HẠN KẾT THÚC</span><span>TRẠNG THÁI</span><span></span></div>';
+                    data.dots.forEach(d=>{
+                        const isOpen=d.trang_thai==='Open', status=isOpen?'open':'closed';
+                        const parts=(d.ten_dot||'').split(' - '), main=parts.slice(0,2).join(' - ')||d.ten_dot, sub=parts.slice(2).join(' - ');
+                        html+=`<div class="dot-row" data-status="${status}" data-search="${d.ten_dot}"><div class="dot-place"><b>${main}</b><small>${sub}</small></div><b class="dot-date">${toDisplayDMY(d.ngay_ket_thuc)}</b><span class="status-pill ${status}">${isOpen?'Đang mở':'Đã đóng'}</span><div class="dot-icon-actions"><button title="Xem Phiếu A" onclick="xemTruocDocx('${d.id_dot}');event.stopPropagation();"><img src="assets/images/preview.svg"></button><button title="Tải Phiếu A" onclick="$('#dl-${d.id_dot}').slideToggle();event.stopPropagation();"><img src="assets/images/download.svg"></button>${isOpen?`<button title="Đổi hạn" onclick="chinhSua('${d.id_dot}','${d.ngay_ket_thuc}');event.stopPropagation();"><img src="assets/images/edit.svg"></button><button class="danger" title="Kết thúc đợt" onclick="ketThuc('${d.id_dot}');event.stopPropagation();"><img src="assets/images/lock.svg"></button>`:''}</div><div id="dl-${d.id_dot}" class="dot-download-options" style="display:none"><button onclick="taiFileWord('${d.id_dot}')">Word (.docx)</button><button onclick="taiFilePDF('${d.id_dot}',this)">PDF (.pdf)</button></div></div>`;
+                    });
+                    $('#canbo-dot-list').html(html+'</div>'); applyDashboardFilters();
                 }
-            } catch(e) {}
+            } catch(e) { $('#canbo-dot-list').html("<p style='color:var(--beige);'>Không thể tải danh sách đợt.</p>"); }
         }
-        
+
         async function taoDot() {
             const payload = {
                 action: "create_dot", username: currentUser,
@@ -1282,7 +1302,7 @@ input[type="radio"],input[type="checkbox"]{-webkit-appearance:none!important;app
             document.getElementById('modal-title').innerText = "Đổi Ngày Kết Thúc";
             document.getElementById('modal-body').innerHTML = `
                 <div style="padding:20px;">
-                    <input type="date" id="new_end_date" value="${currentEnd}" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; font-family:'Be Vietnam Pro';">
+                    <input type="text" inputmode="numeric" maxlength="10" class="date-dmy" id="new_end_date" value="${toDisplayDMY(currentEnd)}" placeholder="dd/mm/yyyy" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; font-family:'Be Vietnam Pro';">
                     <button class="btn-dna btn-primary-dna" style="margin-top:16px; width:100%;" onclick="luuChinhSua('${idDot}')">Lưu Thay Đổi</button>
                 </div>
             `;
