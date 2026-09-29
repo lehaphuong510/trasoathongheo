@@ -65,11 +65,10 @@
         }
 
         /* ================= NAVIGATION BAR ================= */
-        /* Navbar mặc định bị ẩn, JS sẽ gọi nó lên khi rời trang Welcome */
         .navbar {
             display: none; justify-content: space-between; align-items: center;
             padding: 16px 5%; position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-            background: rgba(246, 241, 233, 0.95); /* Kính mờ sáng */
+            background: rgba(246, 241, 233, 0.95);
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -85,22 +84,19 @@
         }
 
         /* ================= LAYOUTS ================= */
-        /* Màn hình Welcome: 100vh tuyệt đối, thụt trái 15%, canh giữa dọc */
         .welcome-layout {
             height: 100vh; width: 100vw;
             display: flex; align-items: center;
             padding-left: 15vw; box-sizing: border-box;
-            overflow: hidden; /* Cắt bỏ hoàn toàn scroll */
+            overflow: hidden; 
         }
         .welcome-layout .hero-content { width: 100%; max-width: 550px; }
 
-        /* Màn hình form ngắn (Đăng nhập, Route): Canh giữa màn hình */
         .form-center-layout {
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             padding: 80px 5% 40px; box-sizing: border-box;
         }
 
-        /* Màn hình form dài (B1, C, Dashboard): Bắt đầu từ top để scroll */
         .form-top-layout {
             min-height: 100vh; padding: 100px 5% 60px; box-sizing: border-box;
         }
@@ -134,7 +130,7 @@
         .btn-teal-dna { background-color: var(--teal-sec); color: var(--ivory); }
         .btn-teal-dna:hover { background-color: #45626a; transform: translateY(-2px); }
 
-        /* ================= GLASSMORPHISM CARDS (DNA STYLE) ================= */
+        /* ================= GLASSMORPHISM CARDS ================= */
         .glass-card {
             background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border); border-radius: 16px;
@@ -147,7 +143,6 @@
         .glass-card h2 { font-size: 24px; margin-bottom: 24px; }
         .glass-card h3 { font-size: 20px; margin-bottom: 20px; font-weight: 600; }
 
-        /* Form Inputs */
         .form-group-dna { margin-bottom: 20px; }
         .glass-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--beige); }
         .glass-input, .select2-container--default .select2-selection--single {
@@ -160,7 +155,6 @@
         .glass-input:focus { border-color: var(--coral) !important; outline: none; background: rgba(255,255,255,0.1) !important; }
         .glass-input::placeholder { color: var(--blue-gray); }
 
-        /* Select2 override */
         .select2-container { width: 100% !important; }
         .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--ivory) !important; line-height: 48px !important; padding-left: 0 !important;}
         .select2-container--default .select2-selection--single .select2-selection__arrow { height: 48px !important; }
@@ -189,14 +183,12 @@
             width: 22px; height: 22px; margin-right: 16px; cursor: pointer; 
         }
 
-        /* Review box */
         .review-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid var(--coral); margin-bottom: 20px; }
         .review-checklist div { padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
         .review-checklist div:last-child { border-bottom: none; }
         .text-blink { animation: blink 1.2s infinite; color: var(--coral); font-weight: bold; margin-bottom: 15px;}
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* Dashboard Items */
         .dot-item { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 20px; margin-bottom: 16px; border-radius: 12px; transition: 0.2s; }
         .dot-item:hover { border-color: var(--teal-sec); background: rgba(255,255,255,0.08); }
         .dot-actions { margin-top: 16px; display: none; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.1); }
@@ -207,7 +199,6 @@
         .matrix-table th { background: rgba(255,255,255,0.1); font-weight: 600; color: var(--ivory); }
         .matrix-table td:first-child { text-align: left; font-weight: bold; color: var(--beige); }
 
-        /* Tabs Thành viên */
         .tab-member { display: inline-block; padding: 12px 20px; background: rgba(255,255,255,0.05); margin-right: 8px; margin-bottom: 8px; border-radius: 8px; font-weight: 600; transition: 0.2s; color: var(--blue-gray); cursor: pointer; border: 1px solid var(--glass-border); }
         .tab-member.active { background: var(--teal-sec); color: var(--ivory); border-color: var(--teal-sec); }
         .tab-member.error { background: rgba(223, 92, 80, 0.2); color: var(--coral); border: 1px solid var(--coral); } 
@@ -216,144 +207,11 @@
         .phieuc-question { margin-bottom:16px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:16px; transition: 0.3s; }
         .phieuc-question.error { border-left: 4px solid var(--coral); padding-left: 12px; background: rgba(223, 92, 80, 0.05); }
 
-        /* Modal ẩn triệt để */
         .modal { display: none !important; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
         .modal[style*="display: block"] { display: block !important; }
         .modal-content { background-color: var(--bg-main); margin: 5% auto; padding: 24px; border: 1px solid var(--teal-sec); width: 95%; max-width: 1000px; border-radius: 16px; max-height: 90vh; overflow-y: auto; color: var(--ivory); }
         #modal-body { width: 100%; background: white; color: black; min-height: 50vh; border-radius: 8px; overflow-x: hidden; position: relative; padding: 10px;}
     </style>
-<style>
-/* =============== UX/UI REDESIGN OVERRIDES — LOGIC UNCHANGED =============== */
-:root{
-  --nav-h:82px;
-  --page-x:clamp(20px,6vw,96px);
-  --content-w:1120px;
-  --focus:0 0 0 4px rgba(223,92,80,.2);
-}
-html{scroll-behavior:smooth;background:var(--bg-main)}
-body{min-height:100svh;font-family:'Be Vietnam Pro','Noto Sans',Arial,sans-serif;letter-spacing:-.01em}
-.screen:not(.active){display:none!important}
-button,input,select,textarea,.btn-dna,.glass-input,.select2-container{font-family:inherit!important}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box-shadow:var(--focus)}
-.screen{width:100%;isolation:isolate}
-.screen.active.welcome-layout,.screen.active.form-center-layout{display:flex!important}
-.screen.active.form-top-layout{display:block!important}
-.bg-common{background-attachment:scroll!important;background-size:cover;background-position:center center;position:relative}
-.bg-common:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(27,57,64,.2),rgba(27,57,64,.04) 62%,rgba(27,57,64,0))}
-
-/* Navbar */
-.navbar,.navbar[style*="display: block"]{height:var(--nav-h);padding:0 var(--page-x);display:none;flex-direction:row;gap:24px;background:rgba(246,241,233,.97);border-bottom:1px solid rgba(27,57,64,.09);box-shadow:none;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.navbar[style*="display: block"]{display:flex!important}
-.nav-logo{font-size:clamp(15px,1.3vw,21px);font-weight:800;text-transform:uppercase;letter-spacing:-.025em;white-space:nowrap}
-.nav-logo img{width:40px!important;height:40px!important;padding:0!important;background:transparent!important;filter:none!important;border-radius:10px!important}
-.nav-links{gap:clamp(20px,3vw,46px);align-items:center;font-size:clamp(14px,1.15vw,18px);font-weight:650}
-.nav-item{position:relative;color:#98a1a2;white-space:nowrap}
-.nav-item:after{content:"";position:absolute;left:0;right:100%;bottom:-10px;height:2px;background:var(--coral);transition:right .2s ease}
-.nav-item:hover:after,.nav-item.active:after{right:0}
-.nav-item.active{color:var(--bg-main)}
-
-/* Welcome */
-.welcome-layout{min-height:100svh;height:auto;padding:0 var(--page-x);align-items:center;overflow:hidden}
-.welcome-layout .hero-content{width:min(620px,47vw);max-width:none;margin-left:9.5vw;transform:translateY(-1vh)}
-.tagline{margin:0 0 26px;font-size:clamp(12px,1.25vw,18px);font-weight:700;letter-spacing:.24em;color:rgba(246,241,233,.66)}
-.hero-title{margin:0 0 38px;font-size:clamp(36px,3.35vw,56px);line-height:1.08;letter-spacing:-.045em}
-.hero-title span{margin-top:8px;font-size:clamp(28px,2.65vw,44px);line-height:1.14;letter-spacing:-.035em}
-.hero-desc{max-width:690px;margin:0 0 40px;font-size:clamp(15px,1.35vw,21px);line-height:1.48;color:rgba(246,241,233,.62)}
-.btn-group{gap:14px}
-.btn-dna{min-height:48px;height:auto;padding:13px 24px;border-radius:10px;font-weight:700;line-height:1.2;box-shadow:none}
-.btn-dna img{flex:0 0 auto}
-.btn-primary-dna{background:var(--coral);color:#fff}
-.btn-primary-dna:hover{background:#d65348;transform:translateY(-1px);box-shadow:0 8px 24px rgba(223,92,80,.2)}
-.btn-outline-dna{background:rgba(246,241,233,.045);border-color:rgba(246,241,233,.35)}
-.btn-outline-dna:hover{background:rgba(246,241,233,.1);border-color:rgba(246,241,233,.55)}
-
-/* Shared layouts */
-.form-center-layout{min-height:100svh;padding:calc(var(--nav-h) + 48px) var(--page-x) 56px;justify-content:flex-start;align-items:center}
-.form-top-layout{min-height:100svh;padding:calc(var(--nav-h) + 44px) var(--page-x) 64px}
-.glass-card{background:rgba(27,57,64,.82);border:1px solid rgba(246,241,233,.16);border-radius:18px;box-shadow:0 22px 64px rgba(8,24,29,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.glass-card-sm{max-width:580px}
-.glass-card-lg{max-width:980px}
-.glass-card h2{font-size:clamp(23px,2vw,30px);letter-spacing:-.035em}
-.glass-card h3{letter-spacing:-.025em}
-.form-group-dna{margin-bottom:18px}
-.glass-label{font-size:13px;font-weight:650;letter-spacing:.01em}
-.glass-input,.select2-container--default .select2-selection--single{height:50px!important;border-radius:10px!important;background:rgba(246,241,233,.075)!important;border-color:rgba(246,241,233,.22)!important}
-.glass-input:hover,.select2-container--default .select2-selection--single:hover{border-color:rgba(246,241,233,.4)!important}
-.glass-input:focus{box-shadow:var(--focus);border-color:var(--coral)!important}
-.grid-2{gap:18px}
-
-/* Staff login: match approved visual */
-#screen-canbo-auth{padding-left:18vw;padding-right:52vw;background-position:center}
-#screen-canbo-auth .glass-card{max-width:640px;padding:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none}
-#screen-canbo-auth .glass-card h2{margin-bottom:30px;color:rgba(246,241,233,.7);font-size:24px;text-transform:uppercase;letter-spacing:.12em}
-#screen-canbo-auth .glass-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-#screen-canbo-auth .glass-input{height:58px!important;background:rgba(246,241,233,.97)!important;color:var(--bg-main)!important;border:2px solid rgba(246,241,233,.45)!important;font-size:18px;padding:0 18px}
-#screen-canbo-auth .glass-input::placeholder{color:#9aa6a8}
-#screen-canbo-auth .btn-group{justify-content:flex-end;margin-top:26px!important}
-#screen-canbo-auth .btn-dna{min-width:190px;height:56px;font-size:16px}
-
-/* Citizen entry: focused declaration panel */
-#screen-nd-step1{padding-left:7vw;padding-right:48vw;background-position:center}
-#screen-nd-step1 .glass-card{max-width:640px;background:rgba(246,241,233,.96);border-color:rgba(246,241,233,.9);color:var(--bg-main);box-shadow:0 24px 70px rgba(8,24,29,.2)}
-#screen-nd-step1 .glass-card h2{color:var(--bg-main);font-size:26px;line-height:1.3}
-#screen-nd-step1 .glass-label{color:var(--teal-sec)}
-#screen-nd-step1 .glass-input,#screen-nd-step1 .select2-container--default .select2-selection--single{background:#fff!important;color:var(--bg-main)!important;border-color:rgba(27,57,64,.17)!important}
-#screen-nd-step1 .glass-input::placeholder{color:#8b989b}
-#screen-nd-step1 .select2-container--default .select2-selection--single .select2-selection__rendered{color:var(--bg-main)!important}
-.searchable-select{width:100%;height:50px;padding:0 14px;border:1px solid rgba(246,241,233,.22);border-radius:10px;background:rgba(246,241,233,.075);color:var(--ivory)}
-#screen-nd-step1 .searchable-select{background:#fff;color:var(--bg-main);border-color:rgba(27,57,64,.17)}
-
-/* Long flows: readable, stable content column */
-.form-top-layout>.glass-card{margin-inline:auto}
-#screen-canbo-dash>.glass-card{max-width:1060px}
-#screen-nd-routing{padding-left:9vw;padding-right:58vw}
-#screen-nd-routing .glass-card{max-width:620px}
-.b1-option-label{min-height:56px;padding:15px 18px;border-radius:11px;background:rgba(246,241,233,.045)}
-.b1-option-label:hover{border-color:rgba(246,241,233,.35);background:rgba(246,241,233,.07)}
-.review-box{line-height:1.65}
-.dot-item{padding:22px}
-.matrix-table{font-size:14px}
-.matrix-table th,.matrix-table td{padding:11px}
-
-/* Modal */
-.modal{backdrop-filter:blur(8px)}
-.modal-content{border-radius:18px;box-shadow:0 30px 90px rgba(0,0,0,.35)}
-
-/* Responsive */
-@media(max-width:1000px){
-  :root{--nav-h:76px}
-  .welcome-layout .hero-content{margin-left:2vw;width:min(570px,58vw)}
-  #screen-canbo-auth{padding-left:8vw;padding-right:47vw}
-  #screen-nd-step1,#screen-nd-routing{padding-left:5vw;padding-right:45vw}
-}
-@media(max-width:768px){
-  :root{--nav-h:116px;--page-x:20px}
-  .navbar,.navbar[style*="display: block"]{height:var(--nav-h);padding:12px 20px;flex-direction:column!important;justify-content:center;gap:9px}
-  .nav-logo{font-size:14px}.nav-logo img{width:30px!important;height:30px!important}.nav-links{width:100%;justify-content:center;gap:18px;font-size:12px}.nav-item:after{bottom:-5px}
-  .bg-common{background-position:bottom center}
-  .bg-common:before{background:linear-gradient(180deg,rgba(27,57,64,.08),rgba(27,57,64,.02) 55%,rgba(27,57,64,.08))}
-  .welcome-layout{align-items:flex-start;padding:10vh 22px 42vh;overflow:visible;background-position:bottom center}
-  .welcome-layout .hero-content{width:100%;margin:0;transform:none}
-  .tagline{margin-bottom:18px;font-size:11px}.hero-title{font-size:34px;margin-bottom:22px}.hero-title span{font-size:25px}.hero-desc{font-size:15px;margin-bottom:24px}.desktop-break{display:none}
-  .welcome-layout .btn-group{display:grid;grid-template-columns:1fr 1fr}.welcome-layout .btn-dna{padding:12px 13px;font-size:13px}
-  .form-center-layout,.form-top-layout{padding:calc(var(--nav-h) + 24px) 18px 44vh;align-items:flex-start}
-  #screen-canbo-auth,#screen-nd-step1,#screen-nd-routing{padding-left:18px;padding-right:18px}
-  #screen-canbo-auth .glass-card{max-width:none;padding:24px 0}
-  #screen-canbo-auth .glass-input{height:52px!important;font-size:16px}
-  #screen-canbo-auth .btn-group{display:grid;grid-template-columns:1fr 1fr}.btn-dna{min-height:46px;padding:12px 16px;font-size:14px}
-  #screen-nd-step1 .glass-card{padding:24px 18px;background:rgba(246,241,233,.95)}
-  #screen-nd-routing .glass-card{background:rgba(27,57,64,.9)}
-  .glass-card{padding:24px 18px;border-radius:15px}.glass-card h2{font-size:23px}.grid-2{grid-template-columns:1fr;gap:0}.form-top-layout{padding-bottom:40px}.form-top-layout>.glass-card{margin:0}
-  .matrix-table{min-width:720px}.btn-group{gap:10px}
-}
-@media(max-width:420px){
-  .welcome-layout{padding-top:8vh}.hero-title{font-size:30px}.hero-title span{font-size:23px}
-  .welcome-layout .btn-group,#screen-canbo-auth .btn-group{grid-template-columns:1fr}
-  .nav-links{gap:12px;font-size:11px}
-}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-
-</style>
 </head>
 <body>
 
@@ -636,7 +494,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <div id="phieuc-ho-container"></div>
             <br>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; flex-wrap: wrap; gap: 16px;">
-                <button class="btn-dna btn-outline-dna" onclick="switchMemberTab(numMembers-1)">← Quay lại Thành viên cuối</button>
+                <button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-phieuc-members', 'nav-citizen'); switchMemberTab(numMembers-1);">← Quay lại Thành viên cuối</button>
                 <button class="btn-dna btn-primary-dna" onclick="tinhToanLogicB2()">Hoàn tất & Chấm Điểm →</button>
             </div>
         </div>
@@ -674,7 +532,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
                 <div id="review-content-b2"></div>
                 <div class="grid-2" style="margin-top:24px; margin-bottom:0;">
                     <button class="btn-dna btn-outline-dna" onclick="xemTruocDocxB2()">
-                        <img src="assets/images/preview.svg" width="18" height="18"> Xem Phiếu B2
+                        <img src="assets/images/preview.svg" width="18" height="18" style="filter: invert(47%) sepia(50%) saturate(830%) hue-rotate(320deg) brightness(96%) contrast(92%);"> Xem Phiếu B2
                     </button>
                     <button class="btn-dna btn-primary-dna" onclick="$('#dl-b2-options').slideToggle();">
                         <img src="assets/images/download.svg" width="18" height="18" style="filter: brightness(2);"> Tải Phiếu B2 ▼
@@ -703,7 +561,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <div id="myModal" class="modal"><div class="modal-content"><h3 id="modal-title" style="border-bottom: 1px solid var(--glass-border); padding-bottom:16px;">Xem Trước</h3><div id="modal-body"></div><br><button class="btn-dna btn-outline-dna" style="width:100%;" onclick="document.getElementById('myModal').style.display='none'">ĐÓNG XEM TRƯỚC</button></div></div>
 
     <script>
-        // Hàm chuyển đổi màn hình và cập nhật Navbar (ẩn Navbar nếu ở trang Welcome)
         function switchScreenUI(screenId, navId) {
             $('.screen').removeClass('active'); 
             $('#' + screenId).addClass('active');
@@ -729,7 +586,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         function initSelect2() { $('.searchable-select').select2(); }
 
         window.onload = async () => {
-            // Mặc định ẩn navbar khi vừa load trang (ở màn hình welcome)
             $('.navbar').hide();
 
             try {
@@ -827,32 +683,37 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         function nextB1() { 
             if(!saveCurrentB1Answer()) return alert("Vui lòng chọn đáp án trước khi đi tiếp!"); 
             
-            // ================= REAL-TIME SECURITY CHECK (PHIẾU A vs CÂU B1 HIỆN TẠI) =================
+            // ================= REAL-TIME SECURITY CHECK =================
             let q = appConfig.phieu_b1[currentB1Index];
             let ma = q.ma;
             let ans = b1Answers[ma];
             let err = "";
 
-            if (ma === 'B1.5') {
-                if (finalData["9"] && ans !== 1) err = "Phiếu A khai hộ có 'Người làm việc theo Hợp đồng lao động', nhưng ở câu này anh/chị lại không chọn mức tương ứng.";
-            }
-            else if (ma === 'B1.8') {
-                if ((ans === 1 || ans === 2) && !finalData["7"]) err = "Anh/chị đang chọn diện tích >= 30m2, nhưng ở Phiếu A (Nhận diện nhanh) lại không xác nhận nhà có diện tích >= 25m2.";
-            }
-            else if (ma === 'B1.9') {
-                if (finalData["6"] && ans !== 2) err = "Phiếu A khai hộ 'Tiêu thụ điện >= 150kWh/tháng', nhưng ở câu này anh/chị không chọn mức 'Từ 150 kWh trở lên'.";
-            }
-            else if (ma === 'B1.12') {
-                let b1_12 = Array.isArray(ans) ? ans : [ans];
-                let hasXeTau = b1_12.some(x => [1,2,3,4].includes(x));
-                if (finalData["1"] && !hasXeTau) err = "Phiếu A khai có 'Xe máy/Tàu thuyền > 20 triệu', nhưng ở câu này anh/chị không đánh dấu loại hình tương ứng.";
-                if (finalData["2"] && !b1_12.some(x => [9,10,11].includes(x))) err = "Phiếu A khai có 'Điều hòa/Tủ lạnh', nhưng ở câu này không được đánh dấu.";
-                if (finalData["3"] && !b1_12.includes(13)) err = "Phiếu A khai có 'Bình tắm nóng', nhưng ở câu này không được đánh dấu.";
-                if (finalData["4"] && !b1_12.includes(12)) err = "Phiếu A khai có 'Máy giặt', nhưng ở câu này không được đánh dấu.";
-            }
-            else if (ma === 'B1.13') {
-                let b1_13_khong = Array.isArray(ans) ? ans.includes(9) : ans === 9;
-                if (!b1_13_khong && !finalData["5"]) err = "Anh/chị đang đánh dấu CÓ đất đai/nuôi trồng, nhưng ở Phiếu A lại chưa xác nhận mục 'Có đất đai/nhà xưởng...'.";
+            let isADone = ("1" in finalData); // Kiểm tra xem người dùng ĐÃ LÀM Phiếu A chưa
+
+            // CHỈ CROSS-CHECK NẾU ĐÃ LÀM PHIẾU A
+            if (isADone) {
+                if (ma === 'B1.5') {
+                    if (finalData["9"] && ans !== 1) err = "Phiếu A khai hộ có 'Người làm việc theo Hợp đồng lao động', nhưng ở câu này anh/chị lại không chọn mức tương ứng.";
+                }
+                else if (ma === 'B1.8') {
+                    if ((ans === 1 || ans === 2) && !finalData["7"]) err = "Anh/chị đang chọn diện tích >= 30m2, nhưng ở Phiếu A (Nhận diện nhanh) lại không xác nhận nhà có diện tích >= 25m2.";
+                }
+                else if (ma === 'B1.9') {
+                    if (finalData["6"] && ans !== 2) err = "Phiếu A khai hộ 'Tiêu thụ điện >= 150kWh/tháng', nhưng ở câu này anh/chị không chọn mức 'Từ 150 kWh trở lên'.";
+                }
+                else if (ma === 'B1.12') {
+                    let b1_12 = Array.isArray(ans) ? ans : [ans];
+                    let hasXeTau = b1_12.some(x => [1,2,3,4].includes(x));
+                    if (finalData["1"] && !hasXeTau) err = "Phiếu A khai có 'Xe máy/Tàu thuyền > 20 triệu', nhưng ở câu này anh/chị không đánh dấu loại hình tương ứng.";
+                    if (finalData["2"] && !b1_12.some(x => [9,10,11].includes(x))) err = "Phiếu A khai có 'Điều hòa/Tủ lạnh', nhưng ở câu này không được đánh dấu.";
+                    if (finalData["3"] && !b1_12.includes(13)) err = "Phiếu A khai có 'Bình tắm nóng', nhưng ở câu này không được đánh dấu.";
+                    if (finalData["4"] && !b1_12.includes(12)) err = "Phiếu A khai có 'Máy giặt', nhưng ở câu này không được đánh dấu.";
+                }
+                else if (ma === 'B1.13') {
+                    let b1_13_khong = Array.isArray(ans) ? ans.includes(9) : ans === 9;
+                    if (!b1_13_khong && !finalData["5"]) err = "Anh/chị đang đánh dấu CÓ đất đai/nuôi trồng, nhưng ở Phiếu A lại chưa xác nhận mục 'Có đất đai/nhà xưởng...'.";
+                }
             }
 
             if (err !== "") {
@@ -1114,15 +975,28 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             
             hoQ.forEach(q => {
                 if(q.ma==='CS_DH' || q.ma==='CS_MM') return; 
+                
+                if (q.ma === 'B2.82') return; 
+                if (q.ma === 'B2.81') {
+                    html += `<div style="margin-bottom:20px; border-bottom:1px dashed var(--glass-border); padding-bottom:20px;">
+                        <strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">${q.ma}. ${q.noidung}</strong>`;
+                    html += `<input type="number" id="ho_B2.81" class="glass-input" placeholder="Nhập diện tích (m2)..." style="margin-bottom: 12px;">`;
+                    html += `<label class="b1-option-label" style="margin-bottom:0;"><input type="checkbox" name="ho_B2.82" value="1"> ✅ Có, nhà tôi có gác xép</label>`;
+                    html += `</div>`;
+                    return;
+                }
+
                 html += `<div style="margin-bottom:20px; border-bottom:1px dashed var(--glass-border); padding-bottom:20px;"><strong style="color:var(--beige); font-size:18px; display:block; margin-bottom:12px;">${q.ma}. ${q.noidung}</strong>`;
                 if(q.options && q.options.length>0) {
                     if(q.options[0].text.includes('(fill)') && q.options.length===1) {
                         html += `<input type="text" id="ho_${q.ma}" class="glass-input">`;
                     } else {
                         q.options.forEach(opt => {
-                            let textL = opt.text.replace('(fill)', '').trim();
+                            let textL = opt.text.replace('(fill)', '').replace('(checkbox)', '').trim();
                             let isFillKhac = opt.text.includes('(fill)');
-                            let type = q.isMulti ? 'checkbox' : 'radio';
+                            let isForceCheck = opt.text.includes('(checkbox)') || q.options.length === 1;
+                            let type = (q.isMulti || isForceCheck) ? 'checkbox' : 'radio';
+                            
                             html += `<label class="b1-option-label"><input type="${type}" name="ho_${q.ma}" value="${opt.ma_lc}"> ${textL}</label>`;
                             if(isFillKhac) html += `<input type="text" id="txt_ho_${q.ma}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
                         });
@@ -1137,18 +1011,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
                 matrixDH.options.forEach(opt => {
                     let textL = opt.text.replace('(fill)', '').trim();
                     html += `<tr><td>${textL}</td>
-                    <td><input type="checkbox" name="ho_CS_DH" value="${opt.ma_lc}"></td>
-                    <td><input type="checkbox" name="ho_CS_MM" value="${opt.ma_lc}"></td></tr>`;
+                    <td><input type="checkbox" name="ho_CS_DH" value="${opt.ma_lc}" style="width:20px; height:20px; accent-color:var(--teal-sec);"></td>
+                    <td><input type="checkbox" name="ho_CS_MM" value="${opt.ma_lc}" style="width:20px; height:20px; accent-color:var(--teal-sec);"></td></tr>`;
                 });
                 html += `</table></div>`;
             }
             
             $('#phieuc-ho-container').html(html);
             
-            // AUTO FILL CHO CÁC MỤC HỘ GIA ĐÌNH TỪ PHIẾU B1
             if(b1Answers['B1.7']) { let ans = Array.isArray(b1Answers['B1.7']) ? b1Answers['B1.7'] : [b1Answers['B1.7']]; ans.forEach(a => $(`input[name="ho_B2.7"][value="${a}"]`).prop('checked', true)); }
             if(b1Answers['B1.11']) { let ans = Array.isArray(b1Answers['B1.11']) ? b1Answers['B1.11'] : [b1Answers['B1.11']]; ans.forEach(a => $(`input[name="ho_B2.11"][value="${a}"]`).prop('checked', true)); }
-            if(b1Answers['B1.10'] === 0) { $(`input[name="ho_B2.10"][value="1"]`).prop('checked', true); } // Nếu "Chỉ dùng nước máy" thì tự động tick "Nước máy"
+            if(b1Answers['B1.10'] === 0) { $(`input[name="ho_B2.10"][value="1"]`).prop('checked', true); } 
             
             $('input[type="radio"], input[type="checkbox"]').on('change', function() {
                 let name = $(this).attr('name'), isChk = $(this).is(':checked'), val = $(this).val();
@@ -1172,55 +1045,67 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             return val;
         }
 
-        // ================= SECURITY CHECK 2: SIÊU KIỂM TRA CHÉO TỔNG THỂ =================
         function crossCheckSecurity() {
             let errs = []; let N = numMembers;
             let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
             
-            // Cập nhật biến hoGiaDinh_Data tạm thời để tính toán
             hoQ.forEach(q => {
                 if(q.options && q.options.length>1) {
                     let sel = $(`input[name="ho_${q.ma}"]:checked`);
                     if(q.isMulti) { hoGiaDinh_Data[q.ma] = []; sel.each(function(){ hoGiaDinh_Data[q.ma].push($(this).val()); }); }
                     else hoGiaDinh_Data[q.ma] = sel.val();
-                } else if(q.options && q.options.length===1 && q.options[0].text.includes('(fill)')){
-                    hoGiaDinh_Data[q.ma] = $(`#ho_${q.ma}`).val();
+                } else if(q.options && q.options.length===1){
+                    if(q.options[0].text.includes('(fill)')) {
+                        hoGiaDinh_Data[q.ma] = $(`#ho_${q.ma}`).val();
+                    } else {
+                        let sel = $(`input[name="ho_${q.ma}"]:checked`);
+                        hoGiaDinh_Data[q.ma] = sel.length > 0 ? [sel.val()] : [];
+                    }
+                } else if(q.ma === 'B2.81') {
+                    hoGiaDinh_Data['B2.81'] = document.getElementById('ho_B2.81').value;
+                } else if (q.ma === 'B2.82') {
+                    let sel = $(`input[name="ho_B2.82"]:checked`);
+                    hoGiaDinh_Data['B2.82'] = sel.length > 0 ? ["1"] : []; 
                 }
             });
 
-            let b1_10 = b1Answers['B1.10'];
-            let b2_10_ans = hoGiaDinh_Data['B2.10'] || [];
-            if (b1_10 === 1 && b2_10_ans.length === 1 && b2_10_ans.includes('1')) errs.push("Chưa có sự nhất quán: Ở Phiếu B1 (Câu B1.10) anh/chị xác nhận Không dùng nước máy, nhưng tại Phiếu C lại chỉ đánh dấu 'Nước máy'.");
+            let isB1Done = Object.keys(b1Answers).length > 0;
 
-            let b1_3 = b1Answers['B1.3']; // 0: Không người, 1: 1 người, 2: Không đúng (>=2)
-            let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 16) || (p.C16 && p.C16.length > 0); }).length;
-            if (b1_3 === 0 && phuThuocCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai 0 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
-            if (b1_3 === 1 && phuThuocCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
-            if (b1_3 === 2 && phuThuocCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người phụ thuộc, nhưng danh sách chi tiết chỉ có ${phuThuocCount} người.`);
+            if (isB1Done) {
+                let b1_10 = b1Answers['B1.10'];
+                let b2_10_ans = hoGiaDinh_Data['B2.10'] || [];
+                if (b1_10 === 1 && b2_10_ans.length === 1 && b2_10_ans.includes('1')) errs.push("Chưa có sự nhất quán: Ở Phiếu B1 (Câu B1.10) anh/chị xác nhận Không dùng nước máy, nhưng tại Phiếu C lại chỉ đánh dấu 'Nước máy'.");
 
-            let b1_5 = b1Answers['B1.5']; // 0: CC, 1: HĐLĐ, 2: Thuê, 3: Không
-            let hasCC = phieuC_Data.some(p => p.C18 === '1');
-            let hasHDLD = phieuC_Data.some(p => p.C19 === '1');
-            let hasThue = phieuC_Data.some(p => p.C18 === '3');
-            if (b1_5 === 0 && !hasCC) errs.push("Mâu thuẫn: Phiếu B1 khai có Công chức/Viên chức nhưng không có thành viên nào mang Loại việc làm này.");
-            if (b1_5 === 1 && !hasHDLD) errs.push("Mâu thuẫn: Phiếu B1 khai có Hợp đồng lao động nhưng không có thành viên nào ghi nhận HĐLĐ.");
-            if (b1_5 === 2 && !hasThue) errs.push("Mâu thuẫn: Phiếu B1 khai Làm thuê cho hộ gia đình nhưng không thành viên nào ghi nhận Loại việc làm này.");
-            if (b1_5 === 3 && (hasCC || hasHDLD || hasThue)) errs.push("Mâu thuẫn: Phiếu B1 khai Không có ai làm phi nông nghiệp nhưng chi tiết lại có thành viên đi làm.");
+                let b1_3 = b1Answers['B1.3'];
+                let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 16) || (p.C16 && p.C16.length > 0); }).length;
+                if (b1_3 === 0 && phuThuocCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai 0 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
+                if (b1_3 === 1 && phuThuocCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
+                if (b1_3 === 2 && phuThuocCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người phụ thuộc, nhưng danh sách chi tiết chỉ có ${phuThuocCount} người.`);
 
-            let b1_6 = b1Answers['B1.6']; // 0: 1 người, 1: >=2, 2: Không ai
-            let tcCount = phieuC_Data.filter(p => p.C20 && p.C20.length > 0).length;
-            if (b1_6 === 2 && tcCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai không ai hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
-            if (b1_6 === 0 && tcCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
-            if (b1_6 === 1 && tcCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+                let b1_5 = b1Answers['B1.5'];
+                let hasCC = phieuC_Data.some(p => p.C18 === '1');
+                let hasHDLD = phieuC_Data.some(p => p.C19 === '1');
+                let hasThue = phieuC_Data.some(p => p.C18 === '3');
+                if (b1_5 === 0 && !hasCC) errs.push("Mâu thuẫn: Phiếu B1 khai có Công chức/Viên chức nhưng không có thành viên nào mang Loại việc làm này.");
+                if (b1_5 === 1 && !hasHDLD) errs.push("Mâu thuẫn: Phiếu B1 khai có Hợp đồng lao động nhưng không có thành viên nào ghi nhận HĐLĐ.");
+                if (b1_5 === 2 && !hasThue) errs.push("Mâu thuẫn: Phiếu B1 khai Làm thuê cho hộ gia đình nhưng không thành viên nào ghi nhận Loại việc làm này.");
+                if (b1_5 === 3 && (hasCC || hasHDLD || hasThue)) errs.push("Mâu thuẫn: Phiếu B1 khai Không có ai làm phi nông nghiệp nhưng chi tiết lại có thành viên đi làm.");
 
-            let b1_4 = b1Answers['B1.4']; // 0: ĐH, 1: TC, 2: SC, 3: Không
-            let maxC13 = Math.max(...phieuC_Data.map(p => parseInt(p.C13) || 1));
-            let matchBangCap = false;
-            if (b1_4 === 0 && maxC13 >= 4) matchBangCap = true;
-            else if (b1_4 === 1 && maxC13 === 3) matchBangCap = true;
-            else if (b1_4 === 2 && maxC13 === 2) matchBangCap = true;
-            else if (b1_4 === 3 && maxC13 === 1) matchBangCap = true;
-            if (!matchBangCap) errs.push("Mâu thuẫn: Bằng cấp cao nhất khai ở Phiếu B1 không khớp với dữ liệu Trình độ đào tạo ở Phiếu C.");
+                let b1_6 = b1Answers['B1.6'];
+                let tcCount = phieuC_Data.filter(p => p.C20 && p.C20.length > 0).length;
+                if (b1_6 === 2 && tcCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai không ai hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+                if (b1_6 === 0 && tcCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+                if (b1_6 === 1 && tcCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
+
+                let b1_4 = b1Answers['B1.4'];
+                let maxC13 = Math.max(...phieuC_Data.map(p => parseInt(p.C13) || 1));
+                let matchBangCap = false;
+                if (b1_4 === 0 && maxC13 >= 4) matchBangCap = true;
+                else if (b1_4 === 1 && maxC13 === 3) matchBangCap = true;
+                else if (b1_4 === 2 && maxC13 === 2) matchBangCap = true;
+                else if (b1_4 === 3 && maxC13 === 1) matchBangCap = true;
+                if (b1_4 !== undefined && !matchBangCap) errs.push("Mâu thuẫn: Bằng cấp cao nhất khai ở Phiếu B1 không khớp với dữ liệu Trình độ đào tạo ở Phiếu C.");
+            }
 
             let namHienTai = new Date().getFullYear(); 
             let nguoiLaoDongCount = 0;
@@ -1275,9 +1160,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             let dtNha = parseFloat(hoGiaDinh_Data['B2.81'] || 0);
             let coGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
             let dtBinhQuan = (dtNha * (coGac ? 1.5 : 1)) / N;
-            if (dtBinhQuan < 8) {
-                if (b1Answers['B1.8'] !== 3) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng B1.8 lại khai >= 20m2.");
-                if (finalData["7"]) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng Phiếu A lại đánh dấu diện tích >= 25m2.");
+            let isADone = ("1" in finalData); // Kiểm tra xem ĐÃ LÀM Phiếu A chưa
+            if (dtBinhQuan > 0 && dtBinhQuan < 8) {
+                if (isB1Done && b1Answers['B1.8'] !== 3) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng B1.8 lại khai >= 20m2.");
+                if (isADone && finalData["7"]) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng Phiếu A lại đánh dấu diện tích >= 25m2.");
             }
 
             if (errs.length > 0) {
