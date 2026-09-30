@@ -7,14 +7,15 @@
 <title>Hệ Thống Rà Soát Hộ Nghèo</title>
 <!-- Font Be Vietnam Pro -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://api-khao-sat.lehaphuong510.workers.dev" rel="preconnect" crossorigin/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <!-- Các thư viện JS -->
-<script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.11/build/docxtemplater.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-<script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
-<script src="https://unpkg.com/docx-preview/dist/docx-preview.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.11/build/docxtemplater.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script defer src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+<script defer src="https://unpkg.com/docx-preview/dist/docx-preview.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -244,7 +245,52 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
 .dash-tools{display:flex;align-items:center;gap:12px}.filter-pills{display:flex;gap:6px}.filter-pills button{border:0;color:var(--ivory);font-size:11px;padding:7px 10px;border-radius:7px;background:rgba(246,241,233,.06)}.filter-pills button.active{background:var(--ivory);color:var(--bg-main)}.dash-search{height:38px;width:230px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(27,57,64,.22);padding:0 12px}.dot-table{border:1px solid var(--glass-border);border-radius:11px;overflow:hidden;margin-top:14px}.dot-table-head,.dot-row{display:grid;grid-template-columns:minmax(280px,1.8fr) 160px 130px 190px;align-items:center;gap:12px}.dot-table-head{min-height:42px;padding:0 14px;background:rgba(246,241,233,.06);color:var(--blue-gray);font-size:10px;font-weight:600}.dot-row{position:relative;min-height:68px;padding:10px 14px;border-top:1px solid rgba(246,241,233,.1)}.dot-place b{display:block;font-size:13px;font-weight:600}.dot-place small{display:block;color:var(--blue-gray);font-size:10px;margin-top:4px}.dot-date{font-size:12px}.status-pill{justify-self:start;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:600}.status-pill.open{background:rgba(35,162,125,.16);color:#72d2ab}.status-pill.closed{background:rgba(223,92,80,.13);color:#ef847a}.dot-icon-actions{display:flex;justify-content:flex-end;gap:7px}.dot-icon-actions button{width:34px;height:34px;padding:0;border-radius:8px;border:1px solid var(--glass-border);background:rgba(246,241,233,.03);display:grid;place-items:center}.dot-icon-actions button:hover{background:rgba(86,119,129,.5)}.dot-icon-actions button.danger{border-color:rgba(223,92,80,.45)}.dot-icon-actions img{width:18px;height:18px}.dot-download-options{grid-column:1/-1;padding:10px;border-top:1px dashed var(--glass-border)}.dot-download-options button{margin-right:7px;padding:8px 12px;border-radius:7px;border:1px solid var(--glass-border);background:transparent;color:var(--ivory)}
 @media(max-width:900px){:root{--nav-h:96px}.navbar,.navbar[style*="display: block"]{height:var(--nav-h)!important;padding:10px 18px!important;justify-content:center!important}.nav-links{margin-left:0!important;gap:18px!important}.hero-title span{font-size:clamp(12px,4.2vw,22px)!important}.dot-table{overflow-x:auto}.dot-table-head,.dot-row{min-width:800px}.dash-tools{align-items:flex-end;flex-direction:column}.dash-search{width:100%}}
 </style>
-<style>.form-badge,.a-score-number,.final-summary .big{font-weight:800!important}.glass-label{font-weight:600!important}</style></head>
+<style>.form-badge,.a-score-number,.final-summary .big{font-weight:800!important}.glass-label{font-weight:600!important}</style>
+<style id="v3-ui-fixes">
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+/* Use each supplied TTF as an independent family; never synthesize heavier faces. */
+@font-face{font-family:'BVP Light';src:url('assets/fonts/BeVietnamPro-Light.ttf') format('truetype');font-style:normal;font-weight:normal;font-display:swap}
+@font-face{font-family:'BVP Medium';src:url('assets/fonts/BeVietnamPro-Medium.ttf') format('truetype');font-style:normal;font-weight:normal;font-display:swap}
+@font-face{font-family:'BVP SemiBold';src:url('assets/fonts/BeVietnamPro-SemiBold.ttf') format('truetype');font-style:normal;font-weight:normal;font-display:swap}
+@font-face{font-family:'BVP ExtraBold';src:url('assets/fonts/BeVietnamPro-ExtraBold.ttf') format('truetype');font-style:normal;font-weight:normal;font-display:swap}
+html,body{font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif;font-weight:normal;font-synthesis:none}
+body,p,label,small,input,select,textarea,.glass-input,.select2-selection,.select2-selection__rendered,.dash-search,.criterion,.criterion span,.b1-answer p,.b2-line{font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important;font-synthesis:none}
+h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'BVP ExtraBold','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,button,.dot-place b,.status-pill{font-family:'BVP SemiBold','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+.question-body h1,.c-question-panel h1,.b1-option-label>span,.route-card p{font-family:'BVP Medium','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+.nav-logo{font-family:'BVP ExtraBold','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+/* Full artwork at normal zoom; use the dedicated 9:16 files on phones. */
+.bg-common{background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+@media(max-width:768px){
+ .bg-welcome{background-image:url('assets/images/welcome-mobile-9x16.webp')!important}
+ .bg-staff{background-image:url('assets/images/staff-mobile-9x16.webp')!important}
+ .bg-citizen{background-image:url('assets/images/citizen-mobile-9x16.webp')!important}
+ .bg-common{background-size:100% 100%!important;background-position:center!important}
+}
+/* Compact dashboard hierarchy. */
+.dash-grid{grid-template-columns:minmax(330px,370px) minmax(0,1fr)!important;align-items:start}
+.dash-create,.dash-list{padding:20px!important}.dash-create .form-group-dna{margin-bottom:12px!important}
+.dash-create .glass-input,.dash-create .select2-selection--single{height:46px!important}.dash-create textarea{height:72px!important}
+.dash-create h2,.dash-list h2{font-size:20px!important}.dash-list{font-size:14px}.dot-place b{font-size:13px!important}
+/* Equal route cards at rest; coral appears only on hover/focus. */
+.route-card,.route-card.active{border-color:var(--glass-border)!important;background:rgba(86,119,129,.14)!important}
+.route-card span,.route-card.active span{background:transparent!important;border-color:var(--glass-border)!important}
+.route-card:hover,.route-card:focus-visible{border-color:var(--coral)!important;background:linear-gradient(145deg,rgba(223,92,80,.16),rgba(86,119,129,.15))!important;transform:translateY(-2px)}
+.route-card:hover span,.route-card:focus-visible span{background:var(--coral)!important;border-color:var(--coral)!important}
+/* Restore one consistent hover/checked system for every answer card. */
+.numbered-options .b1-option-label,.c-question-panel .b1-option-label,#phieuc-ho-container .b1-option-label{transition:border-color .18s ease,background-color .18s ease,transform .18s ease!important}
+.numbered-options .b1-option-label:hover,.c-question-panel .b1-option-label:hover,#phieuc-ho-container .b1-option-label:hover{border-color:rgba(223,92,80,.75)!important;background:rgba(223,92,80,.075)!important}
+.c-question-panel .b1-option-label:has(input:checked),#phieuc-ho-container .b1-option-label:has(input:checked){border-color:var(--coral)!important;background:rgba(223,92,80,.10)!important}
+.numbered-options .b1-option-label>span,.c-question-panel .b1-option-label>span,#phieuc-ho-container .b1-option-label>span{font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+/* Criteria cards hug their content instead of stretching to the tallest column. */
+.criteria-grid{align-items:start!important}.criteria-group{align-self:start!important;height:fit-content!important;min-height:0!important}
+.criterion{min-height:0!important;padding:10px 11px!important;line-height:1.42!important;align-items:flex-start!important}
+.criteria-group>.panel-title>b{font-family:'BVP SemiBold','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+.criteria-group>.panel-title>small{font-family:'BVP SemiBold','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
+@media(max-width:900px){.dash-grid{grid-template-columns:1fr!important}.route-card{min-height:0!important}.criteria-grid{grid-template-columns:1fr!important}}
+</style>
+</head>
 <body>
 <!-- ================= NAVBAR ================= -->
 <nav class="navbar" id="main-navbar">
@@ -306,7 +352,7 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
 <div class="dash-grid">
 <section class="dash-create glass-panel"><h2>Tạo đợt rà soát</h2>
 <div id="form-tao-dot">
-<div class="grid-2"><div class="form-group-dna"><label class="glass-label">Tỉnh/Thành</label><select class="searchable-select" id="cb_tinh"><option value="">-- Chọn --</option></select></div><div class="form-group-dna"><label class="glass-label">Phường/Xã</label><select class="searchable-select" id="cb_phuong"><option value="">-- Chọn --</option></select></div></div>
+<div class="form-group-dna"><label class="glass-label">Tỉnh/Thành</label><select class="searchable-select" id="cb_tinh"><option value="">-- Chọn --</option></select></div><div class="form-group-dna"><label class="glass-label">Phường/Xã</label><select class="searchable-select" id="cb_phuong"><option value="">-- Chọn Phường/Xã --</option></select></div>
 <div class="form-group-dna"><label class="glass-label">Thôn/Tổ</label><input class="glass-input" id="cb_thon" placeholder="Nhập thôn hoặc tổ dân phố" type="text"/></div>
 <div class="grid-2"><div class="form-group-dna"><label class="glass-label">Ngày bắt đầu</label><input class="glass-input date-dmy" id="cb_start" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy"/></div><div class="form-group-dna"><label class="glass-label">Ngày kết thúc</label><input class="glass-input date-dmy" id="cb_end" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy"/></div></div>
 <div class="form-group-dna"><label class="glass-label">Điều kiện bổ sung của địa phương</label><textarea class="glass-input" id="cb_dieukien_bosung" placeholder="Ghi rõ điều kiện cụ thể..."></textarea></div>
@@ -357,7 +403,7 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
 <div class="screen bg-citizen bg-common form-center-layout" id="screen-nd-routing">
 <div class="route-shell"><div class="route-intro"><div class="kicker">LỰA CHỌN QUY TRÌNH</div><h1>Anh/Chị muốn thực hiện nội dung nào?</h1><p>Mỗi quy trình có thể được thực hiện độc lập theo nhu cầu khai báo.</p></div>
 <div class="route-cards">
-<button class="route-card active" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')"><div class="route-icon"><img src="assets/images/form-check.svg"/></div><small>PHIẾU A · NHẬN DIỆN</small><h2>Nhận diện nhanh</h2><p>Kiểm tra nhanh các điều kiện ban đầu của hộ gia đình.</p><span>Bắt đầu Phiếu A →</span></button>
+<button class="route-card" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')"><div class="route-icon"><img src="assets/images/form-check.svg"/></div><small>PHIẾU A · NHẬN DIỆN</small><h2>Nhận diện nhanh</h2><p>Kiểm tra nhanh các điều kiện ban đầu của hộ gia đình.</p><span>Bắt đầu Phiếu A →</span></button>
 <button class="route-card" onclick="startPhieuB1()"><div class="route-icon"><img src="assets/images/location.svg"/></div><small>PHIẾU B1 · ĐIỂM VÙNG</small><h2>Đánh giá theo địa bàn</h2><p>Xác định điểm vùng và nhóm điều kiện theo nơi cư trú.</p><span>Thực hiện Phiếu B1 →</span></button>
 <button class="route-card" onclick="switchScreenUI('screen-nd-phieuc-init', 'nav-citizen')"><div class="route-icon"><img src="assets/images/family.svg"/></div><small>PHIẾU B2 &amp; C · NHÓM HỘ</small><h2>Thông tin chi tiết hộ</h2><p>Khai báo thành viên, điều kiện sống và mức độ thiếu hụt.</p><span>Thực hiện Phiếu B2 &amp; C →</span></button>
 </div><button class="route-back" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">✎ Quay lại sửa thông tin cá nhân</button></div></div>
@@ -425,12 +471,12 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
         $(document).on('input','.date-dmy',function(){this.value=formatDateDMYInput(this.value);});
         $(document).on('blur','.date-dmy',function(){if(this.value && !/^\d{2}\/\d{2}\/\d{4}$/.test(this.value)) this.setCustomValidity('Vui lòng nhập ngày theo định dạng dd/mm/yyyy'); else this.setCustomValidity('');});
 
-        window.onload = async () => {
+        async function initApp() {
             $('.navbar').hide();
-
-            try {
-                const resConfig = await fetch(`${WORKER_URL}/api/config`);
-                if (resConfig.ok) {
+            const configTask = (async () => {
+                try {
+                    const resConfig = await fetch(`${WORKER_URL}/api/config`);
+                    if (!resConfig.ok) return;
                     appConfig = await resConfig.json();
                     Object.keys(appConfig.diachinh || {}).forEach(t => { $('#cb_tinh').append(new Option(t,t)); $('#nd_tinh').append(new Option(t,t)); });
                     if (appConfig.madantoc) appConfig.madantoc.forEach(dt => $('#nd_dantoc').append(new Option(dt.ten, dt.ma)));
@@ -443,19 +489,33 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
                             appConfig.cauhoi.B2.lua_chon.forEach(lc => $('#list-b2').append(`<label class="b1-option-label"><input type="checkbox" class="cb-b2"><span>${lc}</span></label>`));
                         }
                     }
-                }
-            } catch (e) {}
-            try {
-                const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
-                const dotData = await resDots.json();
-                if(dotData.status === "success") activeCampaigns = dotData.dots;
-            } catch (e) {}
+                } catch (e) { console.warn('Không tải được cấu hình:', e); }
+            })();
+            const campaignsTask = refreshActiveCampaigns();
             initSelect2();
             $('#cb_tinh').on('change', loadCbPhuong); $('#nd_tinh').on('change', loadNdPhuong); $('#nd_phuong').on('change', loadNdThon);
             $('#nd_thon').on('change', function() { $(this).val() === 'Khác' ? $('#nd_thon_khac').slideDown() : $('#nd_thon_khac').slideUp(); });
-        };
+            await Promise.allSettled([configTask, campaignsTask]);
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp, { once: true });
+        else initApp();
 
-        function startNguoiDan() { switchScreenUI('screen-nd-step1', 'nav-citizen'); loadNdThon(); }
+        async function refreshActiveCampaigns() {
+            try {
+                const resDots = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "get_active_dots" }) });
+                const dotData = await resDots.json();
+                if (dotData.status === "success") {
+                    activeCampaigns = Array.isArray(dotData.dots) ? dotData.dots : [];
+                    return true;
+                }
+            } catch (e) { console.warn('Không tải được danh sách đợt:', e); }
+            return false;
+        }
+        async function startNguoiDan() {
+            switchScreenUI('screen-nd-step1', 'nav-citizen');
+            await refreshActiveCampaigns();
+            loadNdThon();
+        }
         function loadCbPhuong() { let t = $('#cb_tinh').val(); $('#cb_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#cb_phuong').append(new Option(p,p))); }
         function loadNdPhuong() { let t = $('#nd_tinh').val(); $('#nd_phuong').empty().append('<option value="">-- Chọn Phường/Xã --</option>'); if(t && appConfig.diachinh[t]) appConfig.diachinh[t].forEach(p => $('#nd_phuong').append(new Option(p,p))); loadNdThon(); }
         function loadNdThon() { let t = $('#nd_tinh').val(), p = $('#nd_phuong').val(); $('#nd_thon').empty().append('<option value="">-- Chọn Thôn/Tổ --</option>'); activeCampaigns.filter(d => d.tinh===t && d.phuong===p).forEach(d => $('#nd_thon').append(new Option(d.thon, d.id_dot))); $('#nd_thon').append(new Option("Khác", "Khác")); }
@@ -1206,7 +1266,7 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
             if(!u || !p) return alert("❌ Nhập đủ Tên đăng nhập và Mật khẩu!");
             if(u.includes(" ")) return alert("❌ Tên đăng nhập không được chứa khoảng trắng!");
             
-            let ogText = btn.innerText; btn.innerText = "⏳..."; btn.disabled = true;
+            let ogText = btn.innerText; btn.innerText = action === "login" ? "ĐANG XÁC THỰC..." : "ĐANG TẠO..."; btn.disabled = true;
             try {
                 const res = await fetch(WORKER_URL, { 
                     method: 'POST', 
@@ -1243,7 +1303,7 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
                     let html='<div class="dot-table"><div class="dot-table-head"><span>ĐỊA BÀN</span><span>HẠN KẾT THÚC</span><span>TRẠNG THÁI</span><span></span></div>';
                     data.dots.forEach(d=>{
                         const isOpen=d.trang_thai==='Open', status=isOpen?'open':'closed';
-                        const parts=(d.ten_dot||'').split(' - '), main=parts.slice(0,2).join(' - ')||d.ten_dot, sub=parts.slice(2).join(' - ');
+                        const parts=(d.ten_dot||'').split(' - '), rawThon=String(d.thon||parts[0]||'').replace(/^(Thôn|Tổ\s*(dân phố|DP))\s+/i,'').trim(), rawWard=String(d.phuong||parts[1]||'').trim(), isPhuong=/^Phường\b/i.test(rawWard), wardLabel=/^(Phường|Xã)\b/i.test(rawWard)?rawWard:`${isPhuong?'Phường':'Xã'} ${rawWard}`.trim(), main=`${isPhuong?'Tổ DP':'Thôn'} ${rawThon}${wardLabel?' - '+wardLabel:''}`, sub=d.tinh||parts.slice(2).join(' - ');
                         html+=`<div class="dot-row" data-status="${status}" data-search="${d.ten_dot}"><div class="dot-place"><b>${main}</b><small>${sub}</small></div><b class="dot-date">${toDisplayDMY(d.ngay_ket_thuc)}</b><span class="status-pill ${status}">${isOpen?'Đang mở':'Đã đóng'}</span><div class="dot-icon-actions"><button title="Xem Phiếu A" onclick="xemTruocDocx('${d.id_dot}');event.stopPropagation();"><img src="assets/images/preview.svg"></button><button title="Tải Phiếu A" onclick="$('#dl-${d.id_dot}').slideToggle();event.stopPropagation();"><img src="assets/images/download.svg"></button>${isOpen?`<button title="Đổi hạn" onclick="chinhSua('${d.id_dot}','${d.ngay_ket_thuc}');event.stopPropagation();"><img src="assets/images/edit.svg"></button><button class="danger" title="Kết thúc đợt" onclick="ketThuc('${d.id_dot}');event.stopPropagation();"><img src="assets/images/lock.svg"></button>`:''}</div><div id="dl-${d.id_dot}" class="dot-download-options" style="display:none"><button onclick="taiFileWord('${d.id_dot}')">Word (.docx)</button><button onclick="taiFilePDF('${d.id_dot}',this)">PDF (.pdf)</button></div></div>`;
                     });
                     $('#canbo-dot-list').html(html+'</div>'); applyDashboardFilters();
@@ -1262,8 +1322,13 @@ h1,.hero-title,.dash-head h1,.result-heading h1{font-family:'Be Vietnam Pro Loca
                 dieukien_bosung: document.getElementById('cb_dieukien_bosung').value
             };
             if(!payload.tinh || !payload.thon) return alert("Vui lòng điền đủ địa bàn!");
-            await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
-            alert("✅ Đã tạo đợt rà soát thành công!");
+            const createRes = await fetch(WORKER_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const createData = await createRes.json();
+            if (createData.status !== "success") return alert("❌ Không thể tạo đợt: " + (createData.message || "Lỗi không xác định"));
+            const freshDot = createData.dot || { id_dot:createData.id_dot, tinh:payload.tinh, phuong:payload.phuong, thon:payload.thon, dieukien_bosung:payload.dieukien_bosung || "" };
+            activeCampaigns = activeCampaigns.filter(d => d.id_dot !== freshDot.id_dot);
+            activeCampaigns.push(freshDot);
+            alert("✅ Đã tạo đợt rà soát thành công! Người dân có thể chọn Thôn/Tổ ngay, không cần refresh.");
             
             $('#cb_tinh').val(null).trigger('change');
             $('#cb_phuong').val(null).trigger('change');
