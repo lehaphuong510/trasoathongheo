@@ -343,6 +343,11 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 .criterion{min-height:52px!important;align-items:center!important}
 .criterion .state{align-self:center!important}
 </style>
+
+<style id="v10-sheet-linebreaks">
+/* Preserve line breaks authored inside the Sheet note cell. */
+#b1-ghichu-content{white-space:pre-line;line-height:1.55;margin-top:10px;color:var(--ivory)}
+</style>
 </head>
 <body>
 <!-- ================= NAVBAR ================= -->
@@ -473,7 +478,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 <div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-step3"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">A</div><div><small>BIỂU MẪU</small><h2>Phiếu A</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars"><i class="on"></i><i class="on"></i></div></div><div class="question-count"><small>PHẦN</small><b>02 / 02</b></div></section><section class="question-body glass-panel"><div class="kicker">PHẦN 02 · TIÊU CHÍ NHẬN DẠNG</div><h1 id="title-b2"></h1><p class="question-help">Có thể chọn nhiều đáp án phù hợp với tình trạng của hộ.</p><div class="numbered-options" id="list-b2"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">← Quay lại</button><button class="btn-dna btn-teal-dna" onclick="checkB2()">Hoàn tất →</button></div></section></div></div>
 <div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-review"><div class="result-page result-a"><div class="result-heading"><div><div class="kicker">KẾT QUẢ NHẬN DIỆN NHANH</div><h1>Phiếu A · Xác nhận kết quả</h1></div></div><div id="review-content"></div><div class="result-bottom"><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-step1', 'nav-citizen')">✎ Sửa khai báo</button><button class="btn-dna btn-outline-dna" onclick="switchScreenUI('screen-nd-routing', 'nav-citizen')">← Quay lại màn hình chọn phiếu</button></div></div></div>
 <!-- PHIẾU B1 -->
-<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-b1"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">B1</div><div><small>BIỂU MẪU</small><h2>Phiếu B1</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars many" id="b1-progress-bars"></div></div><div class="question-count"><small>CÂU HỎI</small><b id="b1-progress-count">01 / 14</b><span hidden="" id="b1-progress"></span></div></section><section class="question-body glass-panel"><div class="kicker" id="b1-question-meta">CÂU HỎI</div><h1 id="b1-question-text"></h1><p class="question-help">Chọn một phương án phù hợp nhất với tình trạng hiện tại của hộ gia đình.</p><div id="b1-ghichu-container" style="display:none"><details><summary>? Bấm xem chi tiết/danh sách</summary><div id="b1-ghichu-content"></div></details></div><div class="numbered-options" id="b1-options"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="prevB1()">← Quay lại câu trước</button><button class="question-warning" onclick="switchScreenUI('screen-nd-step2', 'nav-citizen')">⚠ Phát hiện sai sót? Quay lại sửa Phiếu A</button><button class="btn-dna btn-teal-dna" onclick="nextB1()">Tiếp tục →</button></div></section></div></div>
+<div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-b1"><div class="question-shell"><section class="question-progress glass-panel"><div class="form-badge">B1</div><div><small>BIỂU MẪU</small><h2>Phiếu B1</h2></div><div class="seg-wrap"><small>Tiến độ thực hiện</small><div class="seg-bars many" id="b1-progress-bars"></div></div><div class="question-count"><small>CÂU HỎI</small><b id="b1-progress-count">01 / 14</b><span hidden="" id="b1-progress"></span></div></section><section class="question-body glass-panel"><div class="kicker" id="b1-question-meta">CÂU HỎI</div><h1 id="b1-question-text"></h1><p class="question-help">Chọn một phương án phù hợp nhất với tình trạng hiện tại của hộ gia đình.</p><div id="b1-ghichu-container" style="display:none"><details><summary>? Bấm xem chi tiết/danh sách</summary><div id="b1-ghichu-content"></div></details></div><div class="numbered-options" id="b1-options"></div><div class="question-actions"><button class="btn-dna btn-outline-dna" onclick="prevB1()">← Quay lại câu trước</button><span class="question-warning">Thông tin trước đó đã được xác nhận</span><button class="btn-dna btn-teal-dna" onclick="nextB1()">Tiếp tục →</button></div></section></div></div>
 <!-- KẾT QUẢ B1 -->
 <div class="screen bg-citizen bg-common form-top-layout" id="screen-nd-review-b1"><div class="b1-result-layout"><aside class="glass-panel b1-score-panel"><div id="review-content-b1"></div><section class="file-zone"><h3>Hồ sơ Phiếu B1</h3><p class="warning-line">⚠ Vui lòng xem trước và tải Phiếu B1 trước khi đi tiếp.</p><button class="btn-dna btn-outline-dna file-action" onclick="xemTruocDocxB1()"><img src="assets/images/preview.svg"/>Xem trước</button><button class="btn-dna btn-outline-dna file-action" onclick="$('#dl-b1-options').slideToggle();"><img src="assets/images/download.svg"/>Tải Phiếu B1</button><div class="download-options" id="dl-b1-options" style="display:none"><button class="btn-dna btn-outline-dna" onclick="taiFileWordB1(); $('#dl-b1-options').slideUp();">Word (.docx)</button><button class="btn-dna btn-outline-dna" onclick="taiFilePDFB1(this);">PDF (.pdf)</button></div></section><div class="next-zone"><small>BƯỚC TIẾP THEO</small><h2>Phiếu B2 &amp; C</h2><button class="btn-dna btn-primary-dna" id="btn-submit-review-b1" onclick="submitB1XacNhan()">Xác nhận và tiếp tục →</button></div></aside><section class="glass-panel b1-detail-panel"><div class="panel-title"><h1>Chi tiết câu trả lời &amp; điểm số</h1><button class="btn-dna btn-outline-dna" onclick="editB1()">✎ Quay lại để sửa</button></div><div id="b1-detail-groups"></div></section></div></div>
 <!-- PHIẾU C - INIT -->
@@ -508,6 +513,119 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
         let appConfig = {}; let activeCampaigns = []; let currentUser = ""; let finalData = {};
         let currentB1Index = 0; let b1Answers = {}; 
         let numMembers = 0; let phieuC_Data = []; let hoGiaDinh_Data = {}; 
+
+        // ===== CROSSCHECK V11 =====
+        function hasAData(){ return Array.from({length:9},(_,i)=>String(i+1)).every(k=>Object.prototype.hasOwnProperty.call(finalData,k)); }
+        function hasB1Data(){ return Object.keys(b1Answers).length>0; }
+        function crosscheckAlert(message){ alert("⚠️ CÓ MÂU THUẪN TRONG KHAI BÁO:\n\n"+message+"\n\nVui lòng sửa câu trả lời hiện tại. Nếu phần đã xác nhận trước đó không đúng, anh/chị cần làm lại quy trình từ đầu."); return false; }
+        function toStringArray(v){ return v===null||v===undefined||v===''?[]:(Array.isArray(v)?v:[v]).map(String); }
+        function sameStringSet(a,b){ const A=[...new Set(toStringArray(a))].sort(), B=[...new Set(toStringArray(b))].sort(); return A.length===B.length&&A.every((v,i)=>v===B[i]); }
+        function b1Range(ma,ans){
+            if(ans===undefined||ans===null) return null;
+            if(ma==='B1.1') return ans===6?{min:7,max:Infinity}:{min:ans+1,max:ans+1};
+            if(ma==='B1.2') { if(ans===5)return{min:0,max:0}; if(ans===4)return{min:5,max:Infinity}; return{min:ans+1,max:ans+1}; }
+            if(ma==='B1.3') return ans===2?{min:2,max:Infinity}:{min:ans,max:ans};
+            return null;
+        }
+        function valueFitsRange(value,range){ return !!range&&value>=range.min&&value<=range.max; }
+        function guaranteedGreater(leftRange,rightRange){ return !!leftRange&&!!rightRange&&leftRange.min>rightRange.max; }
+        function validateCurrentB1Crosscheck(){
+            const q=appConfig.phieu_b1[currentB1Index], ma=q?.ma, ans=b1Answers[ma];
+            if(q?.isMulti&&Array.isArray(ans)){ const noneIdx=q.options.findIndex(o=>/^không có/i.test(o.text.trim())); if(noneIdx>=0&&ans.includes(noneIdx)&&ans.length>1)return crosscheckAlert(`${ma} không được chọn đồng thời “Không có lựa chọn nào đúng” với phương án khác.`); }
+            if(ma==='B1.2'&&b1Answers['B1.1']!==undefined){
+                if(guaranteedGreater(b1Range('B1.2',ans),b1Range('B1.1',b1Answers['B1.1']))) return crosscheckAlert('B1.2 — Số người trong độ tuổi lao động không được lớn hơn B1.1 — Tổng số người trong hộ.');
+            }
+            if(!hasAData()) return true;
+            const A=k=>Number(finalData[String(k)]||0)===1;
+            if(ma==='B1.5'){
+                if(A(9)&&ans!==1) return crosscheckAlert('Phiếu A đã xác nhận hộ có người làm việc theo hợp đồng, nên B1.5 phải chọn “Làm việc có hợp đồng lao động”.');
+                if(!A(9)&&ans===1) return crosscheckAlert('B1.5 khai có người làm việc theo hợp đồng nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
+            }
+            if(ma==='B1.6'){
+                const hasCivil=b1Answers['B1.5']===0, hasBenefit=ans===0||ans===1;
+                if(A(8)&&!(hasCivil||hasBenefit)) return crosscheckAlert('Phiếu A đã xác nhận hộ có công chức/viên chức hoặc người hưởng lương hưu, BHXH hay trợ cấp; B1.5 và B1.6 hiện đều khai không có.');
+                if(!A(8)&&(hasCivil||hasBenefit)) return crosscheckAlert('B1.5/B1.6 khai có công chức, viên chức hoặc người hưởng chế độ nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
+            }
+            if(ma==='B1.8'){
+                if(A(7)&&ans===3) return crosscheckAlert('Phiếu A đã xác nhận diện tích bình quân từ 25 m² trở lên nhưng B1.8 lại khai dưới 20 m².');
+                if(!A(7)&&(ans===1||ans===2)) return crosscheckAlert('B1.8 khai diện tích bình quân từ 30 m² trở lên nhưng Phiếu A không xác nhận mức từ 25 m² trở lên.');
+            }
+            if(ma==='B1.9'){
+                const b1High=ans===2;
+                if(A(6)!==b1High) return crosscheckAlert('Thông tin tiêu thụ điện từ 150 kWh/tháng giữa Phiếu A và B1.9 không thống nhất.');
+            }
+            if(ma==='B1.12'){
+                const set=new Set(Array.isArray(ans)?ans:[ans]);
+                const vehicle=[1,2,3,4].some(x=>set.has(x)), cold=[9,10,11].some(x=>set.has(x)), washer=set.has(12), heater=set.has(13);
+                if(A(1)&&!vehicle) return crosscheckAlert('Phiếu A đã xác nhận có xe máy/xe điện/tàu/ghe động cơ từ 20 triệu đồng nhưng B1.12 không có loại tài sản tương ứng.');
+                if(!A(2)&&cold) return crosscheckAlert('B1.12 khai có tủ lạnh/điều hòa nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
+                if(A(3)!==heater) return crosscheckAlert('Thông tin bình tắm nước nóng giữa Phiếu A và B1.12 không thống nhất.');
+                if(A(4)!==washer) return crosscheckAlert('Thông tin máy giặt/sấy giữa Phiếu A và B1.12 không thống nhất.');
+            }
+            if(ma==='B1.13'){
+                const set=new Set(Array.isArray(ans)?ans:[ans]), hasLand=[...set].some(x=>x!==9);
+                if(hasLand&&!A(5)) return crosscheckAlert('B1.13 khai hộ có đất đai nhưng Phiếu A chưa xác nhận tiêu chí đất đai/nhà xưởng/tài sản/máy móc cho thuê.');
+            }
+            return true;
+        }
+        function handleB1OptionChange(){ saveCurrentB1Answer(); validateCurrentB1Crosscheck(); }
+
+        function parseBirthDateSafe(value){ const v=String(value||'').trim(),m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if(!m)return null; const d=new Date(+m[3],+m[2]-1,+m[1]); return d.getFullYear()===+m[3]&&d.getMonth()===+m[2]-1&&d.getDate()===+m[1]&&d<=new Date()?d:null; }
+        function ageInfo(value){
+            const d=parseBirthDateSafe(value); if(!d)return{months:-1,years:-1,calendarYears:-1};
+            const now=new Date(); let months=(now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth()); if(now.getDate()<d.getDate())months--;
+            return{months,years:Math.floor(months/12),calendarYears:now.getFullYear()-d.getFullYear()};
+        }
+        function retirementMonths(gender,year=new Date().getFullYear()){
+            const delta=Math.max(0,year-2021);
+            return String(gender)==='1'?Math.min(62*12,60*12+3+delta*3):Math.min(60*12,55*12+4+delta*4);
+        }
+        function getCQuestion(ma){ return (appConfig.phieu_c||[]).find(q=>!q.isHo&&q.ma===ma); }
+        function getCValueFromDom(idx,ma){
+            const q=getCQuestion(ma); if(!q)return null;
+            if(q.options&&q.options.length&&!["(fill)","(date)","(dropdown)"].some(t=>q.options[0].text.includes(t))){
+                const vals=$(`input[name="pC_${idx}_${ma}"]:checked`).map(function(){return String(this.value)}).get(); return q.isMulti?vals:(vals[0]??null);
+            }
+            return $(`#pC_${idx}_${ma}`).val()||null;
+        }
+        function validateCConsistency(idx,changedMa){
+            const birth=$(`#pC_${idx}_C4`).val(), age=ageInfo(birth), c14=getCValueFromDom(idx,'C14'), c16=getCValueFromDom(idx,'C16')||[], c20=getCValueFromDom(idx,'C20')||[];
+            if((c16.length||c20.length)&&c14==='2') return crosscheckAlert(`Thành viên ${idx+1} đang hưởng trợ cấp/chế độ tại C16 hoặc C20 nên C14 — Bảo hiểm y tế phải là “Có”.`);
+            const c12=getCValueFromDom(idx,'C12');
+            if(c12&&age.calendarYears>=0){ const min={2:11,3:15,4:18}[c12]; if(min&&age.calendarYears<min)return crosscheckAlert(`C12 của Thành viên ${idx+1} không phù hợp với năm sinh: đáp án này yêu cầu từ ${min} tuổi trở lên (tính theo năm).`); }
+            const c13=getCValueFromDom(idx,'C13');
+            if(['4','5','6'].includes(c13)&&age.calendarYears>=0&&age.calendarYears<19) return crosscheckAlert(`C13 của Thành viên ${idx+1} khai Cao đẳng/Đại học/Sau đại học nhưng tuổi theo năm chưa đủ 19.`);
+            return true;
+        }
+        function handleCAnswerChange(idx,ma){ evalLogicPhiencC(idx); validateCConsistency(idx,ma); }
+        function classifyMembers(){
+            const nowYear=new Date().getFullYear(), all=new Set(), dependent=new Set(), workingAge=new Set(), excluded=new Set(), labor=new Set(), retired=new Set();
+            phieuC_Data.forEach((p,i)=>{
+                const id=String(i), age=ageInfo(p.C4), c16=toStringArray(p.C16), c11=String(p.C11||''), c21=String(p.C21||''); all.add(id);
+                if(age.years>=0&&age.years<16||c16.includes('1')||c16.includes('2'))dependent.add(id);
+                const retireAt=retirementMonths(p.C7,nowYear), inWorking=age.months>=15*12&&age.months<retireAt;
+                if(inWorking)workingAge.add(id); if(age.months>=retireAt&&age.months>=0)retired.add(id);
+                const isExcluded=inWorking&&(['5','6','7','9'].includes(c11)||c16.includes('2')||String(p.C17||'')==='3'||(c21==='1'&&age.months>=16*12));
+                if(isExcluded)excluded.add(id); else if(inWorking)labor.add(id);
+            });
+            const overlap15=new Set([...labor].filter(id=>dependent.has(id)));
+            const covered=new Set([...labor,...dependent,...excluded,...retired]);
+            return{all,dependent,workingAge,excluded,labor,retired,overlap15,covered};
+        }
+        function collectB1CConflicts(){
+            const errs=[]; if(!hasB1Data())return errs; const c=classifyMembers(), N=phieuC_Data.length;
+            const r11=b1Range('B1.1',b1Answers['B1.1']), r12=b1Range('B1.2',b1Answers['B1.2']), r13=b1Range('B1.3',b1Answers['B1.3']);
+            if(r11&&!valueFitsRange(N,r11))errs.push(`B1.1 không khớp: Phiếu B1 khai ${r11.max===Infinity?r11.min+' người trở lên':r11.min+' người'}, nhưng Phiếu C có ${N} thành viên.`);
+            if(r12&&!valueFitsRange(c.labor.size,r12))errs.push(`B1.2 không khớp: dữ liệu Phiếu C tính được ${c.labor.size} người lao động hợp lệ.`);
+            if(r13&&!valueFitsRange(c.dependent.size,r13))errs.push(`B1.3 không khớp: dữ liệu Phiếu C tính được ${c.dependent.size} người phụ thuộc.`);
+            if(c.covered.size!==N)errs.push('Phân loại nhân khẩu chưa bao phủ đủ toàn bộ thành viên trong hộ.');
+            const b14=b1Answers['B1.4']; if(b14!==undefined){ const maxC13=Math.max(...phieuC_Data.map(p=>parseInt(p.C13)||1)); const ok=(b14===0&&maxC13>=4)||(b14===1&&maxC13===3)||(b14===2&&maxC13===2)||(b14===3&&maxC13===1); if(!ok)errs.push('B1.4 không khớp với trình độ đào tạo cao nhất C13 của hộ.'); }
+            const b15=b1Answers['B1.5']; if(b15!==undefined){ const hasCC=phieuC_Data.some(p=>p.C18==='1'),hasHDLD=phieuC_Data.some(p=>p.C19==='1'),hasThue=phieuC_Data.some(p=>p.C18==='3'); if(b15===0&&!hasCC)errs.push('B1.5 khai có công chức/viên chức nhưng Phiếu C không có C18=1.'); if(b15===1&&!hasHDLD)errs.push('B1.5 khai có hợp đồng lao động nhưng Phiếu C không có C19=1.'); if(b15===2&&!hasThue)errs.push('B1.5 khai làm thuê cho hộ gia đình nhưng Phiếu C không có C18=3.'); if(b15===3&&(hasCC||hasHDLD||hasThue))errs.push('B1.5 khai không có loại việc làm phù hợp nhưng Phiếu C lại có.'); }
+            const b16=b1Answers['B1.6']; if(b16!==undefined){ const n=phieuC_Data.filter(p=>toStringArray(p.C20).length).length; if((b16===0&&n!==1)||(b16===1&&n<2)||(b16===2&&n!==0))errs.push(`B1.6 không khớp: Phiếu C có ${n} người đang hưởng lương hưu/trợ cấp/chế độ.`); }
+            return errs;
+        }
+        function validateB1MemberCount(n){ if(!hasB1Data()||b1Answers['B1.1']===undefined)return true; const r=b1Range('B1.1',b1Answers['B1.1']); return valueFitsRange(n,r)||crosscheckAlert(`Số thành viên nhập cho Phiếu C (${n}) không phù hợp với B1.1.`); }
+        // ===== END CROSSCHECK V11 =====
 
         function initSelect2() { $('.searchable-select').select2(); }
 
@@ -721,7 +839,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             let optsHTML=""; let saved = b1Answers[q.ma];
             q.options.forEach((opt, idx) => {
                 let type = q.isMulti?"checkbox":"radio", chk = (q.isMulti && Array.isArray(saved) && saved.includes(idx)) || (!q.isMulti && saved===idx) ? "checked" : "";
-                optsHTML+=`<label class="b1-option-label"><input type="${type}" name="b1_opt" class="b1-input" value="${idx}" ${chk}><span>${opt.text}</span></label>`;
+                optsHTML+=`<label class="b1-option-label"><input type="${type}" name="b1_opt" class="b1-input" value="${idx}" ${chk} onchange="handleB1OptionChange()"><span>${opt.text}</span></label>`;
             });
             $('#b1-options').html(optsHTML);
         }
@@ -733,49 +851,10 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
         function prevB1() { if(currentB1Index>0) { saveCurrentB1Answer(); currentB1Index--; renderB1(); } else alert("Đây là câu đầu tiên!"); }
         
         function nextB1() { 
-            if(!saveCurrentB1Answer()) return alert("Vui lòng chọn đáp án trước khi đi tiếp!"); 
-            
-            let q = appConfig.phieu_b1[currentB1Index];
-            let ma = q.ma;
-            let ans = b1Answers[ma];
-            let err = "";
-
-            let isADone = ("1" in finalData); 
-
-            if (isADone) {
-                if (ma === 'B1.5') {
-                    if (finalData["9"] && ans !== 1) err = "Phiếu A khai hộ có 'Người làm việc theo Hợp đồng lao động', nhưng ở câu này anh/chị lại không chọn mức tương ứng.";
-                }
-                else if (ma === 'B1.8') {
-                    if ((ans === 1 || ans === 2) && !finalData["7"]) err = "Anh/chị đang chọn diện tích >= 30m2, nhưng ở Phiếu A (Nhận diện nhanh) lại không xác nhận nhà có diện tích >= 25m2.";
-                }
-                else if (ma === 'B1.9') {
-                    if (finalData["6"] && ans !== 2) err = "Phiếu A khai hộ 'Tiêu thụ điện >= 150kWh/tháng', nhưng ở câu này anh/chị không chọn mức 'Từ 150 kWh trở lên'.";
-                }
-                else if (ma === 'B1.12') {
-                    let b1_12 = Array.isArray(ans) ? ans : [ans];
-                    let hasXeTau = b1_12.some(x => [1,2,3,4].includes(x));
-                    if (finalData["1"] && !hasXeTau) err = "Phiếu A khai có 'Xe máy/Tàu thuyền > 20 triệu', nhưng ở câu này anh/chị không đánh dấu loại hình tương ứng.";
-                    if (finalData["2"] && !b1_12.some(x => [9,10,11].includes(x))) err = "Phiếu A khai có 'Điều hòa/Tủ lạnh', nhưng ở câu này không được đánh dấu.";
-                    if (finalData["3"] && !b1_12.includes(13)) err = "Phiếu A khai có 'Bình tắm nóng', nhưng ở câu này không được đánh dấu.";
-                    if (finalData["4"] && !b1_12.includes(12)) err = "Phiếu A khai có 'Máy giặt', nhưng ở câu này không được đánh dấu.";
-                }
-                else if (ma === 'B1.13') {
-                    let b1_13_khong = Array.isArray(ans) ? ans.includes(9) : ans === 9;
-                    if (!b1_13_khong && !finalData["5"]) err = "Anh/chị đang đánh dấu CÓ đất đai/nuôi trồng, nhưng ở Phiếu A lại chưa xác nhận mục 'Có đất đai/nhà xưởng...'.";
-                }
-            }
-
-            if (err !== "") {
-                alert("⚠️ CHƯA CÓ SỰ NHẤT QUÁN DỮ LIỆU:\n\n" + err + "\n\n👉 Vui lòng CHỌN LẠI ĐÁP ÁN cho khớp, hoặc dùng nút 'Quay lại sửa Phiếu A' bên dưới để cập nhật lại Phiếu A.");
-                return; 
-            }
-
-            if(currentB1Index < appConfig.phieu_b1.length - 1) { 
-                currentB1Index++; renderB1(); 
-            } else { 
-                showReviewB1(); 
-            } 
+            if(!saveCurrentB1Answer()) return alert("Vui lòng chọn đáp án trước khi đi tiếp!");
+            if(!validateCurrentB1Crosscheck()) return;
+            if(currentB1Index < appConfig.phieu_b1.length - 1) { currentB1Index++; renderB1(); }
+            else { showReviewB1(); }
         }
 
         function getVungInfo() {
@@ -884,6 +963,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
         function initPhieuCMembers() {
             let n = parseInt($('#num_members').val());
             if(isNaN(n) || n<1 || n>20) return alert("❌ Vui lòng nhập số thành viên hợp lệ (từ 1 đến 20)!");
+            if(!validateB1MemberCount(n)) return;
             numMembers = n; phieuC_Data = Array.from({length: n}, () => ({})); hoGiaDinh_Data = {};
             
             let tabsHtml = "", contentHtml = "";
@@ -905,11 +985,11 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                         q.options.forEach((opt) => {
                             let isFillKhac = opt.text.includes('(fill)'); let textL = opt.text.replace('(fill)', '').trim();
                             let type = q.isMulti ? 'checkbox' : 'radio';
-                            contentHtml += `<label class="b1-option-label"><input type="${type}" name="pC_${i}_${m}" value="${opt.ma_lc}" onchange="evalLogicPhiencC(${i})"> ${textL}</label>`;
+                            contentHtml += `<label class="b1-option-label"><input type="${type}" name="pC_${i}_${m}" value="${opt.ma_lc}" onchange="handleCAnswerChange(${i},'${m}')"> ${textL}</label>`;
                             if(isFillKhac) contentHtml += `<input type="text" id="txt_pC_${i}_${m}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
                         });
                     } else if (q.options.length > 0 && q.options[0].text.includes('(date)')) {
-                        contentHtml += `<input type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" id="pC_${i}_${m}" class="glass-input date-dmy" onchange="evalLogicPhiencC(${i})" style="margin-top:5px;">`;
+                        contentHtml += `<input type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" id="pC_${i}_${m}" class="glass-input date-dmy" onchange="handleCAnswerChange(${i},'${m}')" style="margin-top:5px;">`;
                     } else if (q.options.length > 0 && q.options[0].text.includes('(dropdown)')) {
                         contentHtml += `<select id="pC_${i}_${m}" class="searchable-select"><option value="">-- Chọn Dân tộc --</option>`;
                         if(appConfig.madantoc) appConfig.madantoc.forEach(dt => contentHtml += `<option value="${dt.ma}">${dt.ten}</option>`);
@@ -946,6 +1026,8 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                 $('#pC_0_C5').val($('#nd_cccd').val().replace("'",""));
                 $('#pC_0_C6').val($('#nd_dantoc').val()).trigger('change');
                 $(`input[name="pC_0_C3"][value="1"]`).prop('checked', true).trigger('change');
+                $(`input[name="pC_0_C3"]`).prop('disabled', true);
+                for(let j=1;j<n;j++) $(`input[name="pC_${j}_C3"][value="1"]`).prop('checked', false).prop('disabled', true);
             }
             
             switchScreenUI('screen-nd-phieuc-members', 'nav-citizen'); 
@@ -966,12 +1048,10 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
         }
 
         function tinhTuoi(dateStr) {
-            if(!dateStr) return {nam: -1, thang: -1};
-            let d = parseFlexibleDate(dateStr), now = new Date();
-            let thang = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
-            if(now.getDate() < d.getDate()) thang--;
-            return { nam: Math.floor(thang/12), thang: thang };
+            const a=ageInfo(dateStr); return {nam:a.years,thang:a.months};
         }
+
+        function clearHiddenCQuestion(idx,ma){ const $d=$(`#q_${idx}_${ma}`); $d.find('input[type="radio"],input[type="checkbox"]').prop('checked',false); $d.find('input[type="text"],select').val('').trigger('change.select2'); }
 
         function evalLogicPhiencC(idx) {
             let ageY = tinhTuoi($(`#pC_${idx}_C4`).val()).nam;
@@ -982,7 +1062,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                 let m = q.ma, $qDiv = $(`#q_${idx}_${m}`);
                 if (skipUntilMa) {
                     if (m === skipUntilMa) skipUntilMa = null; 
-                    else { $qDiv.hide(); return; }
+                    else { $qDiv.hide(); clearHiddenCQuestion(idx,m); return; }
                 }
                 let showByAge = true;
                 if(q.dieu_kien) {
@@ -998,7 +1078,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                             if (optObj && optObj.next) skipUntilMa = optObj.next;
                         }
                     }
-                } else { $qDiv.hide(); }
+                } else { $qDiv.hide(); clearHiddenCQuestion(idx,m); }
             });
         }
 
@@ -1034,11 +1114,16 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                 }
                 phieuC_Data[idx][q.ma] = val;
             });
+            const birth=$(`#pC_${idx}_C4`).val();
+            if(birth&&!parseBirthDateSafe(birth)){ ok=false; $(`#q_${idx}_C4`).addClass('error'); }
+            if(ok&&!validateCConsistency(idx,'member-submit')) ok=false;
             if(!ok) $(`#tab-btn-${idx}`).addClass('error');
             return ok;
         }
 
         function checkAndGoHoGiaDinh() {
+            const memberErrs=collectB1CConflicts();
+            if(memberErrs.length) return crosscheckAlert(memberErrs.join("\n- "));
             let hoQ = (appConfig.phieu_c || []).filter(q => q.isHo);
             let html = "";
             let matrixDH = hoQ.find(q => q.ma==='CS_DH'), matrixMM = hoQ.find(q => q.ma==='CS_MM');
@@ -1065,7 +1150,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                             let textL = opt.text.replace('(fill)', '').replace('(checkbox)', '').trim();
                             let isFillKhac = opt.text.includes('(fill)');
                             let isForceCheck = opt.text.includes('(checkbox)') || q.options.length === 1;
-                            let type = (q.isMulti || isForceCheck) ? 'checkbox' : 'radio';
+                            let type = (q.isMulti || q.ma==='B2.7' || isForceCheck) ? 'checkbox' : 'radio';
                             
                             html += `<label class="b1-option-label"><input type="${type}" name="ho_${q.ma}" value="${opt.ma_lc}"> ${textL}</label>`;
                             if(isFillKhac) html += `<input type="text" id="txt_ho_${q.ma}_${opt.ma_lc}" class="glass-input" placeholder="Ghi rõ..." style="display:none; width:90% !important; margin: 8px 0 16px 36px;">`;
@@ -1089,8 +1174,8 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             
             $('#phieuc-ho-container').html(html);
             
-            if(b1Answers['B1.7']) { let ans = Array.isArray(b1Answers['B1.7']) ? b1Answers['B1.7'] : [b1Answers['B1.7']]; ans.forEach(a => $(`input[name="ho_B2.7"][value="${a}"]`).prop('checked', true)); }
-            if(b1Answers['B1.11']) { let ans = Array.isArray(b1Answers['B1.11']) ? b1Answers['B1.11'] : [b1Answers['B1.11']]; ans.forEach(a => $(`input[name="ho_B2.11"][value="${a}"]`).prop('checked', true)); }
+            if(b1Answers['B1.7']!==undefined) { let ans=Array.isArray(b1Answers['B1.7'])?b1Answers['B1.7']:[b1Answers['B1.7']]; ans.forEach(a=>$(`input[name="ho_B2.7"][value="${a+1}"]`).prop('checked',true)); }
+            if(b1Answers['B1.11']!==undefined) { let ans=Array.isArray(b1Answers['B1.11'])?b1Answers['B1.11']:[b1Answers['B1.11']]; ans.forEach(a=>$(`input[name="ho_B2.11"][value="${a+1}"]`).prop('checked',true)); }
             if(b1Answers['B1.10'] === 0) { $(`input[name="ho_B2.10"][value="1"]`).prop('checked', true); } 
             
             $('input[type="radio"], input[type="checkbox"]').on('change', function() {
@@ -1122,7 +1207,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             hoQ.forEach(q => {
                 if(q.options && q.options.length>1) {
                     let sel = $(`input[name="ho_${q.ma}"]:checked`);
-                    if(q.isMulti) { hoGiaDinh_Data[q.ma] = []; sel.each(function(){ hoGiaDinh_Data[q.ma].push($(this).val()); }); }
+                    if(q.isMulti||q.ma==='B2.7') { hoGiaDinh_Data[q.ma] = []; sel.each(function(){ hoGiaDinh_Data[q.ma].push($(this).val()); }); }
                     else hoGiaDinh_Data[q.ma] = sel.val();
                 } else if(q.options && q.options.length===1){
                     if(q.options[0].text.includes('(fill)')) {
@@ -1139,65 +1224,12 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                 }
             });
 
-            let isB1Done = Object.keys(b1Answers).length > 0;
-            let isADone = ("1" in finalData);
-
-            if (isB1Done) {
-                let b1_10 = b1Answers['B1.10'];
-                let b2_10_ans = hoGiaDinh_Data['B2.10'] || [];
-                if (b1_10 === 1 && b2_10_ans.length === 1 && b2_10_ans.includes('1')) errs.push("Chưa có sự nhất quán: Ở Phiếu B1 (Câu B1.10) anh/chị xác nhận Không dùng nước máy, nhưng tại Phiếu C lại chỉ đánh dấu 'Nước máy'.");
-
-                let b1_3 = b1Answers['B1.3'];
-                let phuThuocCount = phieuC_Data.filter(p => { let age = tinhTuoi(p.C4).nam; return (age !== -1 && age < 16) || (p.C16 && p.C16.length > 0); }).length;
-                if (b1_3 === 0 && phuThuocCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai 0 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
-                if (b1_3 === 1 && phuThuocCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người phụ thuộc, nhưng danh sách chi tiết có ${phuThuocCount} người.`);
-                if (b1_3 === 2 && phuThuocCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người phụ thuộc, nhưng danh sách chi tiết chỉ có ${phuThuocCount} người.`);
-
-                let b1_5 = b1Answers['B1.5'];
-                let hasCC = phieuC_Data.some(p => p.C18 === '1');
-                let hasHDLD = phieuC_Data.some(p => p.C19 === '1');
-                let hasThue = phieuC_Data.some(p => p.C18 === '3');
-                if (b1_5 === 0 && !hasCC) errs.push("Mâu thuẫn: Phiếu B1 khai có Công chức/Viên chức nhưng không có thành viên nào mang Loại việc làm này.");
-                if (b1_5 === 1 && !hasHDLD) errs.push("Mâu thuẫn: Phiếu B1 khai có Hợp đồng lao động nhưng không có thành viên nào ghi nhận HĐLĐ.");
-                if (b1_5 === 2 && !hasThue) errs.push("Mâu thuẫn: Phiếu B1 khai Làm thuê cho hộ gia đình nhưng không thành viên nào ghi nhận Loại việc làm này.");
-                if (b1_5 === 3 && (hasCC || hasHDLD || hasThue)) errs.push("Mâu thuẫn: Phiếu B1 khai Không có ai làm phi nông nghiệp nhưng chi tiết lại có thành viên đi làm.");
-
-                let b1_6 = b1Answers['B1.6'];
-                let tcCount = phieuC_Data.filter(p => p.C20 && p.C20.length > 0).length;
-                if (b1_6 === 2 && tcCount !== 0) errs.push(`Mâu thuẫn: Phiếu B1 khai không ai hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
-                if (b1_6 === 0 && tcCount !== 1) errs.push(`Mâu thuẫn: Phiếu B1 khai 1 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
-                if (b1_6 === 1 && tcCount < 2) errs.push(`Mâu thuẫn: Phiếu B1 khai >=2 người hưởng trợ cấp/lương hưu nhưng chi tiết có ${tcCount} người.`);
-
-                let b1_4 = b1Answers['B1.4'];
-                let maxC13 = Math.max(...phieuC_Data.map(p => parseInt(p.C13) || 1));
-                let matchBangCap = false;
-                if (b1_4 === 0 && maxC13 >= 4) matchBangCap = true;
-                else if (b1_4 === 1 && maxC13 === 3) matchBangCap = true;
-                else if (b1_4 === 2 && maxC13 === 2) matchBangCap = true;
-                else if (b1_4 === 3 && maxC13 === 1) matchBangCap = true;
-                if (b1_4 !== undefined && !matchBangCap) errs.push("Mâu thuẫn: Bằng cấp cao nhất khai ở Phiếu B1 không khớp với dữ liệu Trình độ đào tạo ở Phiếu C.");
-            }
-
-            let namHienTai = new Date().getFullYear(); 
-            let nguoiLaoDongCount = 0;
-            phieuC_Data.forEach(p => {
-                let tuoi = tinhTuoi(p.C4);
-                if (tuoi.nam >= 15) {
-                    let isLaoDong = false; let isMale = p.C7 === '1';
-                    let maxThangNam = 60 * 12 + (namHienTai - 2021) * 3; if (maxThangNam > 62*12) maxThangNam = 62*12;
-                    let maxThangNu = 55 * 12 + (namHienTai - 2021) * 4; if (maxThangNu > 60*12) maxThangNu = 60*12;
-                    let currentThang = tuoi.nam * 12 + tuoi.thang;
-                    
-                    if (isMale && currentThang <= maxThangNam) isLaoDong = true;
-                    if (!isMale && currentThang <= maxThangNu) isLaoDong = true;
-
-                    if (p.C17 === '3') isLaoDong = false; 
-                    if (p.C10 === '1') isLaoDong = false; 
-                    if (p.C21 === '1') isLaoDong = false; 
-                    if (p.C16 && p.C16.includes('2')) isLaoDong = false; 
-                    if (isLaoDong) nguoiLaoDongCount++;
-                }
-            });
+            hoQ.forEach(q=>{ if(!(q.isMulti||q.ma==='B2.7'))return; const vals=toStringArray(hoGiaDinh_Data[q.ma]); const noneCodes=(q.options||[]).filter(o=>/^không có/i.test(o.text.trim())).map(o=>String(o.ma_lc)); if(vals.length>1&&vals.some(v=>noneCodes.includes(v)))errs.push(`${q.ma} không được chọn đồng thời “Không có lựa chọn nào đúng” với phương án khác.`); });
+            let isB1Done = hasB1Data();
+            let isADone = hasAData();
+            errs.push(...collectB1CConflicts());
+            const classified=classifyMembers();
+            let nguoiLaoDongCount=classified.labor.size;
 
             let nnkk = hoGiaDinh_Data['NNKK'] || [];
             if (nnkk.includes('3') && nguoiLaoDongCount > 0) errs.push("Lỗi logic: Hộ khai NNKK là 'Không có lao động' nhưng thực tế có người trong độ tuổi LĐ và có khả năng làm việc.");
@@ -1228,18 +1260,20 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             if (csDH.includes('4') && !phieuC_Data.some(p => p.C17 === '1' && nguoiLaoDongCount > 0)) errs.push("Chính sách Việc làm (Đang hưởng): Không có thành viên nào trong độ tuổi LĐ đang làm việc.");
             if (csMM.includes('4') && !phieuC_Data.some(p => p.C17 === '2')) errs.push("Chính sách Việc làm (Mong muốn): Không có thành viên nào thất nghiệp.");
 
-            let dtNha = parseFloat(hoGiaDinh_Data['B2.81'] || 0);
-            let coGac = (hoGiaDinh_Data['B2.82'] || []).length > 0;
-            let dtBinhQuan = (dtNha * (coGac ? 1.5 : 1)) / N;
-            
-            if (dtBinhQuan > 0 && dtBinhQuan < 8) {
-                if (isB1Done && b1Answers['B1.8'] !== 3) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng B1.8 lại khai >= 20m2.");
-                if (isADone && finalData["7"]) errs.push("Chưa nhất quán: Tổng diện tích nhà tính ra < 8m2/người, nhưng Phiếu A lại đánh dấu diện tích >= 25m2.");
+            if(isB1Done){
+                const b17=Array.isArray(b1Answers['B1.7'])?b1Answers['B1.7'].map(x=>String(x+1)):[];
+                const b27=hoGiaDinh_Data['B2.7']||[];
+                if(!sameStringSet(b17,b27)) errs.push('B1.7 và B2.7 về kết cấu nhà ở không thống nhất.');
+                const b110=b1Answers['B1.10'], water=hoGiaDinh_Data['B2.10']||[], onlyTap=sameStringSet(water,['1']);
+                if((b110===0&&!onlyTap)||(b110===1&&onlyTap)) errs.push('B1.10 và B2.10 về nguồn nước sinh hoạt không thống nhất.');
+                const b111=b1Answers['B1.11'], b211=hoGiaDinh_Data['B2.11'];
+                if(b111!==undefined&&String(b111+1)!==String(b211||'')) errs.push('B1.11 và B2.11 về nhà tiêu hợp vệ sinh không thống nhất.');
+                let dtNha=parseFloat(hoGiaDinh_Data['B2.81']||0), coGac=(hoGiaDinh_Data['B2.82']||[]).length>0, dtBinhQuan=(dtNha*(coGac?1.5:1))/N;
+                if(dtBinhQuan>0){ const expected=dtBinhQuan<20?3:dtBinhQuan<30?0:dtBinhQuan<40?1:2; if(b1Answers['B1.8']!==expected) errs.push(`B1.8 không khớp diện tích bình quân tính từ B2: ${dtBinhQuan.toFixed(2)} m²/người.`); }
             }
 
             if (errs.length > 0) {
-                alert("⚠️ PHÁT HIỆN MÂU THUẪN DỮ LIỆU:\n\n- " + errs.join("\n- ") + "\n\nVui lòng kiểm tra và sửa lại các mục bị sai lệch.");
-                return false;
+                return crosscheckAlert("- "+errs.join("\n- "));
             }
             return true;
         }
