@@ -290,6 +290,16 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 .criteria-group>.panel-title>small{font-family:'BVP SemiBold','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important}
 @media(max-width:900px){.dash-grid{grid-template-columns:1fr!important}.route-card{min-height:0!important}.criteria-grid{grid-template-columns:1fr!important}}
 </style>
+
+<style id="v5-dashboard-form-fixes">
+.select2-container--default .select2-results__option,.select2-results__option{font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important;font-size:13px!important;line-height:1.35!important;padding:8px 10px!important}
+.dash-create .glass-input,.dash-create select,.dash-create .select2-selection__rendered,.dash-create input::placeholder,.dash-create textarea::placeholder{font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif!important;font-weight:normal!important;font-size:13px!important}
+.dash-create #cb_dieukien_bosung{padding:12px 14px!important;line-height:1.4!important}.dash-create #cb_dieukien_bosung:placeholder-shown{padding-top:25px!important}
+.date-combo{position:relative;width:100%}.date-combo>.date-dmy{width:100%!important;padding-right:46px!important;margin:0!important}.date-picker-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:38px;height:38px;padding:0;border:0;border-radius:8px;background:transparent;display:grid;place-items:center;cursor:pointer}.date-picker-btn:hover{background:rgba(246,241,233,.08)}.date-picker-btn img{width:19px;height:19px}.date-picker-native{position:absolute!important;right:8px!important;top:50%!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:105px}.stat>div{min-width:0}.stat img{width:34px;height:34px;opacity:.72;padding:7px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(246,241,233,.045)}.stat small{display:block;margin-top:5px;color:var(--blue-gray);font-size:10px}.stat-soon img{border-color:rgba(223,92,80,.38);background:rgba(223,92,80,.08)}
+.purge-warning-list{display:grid;gap:8px;margin-top:12px}.purge-warning{display:flex;align-items:flex-start;gap:9px;padding:11px 12px;border:1px solid rgba(223,92,80,.32);border-radius:9px;background:rgba(223,92,80,.07);color:#e6c4b5;font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif;font-size:12px;line-height:1.45}.purge-warning img{width:19px;height:19px;flex:none}.purge-warning b{font-family:'BVP SemiBold','Be Vietnam Pro',Arial,sans-serif;font-weight:normal}
+@media(max-width:700px){.stat{min-height:94px}.stat img{width:31px;height:31px}.date-picker-btn{width:36px;height:36px}}
+</style>
 </head>
 <body>
 <!-- ================= NAVBAR ================= -->
@@ -348,7 +358,12 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 <div class="screen bg-staff bg-common form-top-layout" id="screen-canbo-dash">
 <div class="dash-shell">
 <div class="dash-head"><div><div class="kicker">TRUNG TÂM ĐIỀU HÀNH</div><h1>Dashboard cán bộ</h1></div><button class="btn-dna btn-primary-dna" onclick="$('#form-tao-dot').slideToggle();">＋ Tạo đợt rà soát mới</button></div>
-<div class="dash-stats"><div class="stat"><span>Tổng đợt rà soát</span><b id="stat-total">—</b></div><div class="stat"><span>Đang mở</span><b id="stat-open">—</b></div><div class="stat"><span>Sắp hết hạn</span><b id="stat-soon">—</b></div><div class="stat"><span>Đã đóng</span><b id="stat-closed">—</b></div></div>
+<div class="dash-stats">
+<div class="stat"><div><span>Tổng đợt rà soát</span><b id="stat-total">—</b><small>Tất cả lịch sử</small></div><img src="assets/images/note.svg" alt=""/></div>
+<div class="stat"><div><span>Đang mở</span><b id="stat-open">—</b><small>Đang nhận khai báo</small></div><img src="assets/images/tick-square.svg" alt=""/></div>
+<div class="stat stat-soon"><div><span>Sắp hết hạn</span><b id="stat-soon">—</b><small>Còn từ 0–7 ngày</small></div><img src="assets/images/calendar.svg" alt=""/></div>
+<div class="stat"><div><span>Đã đóng</span><b id="stat-closed">—</b><small>Lưu lịch sử đợt</small></div><img src="assets/images/lock.svg" alt=""/></div>
+</div>
 <div class="dash-grid">
 <section class="dash-create glass-panel"><h2>Tạo đợt rà soát</h2>
 <div id="form-tao-dot">
@@ -359,7 +374,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 <button class="btn-dna btn-primary-dna full" onclick="taoDot()">Lưu và mở đợt rà soát</button>
 </div>
 </section>
-<section class="dash-list glass-panel"><div class="panel-title"><h2>Các đợt của bạn</h2><div class="dash-tools"><div class="filter-pills"><button class="active" onclick="filterDashboardDots('all',this)">Tất cả</button><button onclick="filterDashboardDots('open',this)">Đang mở</button><button onclick="filterDashboardDots('closed',this)">Đã đóng</button></div><input id="dash-search" class="dash-search" placeholder="⌕ Tìm theo địa bàn..." oninput="applyDashboardFilters()"></div></div><div id="canbo-dot-list"><p>Đang tải...</p></div></section>
+<section class="dash-list glass-panel"><div class="panel-title"><h2>Các đợt của bạn</h2><div class="dash-tools"><div class="filter-pills"><button onclick="filterDashboardDots('all',this)">Tất cả</button><button class="active" onclick="filterDashboardDots('open',this)">Đang mở</button><button onclick="filterDashboardDots('closed',this)">Đã đóng</button></div><input id="dash-search" class="dash-search" placeholder="⌕ Tìm theo địa bàn..." oninput="applyDashboardFilters()"></div></div><div id="canbo-dot-list"><p>Đang tải...</p></div></section>
 </div>
 <button class="btn-dna btn-outline-dna dash-logout" onclick="switchScreenUI('screen-welcome', 'nav-home')">Đăng xuất</button>
 </div></div>
@@ -468,6 +483,54 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             const d=new Date(value); if(isNaN(d)) return value;
             return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
         }
+        function dmyToIso(value) {
+            const m=String(value||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
+        }
+        function isoToDmy(value) {
+            const m=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+        }
+        function enhanceDateInputs(root=document) {
+            root.querySelectorAll('input.date-dmy:not([data-calendar-ready])').forEach(input => {
+                input.dataset.calendarReady='1';
+                const wrap=document.createElement('div'); wrap.className='date-combo';
+                if(input.style.marginTop){wrap.style.marginTop=input.style.marginTop;input.style.marginTop='0';}
+                input.parentNode.insertBefore(wrap,input); wrap.appendChild(input);
+                const native=document.createElement('input'); native.type='date'; native.className='date-picker-native'; native.tabIndex=-1; native.setAttribute('aria-hidden','true');
+                native.value=dmyToIso(input.value);
+                const btn=document.createElement('button'); btn.type='button'; btn.className='date-picker-btn'; btn.setAttribute('aria-label','Chọn ngày trên lịch'); btn.innerHTML='<img src="assets/images/calendar.svg" alt="">';
+                btn.addEventListener('click',()=>{ native.value=dmyToIso(input.value); if(native.showPicker) native.showPicker(); else native.click(); });
+                native.addEventListener('change',()=>{ input.value=isoToDmy(native.value); input.dispatchEvent(new Event('change',{bubbles:true})); });
+                input.addEventListener('input',()=>{ const iso=dmyToIso(input.value); if(iso) native.value=iso; });
+                wrap.append(native,btn);
+            });
+        }
+        function parseCalendarDate(value) {
+            const m=String(value||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if(m) return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]),0,0,0,0);
+            const d=new Date(value); return isNaN(d)?null:new Date(d.getFullYear(),d.getMonth(),d.getDate());
+        }
+        function daysUntil(value) {
+            const target=parseCalendarDate(toDisplayDMY(value)); if(!target) return NaN;
+            const now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            return Math.round((target-today)/86400000);
+        }
+        function purgeDateFor(value) {
+            const d=parseCalendarDate(toDisplayDMY(value)); if(!d) return null;
+            d.setDate(d.getDate()+1); d.setHours(23,59,0,0); return d;
+        }
+        function formatDateTimeVN(d) {
+            return d ? `23:59:00 ngày ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : '';
+        }
+        function formatDotLocation(d) {
+            const parts=(d.ten_dot||'').split(' - ');
+            const rawThon=String(d.thon||parts[0]||'').replace(/^(Thôn|Tổ\s*(?:dân phố|DP))(?:\s|$)/iu,'').trim();
+            const rawWard=String(d.phuong||parts[1]||'').trim();
+            const isPhuong=/^Phường(?:\s|$)/iu.test(rawWard);
+            const wardLabel=/^(?:Phường|Xã)(?:\s|$)/iu.test(rawWard)?rawWard:`${isPhuong?'Phường':'Xã'} ${rawWard}`.trim();
+            return {main:`${isPhuong?'Tổ DP':'Thôn'} ${rawThon}${wardLabel?' - '+wardLabel:''}`,sub:d.tinh||parts.slice(2).join(' - ')};
+        }
         $(document).on('input','.date-dmy',function(){this.value=formatDateDMYInput(this.value);});
         $(document).on('blur','.date-dmy',function(){if(this.value && !/^\d{2}\/\d{2}\/\d{4}$/.test(this.value)) this.setCustomValidity('Vui lòng nhập ngày theo định dạng dd/mm/yyyy'); else this.setCustomValidity('');});
 
@@ -493,6 +556,8 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             })();
             const campaignsTask = refreshActiveCampaigns();
             initSelect2();
+            enhanceDateInputs();
+            new MutationObserver(records => records.forEach(r => r.addedNodes.forEach(n => { if(n.nodeType===1) enhanceDateInputs(n); }))).observe(document.body,{childList:true,subtree:true});
             $('#cb_tinh').on('change', loadCbPhuong); $('#nd_tinh').on('change', loadNdPhuong); $('#nd_phuong').on('change', loadNdThon);
             $('#nd_thon').on('change', function() { $(this).val() === 'Khác' ? $('#nd_thon_khac').slideDown() : $('#nd_thon_khac').slideUp(); });
             await Promise.allSettled([configTask, campaignsTask]);
@@ -1288,7 +1353,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             btn.innerText = ogText; btn.disabled = false;
         }
 
-        let dashboardFilter='all';
+        let dashboardFilter='open';
         function filterDashboardDots(type,btn){dashboardFilter=type; $('.filter-pills button').removeClass('active'); $(btn).addClass('active'); applyDashboardFilters();}
         function applyDashboardFilters(){const q=($('#dash-search').val()||'').toLowerCase().trim(); $('.dot-row').each(function(){const status=$(this).data('status'), text=($(this).data('search')||'').toLowerCase(); $(this).toggle((dashboardFilter==='all'||dashboardFilter===status)&&(!q||text.includes(q)));});}
         async function loadDanhSachDotCanBo() {
@@ -1297,16 +1362,23 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                 const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
                 if(data.status==="success"){
                     const openDots=data.dots.filter(d=>d.trang_thai==='Open'), closedDots=data.dots.filter(d=>d.trang_thai!=='Open');
-                    const soonDots=openDots.filter(d=>{const x=parseFlexibleDate(toDisplayDMY(d.ngay_ket_thuc)); return !isNaN(x)&&((x-new Date())/86400000)>=0&&((x-new Date())/86400000)<=7;});
+                    const soonDots=openDots.filter(d=>{const days=daysUntil(d.ngay_ket_thuc); return Number.isFinite(days)&&days>=0&&days<=7;});
                     $('#stat-total').text(data.dots.length); $('#stat-open').text(openDots.length); $('#stat-soon').text(soonDots.length); $('#stat-closed').text(closedDots.length);
                     if(data.dots.length===0) return $('#canbo-dot-list').html("<p style='color:var(--beige);'>Chưa có đợt rà soát nào.</p>");
                     let html='<div class="dot-table"><div class="dot-table-head"><span>ĐỊA BÀN</span><span>HẠN KẾT THÚC</span><span>TRẠNG THÁI</span><span></span></div>';
+                    const warnings=[];
                     data.dots.forEach(d=>{
-                        const isOpen=d.trang_thai==='Open', status=isOpen?'open':'closed';
-                        const parts=(d.ten_dot||'').split(' - '), rawThon=String(d.thon||parts[0]||'').replace(/^(Thôn|Tổ\s*(dân phố|DP))\s+/i,'').trim(), rawWard=String(d.phuong||parts[1]||'').trim(), isPhuong=/^Phường\b/i.test(rawWard), wardLabel=/^(Phường|Xã)\b/i.test(rawWard)?rawWard:`${isPhuong?'Phường':'Xã'} ${rawWard}`.trim(), main=`${isPhuong?'Tổ DP':'Thôn'} ${rawThon}${wardLabel?' - '+wardLabel:''}`, sub=d.tinh||parts.slice(2).join(' - ');
-                        html+=`<div class="dot-row" data-status="${status}" data-search="${d.ten_dot}"><div class="dot-place"><b>${main}</b><small>${sub}</small></div><b class="dot-date">${toDisplayDMY(d.ngay_ket_thuc)}</b><span class="status-pill ${status}">${isOpen?'Đang mở':'Đã đóng'}</span><div class="dot-icon-actions"><button title="Xem Phiếu A" onclick="xemTruocDocx('${d.id_dot}');event.stopPropagation();"><img src="assets/images/preview.svg"></button><button title="Tải Phiếu A" onclick="$('#dl-${d.id_dot}').slideToggle();event.stopPropagation();"><img src="assets/images/download.svg"></button>${isOpen?`<button title="Đổi hạn" onclick="chinhSua('${d.id_dot}','${d.ngay_ket_thuc}');event.stopPropagation();"><img src="assets/images/edit.svg"></button><button class="danger" title="Kết thúc đợt" onclick="ketThuc('${d.id_dot}');event.stopPropagation();"><img src="assets/images/lock.svg"></button>`:''}</div><div id="dl-${d.id_dot}" class="dot-download-options" style="display:none"><button onclick="taiFileWord('${d.id_dot}')">Word (.docx)</button><button onclick="taiFilePDF('${d.id_dot}',this)">PDF (.pdf)</button></div></div>`;
+                        const purgeAt=purgeDateFor(d.ngay_ket_thuc), purged=!!d.purged || !!d.purged_at || (purgeAt && Date.now()>=purgeAt.getTime());
+                        const isOpen=d.trang_thai==='Open'&&!purged, status=isOpen?'open':'closed';
+                        const {main,sub}=formatDotLocation(d);
+                        const dataActions=purged?'':`<button title="Xem Phiếu A" onclick="xemTruocDocx('${d.id_dot}');event.stopPropagation();"><img src="assets/images/preview.svg"></button><button title="Tải Phiếu A" onclick="$('#dl-${d.id_dot}').slideToggle();event.stopPropagation();"><img src="assets/images/download.svg"></button>`;
+                        const manageActions=isOpen?`<button title="Đổi hạn" onclick="chinhSua('${d.id_dot}','${d.ngay_ket_thuc}');event.stopPropagation();"><img src="assets/images/edit.svg"></button><button class="danger" title="Kết thúc đợt" onclick="ketThuc('${d.id_dot}');event.stopPropagation();"><img src="assets/images/lock.svg"></button>`:'';
+                        const downloadPanel=purged?'':`<div id="dl-${d.id_dot}" class="dot-download-options" style="display:none"><button onclick="taiFileWord('${d.id_dot}')">Word (.docx)</button><button onclick="taiFilePDF('${d.id_dot}',this)">PDF (.pdf)</button></div>`;
+                        html+=`<div class="dot-row" data-status="${status}" data-search="${main} ${sub}"><div class="dot-place"><b>${main}</b><small>${sub}</small></div><b class="dot-date">${toDisplayDMY(d.ngay_ket_thuc)}</b><span class="status-pill ${status}">${isOpen?'Đang mở':'Đã đóng'}</span><div class="dot-icon-actions">${dataActions}${manageActions}</div>${downloadPanel}</div>`;
+                        if(!purged&&purgeAt){const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),purgeDay=new Date(purgeAt.getFullYear(),purgeAt.getMonth(),purgeAt.getDate()),diff=Math.round((purgeDay-today)/86400000);if(diff>=0&&diff<=1)warnings.push(`<div class="purge-warning"><img src="assets/images/warning.svg" alt=""><span>Dữ liệu đợt <b>${main}</b> sẽ tự động xóa lúc <b>${formatDateTimeVN(purgeAt)}</b>.</span></div>`);}
                     });
-                    $('#canbo-dot-list').html(html+'</div>'); applyDashboardFilters();
+                    html+='</div><div class="purge-warning-list">'+warnings.join('')+'</div>';
+                    $('#canbo-dot-list').html(html); applyDashboardFilters();
                 }
             } catch(e) { $('#canbo-dot-list').html("<p style='color:var(--beige);'>Không thể tải danh sách đợt.</p>"); }
         }
@@ -1336,7 +1408,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             document.getElementById('cb_start').value = "";
             document.getElementById('cb_end').value = "";
             document.getElementById('cb_dieukien_bosung').value = "";
-            $('#form-tao-dot').slideUp(); 
+            $('#form-tao-dot').show();
             loadDanhSachDotCanBo(); 
         }
 
