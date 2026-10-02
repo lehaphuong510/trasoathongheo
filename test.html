@@ -361,7 +361,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 <div class="dash-stats">
 <div class="stat"><div><span>Tổng đợt rà soát</span><b id="stat-total">—</b><small>Tất cả lịch sử</small></div><img src="assets/images/note.svg" alt=""/></div>
 <div class="stat"><div><span>Đang mở</span><b id="stat-open">—</b><small>Đang nhận khai báo</small></div><img src="assets/images/tick-square.svg" alt=""/></div>
-<div class="stat stat-soon"><div><span>Sắp hết hạn</span><b id="stat-soon">—</b><small>Còn từ 0–7 ngày</small></div><img src="assets/images/calendar.svg" alt=""/></div>
+<div class="stat stat-soon"><div><span>Sắp hết hạn</span><b id="stat-soon">—</b><small>Còn tối đa 1 ngày</small></div><img src="assets/images/calendar.svg" alt=""/></div>
 <div class="stat"><div><span>Đã đóng</span><b id="stat-closed">—</b><small>Lưu lịch sử đợt</small></div><img src="assets/images/lock.svg" alt=""/></div>
 </div>
 <div class="dash-grid">
@@ -1362,7 +1362,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
                 const data = await (await fetch(WORKER_URL, { method:'POST', body:JSON.stringify({action:"get_canbo_dots", username:currentUser}) })).json();
                 if(data.status==="success"){
                     const openDots=data.dots.filter(d=>d.trang_thai==='Open'), closedDots=data.dots.filter(d=>d.trang_thai!=='Open');
-                    const soonDots=openDots.filter(d=>{const days=daysUntil(d.ngay_ket_thuc); return Number.isFinite(days)&&days>=0&&days<=7;});
+                    const soonDots=openDots.filter(d=>{const days=daysUntil(d.ngay_ket_thuc); return Number.isFinite(days)&&days>=0&&days<=1;});
                     $('#stat-total').text(data.dots.length); $('#stat-open').text(openDots.length); $('#stat-soon').text(soonDots.length); $('#stat-closed').text(closedDots.length);
                     if(data.dots.length===0) return $('#canbo-dot-list').html("<p style='color:var(--beige);'>Chưa có đợt rà soát nào.</p>");
                     let html='<div class="dot-table"><div class="dot-table-head"><span>ĐỊA BÀN</span><span>HẠN KẾT THÚC</span><span>TRẠNG THÁI</span><span></span></div>';
