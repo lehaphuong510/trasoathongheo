@@ -300,6 +300,13 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 .purge-warning-list{display:grid;gap:8px;margin-top:12px}.purge-warning{display:flex;align-items:flex-start;gap:9px;padding:11px 12px;border:1px solid rgba(223,92,80,.32);border-radius:9px;background:rgba(223,92,80,.07);color:#e6c4b5;font-family:'BVP Light','Be Vietnam Pro',Arial,sans-serif;font-size:12px;line-height:1.45}.purge-warning img{width:19px;height:19px;flex:none}.purge-warning b{font-family:'BVP SemiBold','Be Vietnam Pro',Arial,sans-serif;font-weight:normal}
 @media(max-width:700px){.stat{min-height:94px}.stat img{width:31px;height:31px}.date-picker-btn{width:36px;height:36px}}
 </style>
+
+<style id="v6-dashboard-header">
+.dash-overview-row{display:grid;grid-template-columns:minmax(245px,1.15fr) minmax(620px,3fr) auto;align-items:center;gap:18px;margin-bottom:20px}.dash-title .kicker{margin-bottom:6px}.dash-title h1{font-size:29px;margin:0;white-space:nowrap}.dash-overview-row .dash-stats{display:grid;grid-template-columns:repeat(4,minmax(135px,1fr));gap:10px;margin:0}.dash-overview-row .stat{min-height:82px;padding:14px 15px;border-radius:13px}.dash-overview-row .stat span{font-size:12px}.dash-overview-row .stat b{font-size:25px;margin-top:5px}.dash-overview-row .stat img{width:31px;height:31px;padding:6px}.dash-create-toggle{white-space:nowrap;min-width:190px;padding-left:18px;padding-right:18px}
+.dash-create #cb_dieukien_bosung{height:58px!important;min-height:58px!important;padding:10px 14px!important;line-height:1.4!important;overflow:auto!important}.dash-create #cb_dieukien_bosung:placeholder-shown{padding:0 14px!important;line-height:56px!important;overflow:hidden!important}
+@media(max-width:1180px){.dash-overview-row{grid-template-columns:1fr auto}.dash-overview-row .dash-stats{grid-column:1/-1;grid-row:2}.dash-title h1{white-space:normal}}
+@media(max-width:700px){.dash-overview-row{grid-template-columns:1fr}.dash-create-toggle{grid-row:2;width:100%}.dash-overview-row .dash-stats{grid-row:3;grid-template-columns:1fr 1fr}.dash-overview-row .stat{min-height:76px}}
+</style>
 </head>
 <body>
 <!-- ================= NAVBAR ================= -->
@@ -357,12 +364,15 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
 <!-- CÁN BỘ DASHBOARD -->
 <div class="screen bg-staff bg-common form-top-layout" id="screen-canbo-dash">
 <div class="dash-shell">
-<div class="dash-head"><div><div class="kicker">TRUNG TÂM ĐIỀU HÀNH</div><h1>Dashboard cán bộ</h1></div><button class="btn-dna btn-primary-dna" onclick="$('#form-tao-dot').slideToggle();">＋ Tạo đợt rà soát mới</button></div>
+<div class="dash-overview-row">
+<div class="dash-title"><div class="kicker">TRUNG TÂM ĐIỀU HÀNH</div><h1>Dashboard cán bộ</h1></div>
 <div class="dash-stats">
-<div class="stat"><div><span>Tổng đợt rà soát</span><b id="stat-total">—</b><small>Tất cả lịch sử</small></div><img src="assets/images/note.svg" alt=""/></div>
-<div class="stat"><div><span>Đang mở</span><b id="stat-open">—</b><small>Đang nhận khai báo</small></div><img src="assets/images/tick-square.svg" alt=""/></div>
-<div class="stat stat-soon"><div><span>Sắp hết hạn</span><b id="stat-soon">—</b><small>Còn tối đa 1 ngày</small></div><img src="assets/images/calendar.svg" alt=""/></div>
-<div class="stat"><div><span>Đã đóng</span><b id="stat-closed">—</b><small>Lưu lịch sử đợt</small></div><img src="assets/images/lock.svg" alt=""/></div>
+<div class="stat"><div><span>Tổng đợt rà soát</span><b id="stat-total">—</b></div><img src="assets/images/note.svg" alt=""/></div>
+<div class="stat"><div><span>Đang mở</span><b id="stat-open">—</b></div><img src="assets/images/tick-square.svg" alt=""/></div>
+<div class="stat stat-soon"><div><span>Sắp hết hạn</span><b id="stat-soon">—</b></div><img src="assets/images/calendar.svg" alt=""/></div>
+<div class="stat"><div><span>Đã đóng</span><b id="stat-closed">—</b></div><img src="assets/images/lock.svg" alt=""/></div>
+</div>
+<button class="btn-dna btn-primary-dna dash-create-toggle" onclick="$('#form-tao-dot').slideToggle();">＋ Tạo đợt rà soát mới</button>
 </div>
 <div class="dash-grid">
 <section class="dash-create glass-panel"><h2>Tạo đợt rà soát</h2>
