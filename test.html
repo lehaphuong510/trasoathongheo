@@ -514,11 +514,23 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
         let currentB1Index = 0; let b1Answers = {}; 
         let numMembers = 0; let phieuC_Data = []; let hoGiaDinh_Data = {}; 
 
-        // ===== CROSSCHECK V11 =====
+        // ===== CROSSCHECK V13 =====
         function hasAData(){ return Array.from({length:9},(_,i)=>String(i+1)).every(k=>Object.prototype.hasOwnProperty.call(finalData,k)); }
         function hasB1Data(){ return Object.keys(b1Answers).length>0; }
         function crosscheckAlert(message){ alert("⚠️ CÓ MÂU THUẪN TRONG KHAI BÁO:\n\n"+message+"\n\nVui lòng sửa câu trả lời hiện tại. Nếu phần đã xác nhận trước đó không đúng, anh/chị cần làm lại quy trình từ đầu."); return false; }
         function toStringArray(v){ return v===null||v===undefined||v===''?[]:(Array.isArray(v)?v:[v]).map(String); }
+        // B1 answers store zero-based option indices; multi-select answers are arrays.
+        function b1HasOption(ma,index){ return toStringArray(b1Answers[ma]).includes(String(index)); }
+        function b1HasAnswer(ma){ return toStringArray(b1Answers[ma]).length>0; }
+        function validateA8B1Crosscheck(){
+            // A8 = civil servant OR benefits. Unknown/unanswered is not false.
+            if(!hasAData()||!b1HasAnswer('B1.5')||!b1HasAnswer('B1.6')) return true;
+            const a8=Number(finalData['8']||0)===1;
+            const hasCivil=b1HasOption('B1.5',0), hasBenefit=b1HasOption('B1.6',0)||b1HasOption('B1.6',1);
+            if(a8&&!(hasCivil||hasBenefit)) return crosscheckAlert('Phiếu A đã xác nhận hộ có công chức/viên chức hoặc người hưởng lương hưu, BHXH hay trợ cấp; nhưng B1.5 không chọn “Công chức, viên chức” và B1.6 chọn “Không có ai”.');
+            if(!a8&&(hasCivil||hasBenefit)) return crosscheckAlert('B1.5/B1.6 khai có công chức, viên chức hoặc người hưởng chế độ nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
+            return true;
+        }
         function sameStringSet(a,b){ const A=[...new Set(toStringArray(a))].sort(), B=[...new Set(toStringArray(b))].sort(); return A.length===B.length&&A.every((v,i)=>v===B[i]); }
         function b1Range(ma,ans){
             if(ans===undefined||ans===null) return null;
@@ -538,14 +550,14 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             if(!hasAData()) return true;
             const A=k=>Number(finalData[String(k)]||0)===1;
             if(ma==='B1.5'){
-                if(A(9)&&ans!==1) return crosscheckAlert('Phiếu A đã xác nhận hộ có người làm việc theo hợp đồng, nên B1.5 phải chọn “Làm việc có hợp đồng lao động”.');
-                if(!A(9)&&ans===1) return crosscheckAlert('B1.5 khai có người làm việc theo hợp đồng nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
+                const hasContract=b1HasOption('B1.5',1);
+                // Single-choice priority: civil > contract > casual > none.
+                // Selecting civil leaves lower-priority contract status unknown.
+                const priorityCivil=!q.isMulti&&b1HasOption('B1.5',0);
+                if(A(9)&&!hasContract&&!priorityCivil) return crosscheckAlert(q.isMulti?'Phiếu A đã xác nhận hộ có người làm việc theo hợp đồng, nên B1.5 phải chọn “Làm việc có hợp đồng lao động”.':'Phiếu A đã xác nhận hộ có người làm việc theo hợp đồng; theo thứ tự ưu tiên, B1.5 phải chọn “Công chức, viên chức” hoặc “Làm việc có hợp đồng lao động”.');
+                if(!A(9)&&hasContract) return crosscheckAlert('B1.5 khai có người làm việc theo hợp đồng nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
             }
-            if(ma==='B1.6'){
-                const hasCivil=b1Answers['B1.5']===0, hasBenefit=ans===0||ans===1;
-                if(A(8)&&!(hasCivil||hasBenefit)) return crosscheckAlert('Phiếu A đã xác nhận hộ có công chức/viên chức hoặc người hưởng lương hưu, BHXH hay trợ cấp; B1.5 và B1.6 hiện đều khai không có.');
-                if(!A(8)&&(hasCivil||hasBenefit)) return crosscheckAlert('B1.5/B1.6 khai có công chức, viên chức hoặc người hưởng chế độ nhưng Phiếu A không xác nhận tiêu chí tương ứng.');
-            }
+            if((ma==='B1.5'||ma==='B1.6')&&!validateA8B1Crosscheck()) return false;
             if(ma==='B1.8'){
                 if(A(7)&&ans===3) return crosscheckAlert('Phiếu A đã xác nhận diện tích bình quân từ 25 m² trở lên nhưng B1.8 lại khai dưới 20 m².');
                 if(!A(7)&&(ans===1||ans===2)) return crosscheckAlert('B1.8 khai diện tích bình quân từ 30 m² trở lên nhưng Phiếu A không xác nhận mức từ 25 m² trở lên.');
@@ -568,7 +580,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             }
             return true;
         }
-        function handleB1OptionChange(){ saveCurrentB1Answer(); validateCurrentB1Crosscheck(); }
+        function handleB1OptionChange(){ if(saveCurrentB1Answer()) validateCurrentB1Crosscheck(); }
 
         function parseBirthDateSafe(value){ const v=String(value||'').trim(),m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if(!m)return null; const d=new Date(+m[3],+m[2]-1,+m[1]); return d.getFullYear()===+m[3]&&d.getMonth()===+m[2]-1&&d.getDate()===+m[1]&&d<=new Date()?d:null; }
         function ageInfo(value){
@@ -620,12 +632,12 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             if(r13&&!valueFitsRange(c.dependent.size,r13))errs.push(`B1.3 không khớp: dữ liệu Phiếu C tính được ${c.dependent.size} người phụ thuộc.`);
             if(c.covered.size!==N)errs.push('Phân loại nhân khẩu chưa bao phủ đủ toàn bộ thành viên trong hộ.');
             const b14=b1Answers['B1.4']; if(b14!==undefined){ const maxC13=Math.max(...phieuC_Data.map(p=>parseInt(p.C13)||1)); const ok=(b14===0&&maxC13>=4)||(b14===1&&maxC13===3)||(b14===2&&maxC13===2)||(b14===3&&maxC13===1); if(!ok)errs.push('B1.4 không khớp với trình độ đào tạo cao nhất C13 của hộ.'); }
-            const b15=b1Answers['B1.5']; if(b15!==undefined){ const hasCC=phieuC_Data.some(p=>p.C18==='1'),hasHDLD=phieuC_Data.some(p=>p.C19==='1'),hasThue=phieuC_Data.some(p=>p.C18==='3'); if(b15===0&&!hasCC)errs.push('B1.5 khai có công chức/viên chức nhưng Phiếu C không có C18=1.'); if(b15===1&&!hasHDLD)errs.push('B1.5 khai có hợp đồng lao động nhưng Phiếu C không có C19=1.'); if(b15===2&&!hasThue)errs.push('B1.5 khai làm thuê cho hộ gia đình nhưng Phiếu C không có C18=3.'); if(b15===3&&(hasCC||hasHDLD||hasThue))errs.push('B1.5 khai không có loại việc làm phù hợp nhưng Phiếu C lại có.'); }
+            const b15=b1Answers['B1.5']; if(b15!==undefined){ const hasCC=phieuC_Data.some(p=>p.C18==='1'),hasHDLD=phieuC_Data.some(p=>p.C19==='1'),hasThue=phieuC_Data.some(p=>p.C18==='3'); if(b1HasOption('B1.5',0)&&!hasCC)errs.push('B1.5 khai có công chức/viên chức nhưng Phiếu C không có C18=1.'); if(b1HasOption('B1.5',1)&&!hasHDLD)errs.push('B1.5 khai có hợp đồng lao động nhưng Phiếu C không có C19=1.'); if(b1HasOption('B1.5',2)&&!hasThue)errs.push('B1.5 khai làm thuê cho hộ gia đình nhưng Phiếu C không có C18=3.'); if(b1HasOption('B1.5',3)&&(hasCC||hasHDLD||hasThue))errs.push('B1.5 khai không có loại việc làm phù hợp nhưng Phiếu C lại có.'); }
             const b16=b1Answers['B1.6']; if(b16!==undefined){ const n=phieuC_Data.filter(p=>toStringArray(p.C20).length).length; if((b16===0&&n!==1)||(b16===1&&n<2)||(b16===2&&n!==0))errs.push(`B1.6 không khớp: Phiếu C có ${n} người đang hưởng lương hưu/trợ cấp/chế độ.`); }
             return errs;
         }
         function validateB1MemberCount(n){ if(!hasB1Data()||b1Answers['B1.1']===undefined)return true; const r=b1Range('B1.1',b1Answers['B1.1']); return valueFitsRange(n,r)||crosscheckAlert(`Số thành viên nhập cho Phiếu C (${n}) không phù hợp với B1.1.`); }
-        // ===== END CROSSCHECK V11 =====
+        // ===== END CROSSCHECK V13 =====
 
         function initSelect2() { $('.searchable-select').select2(); }
 
@@ -846,6 +858,7 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
         function saveCurrentB1Answer() {
             let q=appConfig.phieu_b1[currentB1Index], sel=$('.b1-input:checked');
             if(sel.length>0){ b1Answers[q.ma] = q.isMulti ? Array.from(sel).map(e=>Number(e.value)) : Number(sel.val()); return true; }
+            delete b1Answers[q.ma]; // Do not retain a stale answer when all options are unchecked.
             return false;
         }
         function prevB1() { if(currentB1Index>0) { saveCurrentB1Answer(); currentB1Index--; renderB1(); } else alert("Đây là câu đầu tiên!"); }
