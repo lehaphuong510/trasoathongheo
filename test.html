@@ -885,17 +885,36 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             return { isDoThi, tenVung, maVung, diemCongDoThi, colLookup: isDoThi?"DoThi_Chung":"NT_"+maVung, diemChuan: isDoThi?220:190, txt: isDoThi?"Đô thị":"Nông thôn" };
         }
 
-        function showReviewB1() {
-            const vi = getVungInfo(); let totalScore=0, html="<div class='review-checklist' style='margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px;'>";
-            appConfig.phieu_b1.forEach(q => {
-                let ans = b1Answers[q.ma]; html+=`<div style="padding-bottom:10px;"><strong>${q.noidung}</strong><br>`;
-                let processOpt = (idx) => { let obj=q.options[idx], sc=obj[vi.colLookup]||0; if(!obj.text.toLowerCase().startsWith("không có")) totalScore+=sc; html+=`✅ ${obj.text} <span style="color:var(--coral); font-weight:bold; float:right;">(+${sc})</span><br>`; };
-                if(q.isMulti && Array.isArray(ans)) ans.forEach(processOpt); else if(ans!==undefined) processOpt(ans);
-                html+="</div>";
+        // V15: wording never determines points; all consumers share the configured barem.
+        function b1QuestionScore(q, vi) {
+            const answer = b1Answers[q.ma];
+            const raw = Array.isArray(answer) ? answer : (answer === undefined || answer === null ? [] : [answer]);
+            const ids = [...new Set(raw.map(x => Number(x)))];
+            const selected = ids.map(idx => {
+                if (!Number.isInteger(idx) || idx < 0 || !q.options[idx]) throw new Error(`Câu ${q.ma}: đáp án không hợp lệ. Vui lòng chọn lại.`);
+                const option = q.options[idx], value = option[vi.colLookup];
+                if (value === undefined || value === null || String(value).trim() === '' || !Number.isFinite(Number(value))) {
+                    throw new Error(`Câu ${q.ma}: thiếu hoặc sai điểm barem ở cột ${vi.colLookup}. Vui lòng đồng bộ lại cấu hình.`);
+                }
+                return { idx, option, score: Number(value) };
             });
-            if(vi.diemCongDoThi>0) { totalScore+=vi.diemCongDoThi; html+=`<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;"><strong>Cộng Đô thị vùng (${vi.tenVung}):</strong> <span style="color:var(--coral); font-weight:bold; float:right;">+${vi.diemCongDoThi}</span></div>`; }
-            html+="</div>";
-            let isPass = totalScore <= vi.diemChuan; finalData.TongDiemB1 = totalScore; finalData.KetQuaB1 = isPass?"Đậu":"Rớt";
+            return { selected, score: selected.reduce((sum, item) => sum + item.score, 0) };
+        }
+
+        function b1ScoreSummary(vi) {
+            const questions = appConfig.phieu_b1.map(q => ({ q, ...b1QuestionScore(q, vi) }));
+            const bonus = Number(vi.diemCongDoThi || 0);
+            if (!Number.isFinite(bonus)) throw new Error('Điểm cộng đô thị không hợp lệ. Vui lòng đồng bộ lại cấu hình.');
+            return { questions, total: questions.reduce((sum, item) => sum + item.score, 0) + bonus };
+        }
+
+        function showReviewB1() {
+            const vi = getVungInfo();
+            let summary;
+            try { summary = b1ScoreSummary(vi); }
+            catch (error) { alert(error.message); return; }
+            const totalScore = summary.total, isPass = totalScore <= vi.diemChuan;
+            finalData.TongDiemB1 = totalScore; finalData.KetQuaB1 = isPass ? "Đậu" : "Rớt";
             renderB1ResultUI(totalScore, isPass, vi);
             $('#btn-submit-review-b1').text(isPass?"Xác nhận và tiếp tục →":"Kết thúc"); switchScreenUI('screen-nd-review-b1', 'nav-citizen');
         }
@@ -908,8 +927,8 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             defs.forEach(([name,a,b])=>{
                 let sum=0, cards='';
                 appConfig.phieu_b1.slice(a,b).forEach(q=>{
-                    const ans=b1Answers[q.ma]; let ids=Array.isArray(ans)?ans:(ans===undefined?[]:[ans]); let texts=[],score=0;
-                    ids.forEach(idx=>{const o=q.options[idx]; if(!o)return; texts.push(o.text); if(!o.text.toLowerCase().startsWith('không có'))score+=Number(o[vi.colLookup]||0);});
+                    const result=b1QuestionScore(q,vi), score=result.score;
+                    const texts=result.selected.map(item=>item.option.text);
                     sum+=score; cards+=`<div class="b1-answer"><span class="tick">✓</span><div><b>${q.noidung}</b><p>${texts.join(', ')||'Chưa có câu trả lời'}</p></div><em>+${score}</em></div>`;
                 });
                 const w=Math.min(100,sum/150*100); groups+=`<section class="b1-group"><div class="panel-title"><b>${name}</b></div><div class="b1-group-items">${cards}</div><div class="group-score"><span class="line"><i style="width:${w}%"></i></span><b>+${sum}</b></div></section>`;
@@ -917,16 +936,25 @@ h2,h3,.panel-title h1,.panel-title h2,.nav-links,.glass-label,.kicker,.btn-dna,b
             $('#b1-detail-groups').html(groups+'</div>');
         }
 
+        // V15.1: Word checkbox policy is separate from the numeric barem.
+        // B1.3 has a real printed "Không có người nào" row; other "Không có..."
+        // options are web-only fallback answers and must not receive an x.
+        function b1ShouldMarkWord(q, option) {
+            const text = String(option.text || '').normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('vi');
+            return !text.startsWith('không có') || (q.ma === 'B1.3' && text === 'không có người nào');
+        }
+
         function prepareWordDataB1() {
-            const vi = getVungInfo();
-            let d = { Khuvuc:vi.isDoThi?1:2, Tinh_thanh:$('#nd_tinh').val(), Phuong_xa:$('#nd_phuong').val(), Thon_to:$('#nd_thon').val()==="Khác"?$('#nd_thon_khac').val():$('#nd_thon option:selected').text(), B:$('#nd_hoten').val().toUpperCase(), Ma_Dantoc:$('#nd_dantoc').val(), TongDiem_B1:finalData.TongDiemB1 };
+            const vi = getVungInfo(), summary = b1ScoreSummary(vi);
+            let d = { Khuvuc:vi.isDoThi?1:2, Tinh_thanh:$('#nd_tinh').val(), Phuong_xa:$('#nd_phuong').val(), Thon_to:$('#nd_thon').val()==="Khác"?$('#nd_thon_khac').val():$('#nd_thon option:selected').text(), B:$('#nd_hoten').val().toUpperCase(), Ma_Dantoc:$('#nd_dantoc').val(), TongDiem_B1:summary.total };
             let cccd = $('#nd_cccd').val(); for(let i=0;i<12;i++) d[`C${i+1}`] = cccd[i]||"";
-            appConfig.phieu_b1.forEach(q => {
-                let m = q.ma.replace('.','_'), ans = b1Answers[q.ma], diem=0, hasV=false;
-                q.options.forEach((o,i) => d[`x_${m}_${i}`]=""); d[`Diem_${m}`]="";
-                let checkObj = (i) => { let o=q.options[i]; if(!o.text.toLowerCase().startsWith("không có")){ d[`x_${m}_${i}`]="x"; diem+=o[vi.colLookup]||0; hasV=true; }};
-                if(q.isMulti && Array.isArray(ans)) ans.forEach(checkObj); else if(ans!==undefined) checkObj(ans);
-                if(hasV) d[`Diem_${m}`]=diem;
+            summary.questions.forEach(({q, selected, score}) => {
+                const m = q.ma.replace('.','_');
+                q.options.forEach((o,i) => d[`x_${m}_${i}`]="");
+                selected.forEach(({idx, option}) => {
+                    if (b1ShouldMarkWord(q, option)) d[`x_${m}_${idx}`]="x";
+                });
+                d[`Diem_${m}`] = selected.length ? score : "";
             });
             ["DBSH","MNPB","BTB","DHTN","DNB","DBSCL","TW"].forEach(v => { d[`x_B1_15_${v}`]=""; d[`Diem_B1_15_${v}`]=""; });
             if(vi.isDoThi && vi.diemCongDoThi>0) { let vMap=vi.maVung==="TPTW"?"TW":vi.maVung; d[`x_B1_15_${vMap}`]="x"; d[`Diem_B1_15_${vMap}`]=vi.diemCongDoThi; }
